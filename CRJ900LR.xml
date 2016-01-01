@@ -65,10 +65,13 @@
 		<slat start="0.0" end="0.94" aoa="3.0" drag="1.1" />
 		<spoiler start="0.06" end="0.31" lift="0.0" drag="10.0" />
 		<control-input axis="/controls/flight/flaps-cmd" control="FLAP0" />
-		<control-input axis="/fcs/aileron-cmd-norm" control="FLAP1" split="true" />
+		<control-input axis="/fcs/aileron-hydraulic-cmd-norm" control="FLAP1" split="true" />
 		<control-input axis="/controls/flight/aileron-trim" control="FLAP1" split="true" />
 		<control-input axis="/controls/flight/slats-cmd" control="SLAT" />
-		<control-input axis="/controls/flight/speedbrake" control="SPOILER" />
+		<control-input axis="/surface-positions/left-ob-mfs-pos-norm" side="left" control="SPOILER" />
+		<control-input axis="/surface-positions/left-ib-mfs-pos-norm" side="left" control="SPOILER" />
+		<control-input axis="/surface-positions/right-ob-mfs-pos-norm" side="right" control="SPOILER" />
+		<control-input axis="/surface-positions/right-ib-mfs-pos-norm" side="right" control="SPOILER" />
 		<control-output control="FLAP0" prop="/surface-positions/flap-pos-norm" />
 		<control-output control="FLAP1" side="left" prop="/surface-positions/left-aileron-pos-norm" />
 		<control-output control="FLAP1" side="right" prop="/surface-positions/right-aileron-pos-norm" />
