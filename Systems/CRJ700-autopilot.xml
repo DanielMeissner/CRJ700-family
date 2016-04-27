@@ -681,7 +681,7 @@
 		<max>10</max>
 	</pi-simple-controller>	
 	
-	<pi-simple-controller>
+<!-- 	<pi-simple-controller>
 		<name>Pitch controller simple test</name>
 		<debug type="bool">false</debug>
 		<enable>
@@ -700,13 +700,13 @@
 		</reference>
 		<output>controls/flight/elevator-trim</output>
 		<config>
-			<Kp>-0.05</Kp>
+			<Kp>-0.055</Kp>
 			<Ti>-0.10</Ti>
 		</config>
 		<min>-1</min>
 		<max>1</max>
-	</pi-simple-controller>
-<!-- 
+	</pi-simple-controller> -->
+
 	<pid-controller>
 		<name>Pitch controller</name>
 		<debug type="bool">false</debug>
@@ -736,7 +736,7 @@
 			<u_max>1</u_max>
 		</config>
 	</pid-controller>
- -->	
+	
     <pid-controller>
 		<name>Roll controller</name>
 		<debug type="bool">false</debug>
