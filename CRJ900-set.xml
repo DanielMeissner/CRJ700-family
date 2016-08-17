@@ -62,11 +62,11 @@
 		</weight>
 		<weight n="2">
 			<name>Main Cargo</name>
-			<max-lb>3036</max-lb>
+			<max-lb>4375</max-lb>
 		</weight>
 		<weight n="3">
 			<name>Aft Cargo</name>
-			<max-lb>3036</max-lb>
+			<max-lb>1700</max-lb>
 		</weight>
 		
         <menubar>
