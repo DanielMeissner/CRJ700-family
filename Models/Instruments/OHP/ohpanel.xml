@@ -1957,7 +1957,7 @@
 					<property>controls/lighting/lt-test</property>
 					<and>
 						<not><property>controls/engines/engine[0]/starter-cmd</property></not>
-						<not><property>engines/engine[0]/running</property></not>
+						<not><property>engines/engine[0]/running-nasal</property></not>
 						<greater-than>
 							<property>engines/engine[0]/rpm2</property>
 							<value>10</value>
@@ -2062,7 +2062,7 @@
 					<property>controls/lighting/lt-test</property>
 					<and>
 						<not><property>controls/engines/engine[1]/starter-cmd</property></not>
-						<not><property>engines/engine[1]/running</property></not>
+						<not><property>engines/engine[1]/running-nasal</property></not>
 						<greater-than>
 							<property>engines/engine[1]/rpm2</property>
 							<value>10</value>

@@ -556,7 +556,7 @@
 		</color>
 		<condition>
 			<and>
-				<property>engines/engine[0]/running</property>
+				<property>engines/engine[0]/running-nasal</property>
 				<not>
 					<property>controls/electric/engine[0]/generator</property>
 				</not>
@@ -573,7 +573,7 @@
 		</color>
 		<condition>
 			<and>
-				<property>engines/engine[1]/running</property>
+				<property>engines/engine[1]/running-nasal</property>
 				<not>
 					<property>controls/electric/engine[1]/generator</property>
 				</not>
@@ -590,7 +590,7 @@
 		</color>
 		<condition>
 			<and>
-				<property>engines/APU/running</property>
+				<property>engines/engine[2]/running</property>
 				<not>
 					<property>controls/electric/APU-generator</property>
 				</not>

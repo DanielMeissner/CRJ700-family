@@ -63,14 +63,6 @@
 			<value>0</value>
 		</set>
 		<set>
-			<property>engines/engine[0]/running</property>
-			<value type="bool">false</value>
-		</set>
-		<set>
-			<property>engines/engine[1]/running</property>
-			<value type="bool">false</value>
-		</set>
-		<set>
 			<property>controls/electric/battery-switch</property>
 			<value type="bool">false</value>
 		</set>
