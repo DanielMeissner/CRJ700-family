@@ -351,30 +351,6 @@
 							</script>
 						</binding>
 					</item>
-				<!-- for development -->
-					
-					<!-- 					<item>
-						<name>debug-output</name>
-						<label>Debug output</label>
-						<binding>
-						<command>nasal</command>
-						<script>
-						CRJ700.dialogs.debug.open();
-						</script>
-						</binding>
-						</item>
-						
-						<item>
-						<name>apdev</name>
-						<label>AP development</label>
-						<binding>
-						<command>nasal</command>
-						<script>
-						CRJ700.dialogs.apdev.open();
-						</script>
-						</binding>
-					</item> -->
-					
 					<item>
 						<name>separator</name>
 						<label>--------</label>
@@ -452,17 +428,6 @@
 				<menu n="102">
 					<label>Development</label>
 					<item>
-						<label>FGPlot</label>
-						<binding>
-							<command>nasal</command>
-							<script>
-								<!-- needs the FGPlot nasal scripts in $FGDATA/Nasal/plot -->
-								if (plot.Fgp != nil)
-								var a = plot.Fgp.new(600,201,0).init();
-							</script>
-						</binding>
-					</item>
-					<item>
 						<label>CRJ debug window</label>
 						<binding>
 							<command>dialog-show</command>
@@ -470,12 +435,22 @@
 						</binding>
 					</item>
 					<item>
-						<label>Yasim display</label>
+						<label>Yasim mass distribution</label>
 						<binding>
 							<command>nasal</command>
 							<script>
 								if (FDM.yasim != nil)
 									FDM.yasim.displayMasses();
+							</script>
+						</binding>
+					</item>
+					<item>
+						<label>Yasim forces</label>
+						<binding>
+							<command>nasal</command>
+							<script>
+								if (FDM.yasim != nil)
+									FDM.yasim.displayForces();
 							</script>
 						</binding>
 					</item>
@@ -1342,10 +1317,12 @@
 			<file>Nasal/electrical.nas</file>
 			<file>Nasal/hydraulic.nas</file>
 			<file>Nasal/instrumentation.nas</file>
+			<file>Nasal/als-lights.nas</file>
 			
 			<file>Nasal/multiplayer.nas</file>
 			<file>Nasal/vnav.nas</file>
 			<file>Nasal/gui-dialogs.nas</file>
+			<file>Nasal/eicas.nas</file>
 			<file>Nasal/master.nas</file>
 		</CRJ700>
 		<controls>

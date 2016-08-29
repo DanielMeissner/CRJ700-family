@@ -1,7 +1,7 @@
 ## Bombardier CRJ700 series
 ##
 
-# Utility functions.
+#= FUNCTIONS ================================================================
 var getprop_safe = func(node)
 {
     var value = getprop(node);
@@ -33,118 +33,6 @@ var Loop = func(interval, update)
     loop.stop = func {timerId += 1;};
     return loop;
 };
-
-var is_slave = 0;
-if (getprop("/sim/flight-model") == "null")
-{
-	is_slave = 1;
-}
-print("CRJ700 master.nas (slave = "~is_slave~")");
-# Engines and APU.
-var apu = CRJ700.Engine.Apu();
-var engines = [
-    CRJ700.Engine.Jet(0),
-    CRJ700.Engine.Jet(1)
-];
-
-# Prevent IDG voltage drop on engine idle while in flight 
-# (idle N1,N2 can be much lower in flight than on ground)
-var idg1_ref = 0;
-var idg2_ref = 0;
-setlistener("engines/engine[0]/running-nasal", func(n)
-{
-	if (n.getBoolValue()) {
-		idg1_ref = generators[0].getInputLo();
-		generators[0].setInputLo(0);
-		#print("IDG1 set 0, was "~idg1_ref);
-	}
-	else {
-		generators[0].setInputLo(idg1_ref);
-		#print("IDG1 idg1_ref "~idg1_ref);
-	}
-}, 0, 0);
-
-setlistener("engines/engine[1]/running-nasal", func(n)
-{
-	if (n.getBoolValue()) {
-		idg2_ref = generators[1].getInputLo();
-		generators[1].setInputLo(0);
-		#print("IDG2 set 0, was "~idg2_ref);
-	}
-	else {
-		generators[1].setInputLo(idg2_ref);
-		#print("IDG2 idg2_ref "~idg2_ref);
-	}
-}, 0, 0);
-
-# Wipers.
-var wipers = [
-    CRJ700.Wiper("/controls/anti-ice/wiper[0]",
-                 "/surface-positions/left-wiper-pos-norm",
-                 "/controls/anti-ice/wiper-power[0]",
-                 "/systems/DC/outputs/wiper-left"),
-    CRJ700.Wiper("/controls/anti-ice/wiper[1]",
-                 "/surface-positions/right-wiper-pos-norm",
-                 "/controls/anti-ice/wiper-power[1]",
-                 "/systems/DC/outputs/wiper-right")
-];
-
-
-
-# Update loops.
-var fast_loop = Loop(0, func {
-	if (!is_slave)
-	{
-		# Engines and APU.
-		CRJ700.Engine.poll_fuel_tanks();
-		#CRJ700.Engine.poll_bleed_air();
-		apu.update();
-		engines[0].update();
-		engines[1].update();
-	}
-
-	update_electrical();
-	update_hydraulic();
-	
-	# Instruments.
-	eicas_messages_page1.update();
-	eicas_messages_page2.update();
-
-	# Model.
-	wipers[0].update();
-	wipers[1].update();
-});
-
-var slow_loop = Loop(2, func {
-	update_tat;
-	update_copilot_ints();
-	update_lightmaps();
-	update_pass_signs();
-});
-
-# When the sim is ready, start the update loops and create the crossfeed valve.
-var gravity_xflow = {};
-setlistener("sim/signals/fdm-initialized", func
-{
-	print("CRJ700 aircraft systems ... initialized");
-	gravity_xflow = aircraft.crossfeed_valve.new(0.5, "controls/fuel/gravity-xflow", 0, 1);
-	if (getprop("/sim/time/sun-angle-rad") > 1.57) 
-		setprop("controls/lighting/dome", 1);
-
-	setprop("consumables/fuel/tank[0]/level-lbs", 2000);
-	setprop("consumables/fuel/tank[1]/level-lbs", 2000);
-	setprop("consumables/fuel/tank[2]/level-lbs", 100);
-	
-	fast_loop.start();
-	slow_loop.start();
-	settimer(func {
-		setprop("sim/model/sound-enabled",1);
-		print("Sound on.");
-		gui.showWeightDialog();
-		}, 3);
-}, 0, 0);
-
-
 
 ## Startup/shutdown functions
 var startid = 0;
@@ -225,19 +113,6 @@ var shutdown = func
 	exec(0);
 };
 
-setlistener("sim/model/start-idling", func(v)
-{
-    var run = v.getBoolValue();
-    if (run)
-    {
-        startup();
-    }
-    else
-    {
-        shutdown();
-    }
-}, 0, 0);
-
 ## Instant start for tutorials and whatnot
 var instastart = func
 {
@@ -258,7 +133,7 @@ var instastart = func
 	setprop("controls/hydraulic/system[0]/pump-b", 2);
 	setprop("controls/hydraulic/system[1]/pump-b", 2);
 	setprop("controls/hydraulic/system[2]/pump-b", 2);
-	setprop("controls/hydraulic/system[2]/pump-a", 1);
+	setprop("controls/hydraulic/system[2]/pump-a", 1);							
 	setprop("/systems/AC/system/adg-position-norm", 0);
 
 	setprop("/controls/gear/brake-parking", 0);
@@ -267,15 +142,95 @@ var instastart = func
 	setprop("/controls/autoflight/yaw-damper[1]/engage", 1);
 };
 
-## Prevent the gear from being retracted on the ground
-setlistener("controls/gear/gear-down", func(v)
+
+var is_slave = 0;
+if (getprop("/sim/flight-model") == "null")
 {
-    if (getprop("gear/on-ground")) 
-    {
-		v.setBoolValue(1);
-        }
-	else setprop("controls/gear/gear-lever-moved", v.getBoolValue());
-}, 0, 0);
+	is_slave = 1;
+}
+else {
+	# Engines and APU.
+	var apu = CRJ700.Engine.Apu();
+	var engines = [
+		CRJ700.Engine.Jet(0),
+		CRJ700.Engine.Jet(1)
+	];
+
+	# Prevent IDG voltage drop on engine idle while in flight 
+	# (idle N1,N2 can be much lower in flight than on ground)
+	var idg1_ref = 0;
+	var idg2_ref = 0;
+	setlistener("engines/engine[0]/running-nasal", func(n)
+	{
+		if (n.getBoolValue()) {
+			idg1_ref = generators[0].getInputLo();
+			generators[0].setInputLo(0);
+			#print("IDG1 set 0, was "~idg1_ref);
+		}
+		else {
+			generators[0].setInputLo(idg1_ref);
+			#print("IDG1 idg1_ref "~idg1_ref);
+		}
+	}, 0, 0);
+
+	setlistener("engines/engine[1]/running-nasal", func(n)
+	{
+		if (n.getBoolValue()) {
+			idg2_ref = generators[1].getInputLo();
+			generators[1].setInputLo(0);
+			#print("IDG2 set 0, was "~idg2_ref);
+		}
+		else {
+			generators[1].setInputLo(idg2_ref);
+			#print("IDG2 idg2_ref "~idg2_ref);
+		}
+	}, 0, 0);
+}
+# Wipers.
+var wipers = [
+    CRJ700.Wiper("/controls/anti-ice/wiper[0]",
+                 "/surface-positions/left-wiper-pos-norm",
+                 "/controls/anti-ice/wiper-power[0]",
+                 "/systems/DC/outputs/wiper-left"),
+    CRJ700.Wiper("/controls/anti-ice/wiper[1]",
+                 "/surface-positions/right-wiper-pos-norm",
+                 "/controls/anti-ice/wiper-power[1]",
+                 "/systems/DC/outputs/wiper-right")
+];
+
+
+
+# Update loops.
+var fast_loop = Loop(0, func {
+	if (!is_slave)
+	{
+		# Engines and APU.
+		CRJ700.Engine.poll_fuel_tanks();
+		#CRJ700.Engine.poll_bleed_air();
+		apu.update();
+		engines[0].update();
+		engines[1].update();
+
+		update_electrical();
+		update_hydraulic();
+		eicas_messages_page1.update();
+		eicas_messages_page2.update();
+
+	}
+	
+	wipers[0].update();
+	wipers[1].update();
+});
+
+var slow_loop = Loop(3, func {
+	if (!is_slave)
+	{
+		update_tat;
+		update_copilot_ints();
+		update_lightmaps();
+		update_pass_signs();
+	}
+});
 
 var reload_checklists = func()
 {
@@ -345,7 +300,53 @@ var update_offsets = func()
 		settimer(update_tutorials,2);
 	}
 };
-update_offsets();
+
+#= LISTENER SECTION ==========================================================
+setlistener("sim/model/start-idling", func(v)
+{
+    var run = v.getBoolValue();
+    if (run)
+    {
+        startup();
+    }
+    else
+    {
+        shutdown();
+    }
+}, 0, 0);
+
+# When the sim is ready, start the update loops and create the crossfeed valve.
+var gravity_xflow = {};
+setlistener("sim/signals/fdm-initialized", func
+{
+	print("CRJ700 aircraft systems ... initialized");
+	if (!is_slave) {
+		gravity_xflow = aircraft.crossfeed_valve.new(0.5, "controls/fuel/gravity-xflow", 0, 1);
+		if (getprop("/sim/time/sun-angle-rad") > 1.57) 
+			setprop("controls/lighting/dome", 1);
+		setprop("consumables/fuel/tank[0]/level-lbs", 2000);
+		setprop("consumables/fuel/tank[1]/level-lbs", 2000);
+		setprop("consumables/fuel/tank[2]/level-lbs", 100);
+	}
+	
+	fast_loop.start();
+	slow_loop.start();
+	settimer(func {
+		setprop("sim/model/sound-enabled",1);
+		print("Sound on.");
+		gui.showWeightDialog();
+		}, 3);
+}, 0, 0);
+
+## Prevent the gear from being retracted on the ground
+setlistener("controls/gear/gear-down", func(v)
+{
+    if (getprop("gear/on-ground")) 
+    {
+		v.setBoolValue(1);
+	}
+	else setprop("controls/gear/gear-lever-moved", v.getBoolValue());
+}, 0, 0);
 
 var tiller_last = 0;
 setlistener("controls/gear/tiller-steer-deg", func(n) 
@@ -359,7 +360,10 @@ setlistener("controls/gear/tiller-steer-deg", func(n)
 	}
 }, 1, 0);
 
-## Engines at cutoff by default (not specified in -set.xml because that means they will be set to 'true' on a reset)
+#= INIT SECTION ==============================================================
+update_offsets();
+
+# Engines at cutoff by default (not specified in -set.xml because that means they will be set to 'true' on a reset)
 setprop("controls/engines/engine[0]/cutoff", 1);
 setprop("controls/engines/engine[1]/cutoff", 1);
 
