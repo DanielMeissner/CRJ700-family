@@ -350,7 +350,7 @@
 								dual_control_tools.copilot_dialog.show(aircraft_dual_control.copilot_type);
 							</script>
 						</binding>
-					</item>
+					</item>			
 					<item>
 						<name>separator</name>
 						<label>--------</label>
@@ -442,7 +442,7 @@
 								if (FDM.yasim != nil)
 									FDM.yasim.displayMasses();
 							</script>
-						</binding>
+						</binding>						
 					</item>
 					<item>
 						<label>Yasim forces</label>
@@ -456,8 +456,7 @@
 					</item>
 				</menu>
 			</default>
-		</menubar>
-		
+		</menubar>		
 		<multiplay>
 			<generic>
 				<!-- Dual control transmission properties -->
@@ -627,7 +626,7 @@
 			<flaps-cmd>0</flaps-cmd>
 			<flaps-start-snd type="bool">false</flaps-start-snd>
 			<flaps-stop-snd type="bool">false</flaps-stop-snd>
-			<slats-cmd>0</slats-cmd>            
+			<slats-cmd>0</slats-cmd>
             <hstab-trim>99</hstab-trim> <!-- initialize to out of range for old FG versions -->
 		</flight>
 		<fuel>
