@@ -46,7 +46,7 @@
 	
     <!-- Pilot-side instruments -->
     <model>
-		<path>Models/Instruments/PFD/pfd.xml</path>
+		<path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-display.xml</path>
 		<overlay>
 			<params>
 				<name>DisplayPFD1</name>
@@ -76,7 +76,7 @@
 		</offsets>
 	</model>
     <model>
-		<path>Models/Instruments/MFD/mfd.xml</path>
+		<path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-display.xml</path>
 		<overlay>
 			<params>
 				<name>DisplayMFD1</name>
@@ -103,7 +103,7 @@
 		</offsets>
 	</model>
     <model>
-		<path>Models/Instruments/EICAS/eicas.xml</path>
+		<path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-display.xml</path>
 		<overlay>
 			<params>
 				<name>DisplayEICAS1</name>
