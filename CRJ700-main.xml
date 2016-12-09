@@ -587,6 +587,12 @@
 			<pack-l-man type="bool">false</pack-l-man>
 			<pack-r-man type="bool">false</pack-r-man>
 		</ECS>
+		<efis>
+			<dc-attdhdg type="int">0</dc-attdhdg>
+			<dc-airdata type="int">0</dc-airdata>
+			<dc-eicas type="int">0</dc-eicas>
+			<dc-cont type="int">0</dc-cont>
+		</efis>
 		<engines>
 			<cont-ignition type="bool">false</cont-ignition>
 			<engine>
