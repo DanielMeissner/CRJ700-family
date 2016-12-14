@@ -46,10 +46,11 @@
 	
     <!-- Pilot-side instruments -->
     <model>
+		<!-- <path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-pfd1.xml</path> -->
 		<path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-display.xml</path>
 		<overlay>
 			<params>
-				<name>DisplayPFD1</name>
+				<ScreenID>PFD1</ScreenID>
 				<powerN>/systems/DC/outputs/pfd1</powerN>
 				<indicated-pitch-deg>instrumentation/attitude-indicator[0]/indicated-pitch-deg</indicated-pitch-deg>
 				<indicated-roll-deg>instrumentation/attitude-indicator[0]/indicated-roll-deg</indicated-roll-deg>
@@ -79,7 +80,7 @@
 		<path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-display.xml</path>
 		<overlay>
 			<params>
-				<name>DisplayMFD1</name>
+				<ScreenID>MFD2</ScreenID>
 				<powerN>/systems/DC/outputs/mfd1</powerN>
 				<page>instrumentation/mfd[0]/page</page>
 				<tcas>instrumentation/mfd[0]/tcas</tcas>
@@ -106,7 +107,7 @@
 		<path>Aircraft/CRJ700-family/Models/Instruments/EFIS/EFIS-display.xml</path>
 		<overlay>
 			<params>
-				<name>DisplayEICAS1</name>
+				<ScreenID>EICAS1</ScreenID>
 				<page>instrumentation/eicas[0]/page</page>
 				<lightmap-texture-path>Models/Effects/Lightmaps/eicas-left-lightmap.png</lightmap-texture-path>
 			</params>
@@ -274,7 +275,7 @@
 		<path>Models/Instruments/PFD/pfd.xml</path>
 		<overlay>
 			<params>
-				<name>DisplayPFD2</name>
+				<name>PFD2</name>
 				<powerN>/systems/DC/outputs/pfd2</powerN>
 				<indicated-pitch-deg>instrumentation/attitude-indicator[2]/indicated-pitch-deg</indicated-pitch-deg>
 				<indicated-roll-deg>instrumentation/attitude-indicator[2]/indicated-roll-deg</indicated-roll-deg>
@@ -299,7 +300,7 @@
 		<path>Models/Instruments/MFD/mfd.xml</path>
 		<overlay>
 			<params>
-				<name>DisplayMFD2</name>
+				<name>MFD2</name>
 				<powerN>/systems/DC/outputs/mfd2</powerN>
 				<page>instrumentation/mfd[1]/page</page>
 				<tcas>instrumentation/mfd[1]/tcas</tcas>
@@ -321,7 +322,7 @@
 		<path>Models/Instruments/EICAS/eicas.xml</path>
 		<overlay>
 			<params>
-				<name>DisplayEICAS2</name>
+				<name>EICAS2</name>
 				<powerN>/systems/DC/outputs/eicas-disp</powerN>
 				<page>instrumentation/eicas[1]/page</page>
 				<lightmap-texture-path>Models/Effects/Lightmaps/eicas-right-lightmap.png</lightmap-texture-path>

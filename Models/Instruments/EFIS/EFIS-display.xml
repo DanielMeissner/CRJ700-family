@@ -8,8 +8,9 @@
     <path>EFIS-display.ac</path>
 	
     <params>
-		<name>EFIS_display_0</name>
+		<ScreenID>Screen</ScreenID>
 		<powerN>/systems/DC/outputs/mfd1</powerN>	
+		<dimN>controls/lighting/display-norm</dimN>
 		<lightmap-texture-path>Aircraft/Generic/generic-lightmap.png</lightmap-texture-path>
 	</params>
 
@@ -20,23 +21,25 @@
 	</animation>
 
 	<animation>
-		<name alias="/params/name" />
-		<object-name>Screen</object-name>
+		<!-- <name>PFD1</name>  -->
+		<name alias="/params/ScreenID" />
+		<object-name>EFIS_Screen</object-name>
 	</animation>
+
 <!-- 	<animation>
-		<object-name alias="/params/name" />
+		<object-name alias="/params/ScreenID" />
 		<type>select</type>
 		<condition>
-			<greater-than>
+			<greater-than-equals>
 				<property alias="/params/powerN" />
 				<value>24</value>
-			</greater-than>
+			</greater-than-equals>
 		</condition>
 	</animation>
  -->
     <animation>
 		<type>material</type>
-		<object-name alias="/params/name" />
+		<object-name alias="/params/ScreenID" />
 		<condition>
 			<greater-than>
 				<property alias="/params/powerN" />
@@ -47,12 +50,22 @@
 			<red>1</red>
 			<green>1</green>
 			<blue>1</blue>
-			<factor-prop>controls/lighting/display-norm</factor-prop>
+			<factor-prop alias="/params/dimN" />
 		</emission>
 	</animation> 
+<!-- 
+	<animation>
+		<object-name>EFIS_Screen.001</object-name>
+		<object-name>EFIS_Screen.002</object-name>
+		<object-name>EFIS_Screen.003</object-name>
+		<object-name>EFIS_Screen.004</object-name>
+		<object-name>EFIS_Screen.005</object-name>
+		<object-name>EFIS_Screen.006</object-name>
+		<type>select</type>
+	</animation> -->
  	
     <!-- Lightmaps -->
-    <effect>
+<!--     <effect>
 		<inherits-from>Aircraft/CRJ700-family/Models/Effects/CRJ700lightmap</inherits-from>
 		<parameters>
 			<lightmap-factor-prop>sim/model/lights/panel-lightmap</lightmap-factor-prop>
@@ -71,5 +84,5 @@
 		</parameters>
 		<object-name>Border</object-name>
 	</effect>
-	
+	 -->
 </PropertyList>
