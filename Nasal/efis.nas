@@ -81,10 +81,12 @@ EFIS.new = func(display_names, object_names = nil)
 		{ 
 			parents  : [EFIS],
 			_du : [],	# DisplayUnits
-			display_names : [],
 			_sources  : [],	#int, canvas index
 			_routing  : [], #int, index to _sources 
 			_L : {},		#listeners for display controls
+			display_names : [],
+			rt_config : {},
+			controls : {},
 		};
 	if (typeof(display_names) != "vector") {
 		print("EFIS.new: 'display_names' not a vector!");
@@ -120,17 +122,44 @@ EFIS.addDisplay = func(id, object_name)
 EFIS.getDisplayName = func(id) me.display_names[num(id)];
 
 #add display source (canvas) 
-EFIS.addSource = func(id, src, display_id = nil)
+EFIS.addSource = func(src, display_id = nil)
 {
-	me.sources[id] = src;
-	return me;
+	append(me.sources, src);
+	return size(me.sources) - 1;
 }
 
-# ctrl: string, property path
-EFIS.addDisplayControl = func(ctrl)
+# ctrl: string, property path to int prop
+EFIS.addDisplayControl = func(ctrl, configs)
 {
-	if (me.controls[ctrl] == nil)
-		me.controls[ctrl] = [];
+	if (me.controls[ctrl] != nil) return;
+	var l = func(p) 
+	{
+		var rt = p.getIntValue();
+		print("EFIS display control listener: " ~ ctrl ~ " " ~ rt ~ "/" ~ size(me.controls[ctrl].configs));
+		me._activateDC(me.controls[ctrl].configs[rt]);
+	}
+	me.controls[ctrl] = {L: setlistener(ctrl, l, 0, 1), configs: configs};
+}
+
+# add a display routing configuration
+# used by control listeners to switch display routing
+# returns config ID
+EFIS.addDisplayConfig = func(mapping)
+{
+	append(me.rt_config, mapping);
+	return size(me.rt_config) - 1;
+}
+
+EFIS._activateDC = func(id)
+{
+	id = num(id);
+	if (id < 0 or id >= size(me.rt_config))
+	{
+		print("EFIS._activateDC: invalid config ID!");
+		return;
+	}
+	me._routing = me.rt_config[id];
+	me.updateRouting();
 }
 
 EFIS.updateRouting = func()
