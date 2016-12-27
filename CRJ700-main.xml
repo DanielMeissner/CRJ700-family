@@ -1304,6 +1304,7 @@
            <file>Nasal/CRJ700-fuel.nas</file>
 		</fuel>
 		<EFIS>
+			<file>Nasal/efis.nas</file>
 			<file>Nasal/display-manager.nas</file>
 		</EFIS>
         <raas>
