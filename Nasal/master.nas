@@ -385,3 +385,8 @@ if (getprop("/sim/config/allow-autothrottle") ) {
 if (getprop("/sim/config/developer") ) {
 	CRJ700.dialogs.developer.open();
 }
+
+setlistener("/sim/signals/fdm-initialized", func {
+    itaf.ap_init();
+    var autopilot = gui.Dialog.new("sim/gui/dialogs/autopilot/dialog", "Aircraft/CRJ700-family/Systems/autopilot-dlg.xml");
+});
