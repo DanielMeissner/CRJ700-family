@@ -11,7 +11,7 @@
  http://en.wikipedia.org/wiki/Bombardier_CRJ700_series#Specifications
 -->
 
-<airplane mass="47250">
+<airplane mass="47250" mlw-lbs="81500" mtow-lbs="90000">
 	<!-- Approach speed is 125-140 knots http://forums.jetcareers.com/airline-pilots/57253-crj-900-v-speeds.html#post758173 -->
 	<approach speed="115" aoa="4.0" fuel="0.6">
 		<control-setting axis="/controls/engines/engine[0]/throttle-lever" value="0.7" />
