@@ -1,96 +1,92 @@
+#
 # EFIS display manager
+# Author: Henning Stahlke
+# created: Feb. 2018
+#
+print("-- EFIS display manager --");
+var reloadFlag = "/instrumentation/efis/reload";
+props.getNode(reloadFlag,1).setIntValue(0);
 
-var dev_canvas_idx = "/dev/canvas_idx";
-setprop(dev_canvas_idx, 1);
-
+# identifiers for display units
 var display_names = ["PFD1", "MFD1", "EICAS1", "EICAS2", "MFD2", "PFD2"];
+# names of 3D objects that will take the canvas texture
 var display_objects = ["EFIS1", "EFIS2", "EFIS3", "EFIS4", "EFIS5", "EFIS6"];
+var power_props = [ 
+    "/systems/DC/outputs/pfd1",
+    "/systems/DC/outputs/mfd1",
+    "/systems/DC/outputs/eicas-disp",
+    "/systems/DC/outputs/eicas-disp",
+    "/systems/DC/outputs/mfd2",
+    "/systems/DC/outputs/pfd2"
+];
+
+#-- EICAS pages --
+# page 3 ECS 
+# page 4 HYD
+# page 5 AC 
+# page 6 DC 
+# page 7 FUEL 
+# page 8 F/CTL 
+# page 9 A/ICE 
+# page 10 Doors 
+
+var efis = EFIS.new(display_names, display_objects, power_props);
+# efis will create one "page" canvas per display unit automatically
+# more pages can be added e.g. for EICAS, see below
+var sources = efis.getSources();
+#var eicas_sources = [sources[2], sources[3]];
+#append (eicas_sources, efis.addSource);
+#FIXME: add EICAS pages
 
 # display selectors allow to re-route certain displays
 # e.g. each MFD can be set to display the adjacent PFD or EICAS
 # values 0,1,2 1=default
-# /instrumentation/efis/controls/
-var source_selectors = ["pilot_mfd", "copilot_mfd", "eicas"];
+var src_selector_base = "/controls/efis/";
+var src_selectors = ["src-mfd-pilot", "src-mfd-copilot", "src-eicas"];
+# mappings per src_selector
+var mappings = [ 
+        [[-1,0,nil,nil,nil,nil], [0,1,nil,nil,nil,nil], [0,3,nil,nil,nil,nil]],
+        [[nil,nil,nil,nil,5,-1], [nil,nil,nil,nil,4,5], [nil,nil,nil,nil,3,5]],
+        [[nil,nil,3,-1,nil,nil], [nil,nil,2,3,nil,nil], [nil,nil,-1,2,nil,nil]],
+    ];
 
-var efis = EFIS.new(display_names, display_objects);
+
+io.include("Models/Instruments/EFIS/pfd.nas");
+io.include("Models/Instruments/EFIS/eicas-doors.nas");
+#io.include("Models/Instruments/EFIS/EICAS.nas");
+#io.include("Models/Instruments/EFIS/EICAS2.nas");
+
+var DM_init = func() {
+    forindex (var i; display_names) {
+        efis.getDU(i).setPower(power_props[i], 22);
+    }    
+    var pfd1 = PFDCanvas.new(sources[0].root, "Models/Instruments/EFIS/PFD.svg",0);
+    var pfd2 = PFDCanvas.new(sources[5].root, "Models/Instruments/EFIS/PFD.svg",1);
+    var eicas = EICASDoorsCanvas.new(sources[3].root, "Models/Instruments/EFIS/doors.svg");
+
+    var timer_pfd1 = maketimer(0.05, pfd1.update);
+    var timer_pfd2 = maketimer(0.05, pfd2.update);
     
-print("-- display manager --");
-io.include("Models/Instruments/EFIS/pfdL.nas");
-io.include("Models/Instruments/EFIS/EICAS.nas");
-io.include("Models/Instruments/EFIS/EICAS2.nas");
-
-setlistener("sim/signals/fdm-initialized", func {
-    pfd_canvas = canvas.new({
-        "name": "PFD1",
-        "size": [1024, 1280],
-        "view": [1024, 1280],
-        "mipmapping": 1
-    });
-
-    var groupPfd = pfd_canvas.createGroup();
-
-    PFD_pfd = canvas_PFD_pfd.new(groupPfd, "Models/Instruments/EFIS/PFD.svg");
-    PFD_pfd.update();
-    canvas_PFD_base.update();
-    var pfd_src = efis.addSource(pfd_canvas);
-    efis.setDisplaySource(0, pfd_src);
-});
-
-
-var demo = func {
-    var lines = [0,1,2,3,4,5,6];
-    var windows = {};
-    var i = 0;
-    foreach (var name; screens) {
-        print(name);
-        windows[name] = canvas.Window.new([375,450], "dialog").set('title', name).move(i*250,0);
-        i = i+1;
-        #var c = windows[name].createCanvas();
-        var c = canvas.new({"name" : name, "size" : [1024,1024], "view" : [375,450], "mipmapping" : 1 });
-        c.setColorBackground(0.03, 0.03, 0.03, 1);
-        windows[name].setCanvas(c);
-        var root = c.createGroup();
-
-        root.createChild("text", "heading")
-            .setText("EFIS Test")
-            .setFontSize(20, 0.9)          
-            .setColor(1, 1, 1, 1)             
-            .setAlignment("center-top") 
-            .setTranslation(160, 10); 
-        root.createChild("text", "ident")
-            .setText("Display "~name)
-            .setFontSize(20, 0.9)          
-            .setColor(0.1, 1.0 , 0.1, 1)             
-            .setAlignment("left-top") 
-            .setTranslation(10, 50); 
-        foreach (var l; lines)
-            root.createChild("text").setText("Line "~l).setTranslation(20*l,100+20*l);
-        var d = DisplayUnit.new(name, "EFIS_Screen");
-        displays[name] = d;
-        sources[name] = c;
-        d.setSource(c);
+    foreach (var i; [1,2,4]) {
+        sources[i].root.createChild("text")
+            .setText(display_names[i] ~ " dummy")
+            .setFontSize(70)
+            .setColor(1,1,1,1).setAlignment("left-center")
+            .setTranslation(150,150);
     }
-    var apu = root.createChild("group","svg");
-    canvas.parsesvg(apu, "Aircraft/CRJ700-family/_dev/eicas-apu-dummy.svg");
-
-    windows["test"] = canvas.Window.new([375,450], "dialog").set('title', "Test").move(250,90);
-    c = canvas.new({"name" : name, "size" : [1024,1024], "view" : [375,450], "mipmapping" : 1 });
-    windows["test"].setCanvas(c);
-    root = c.createGroup();
-    root.createChild("text", "heading")
-            .setText("EFIS Source Test")
-            #.setFontSize(20, 0.9)          
-            .setColor(1, 1, 1, 1)             
-            .setAlignment("center-top") 
-            .setTranslation(60, 10); 
-    var img = root.createChild("image");
-
-
-    var switchCanvas = func (i) {
-        img.set("src", "canvas://by-index/texture["~i~"]");
+    #-- add display routing controls
+    forindex (var i; src_selectors) {
+        var prop_path = src_selector_base~src_selectors[i];
+        # init to default=1 (3D model knobs in middle position)
+        setprop(prop_path,1);
+        efis.addDisplayControl(prop_path, mappings[i]);
     }
+};
 
-    setlistener(dev_canvas_idx, func(n) {
-        switchCanvas(n.getValue());
-    }, 0,1);
-}
+setlistener("sim/signals/fdm-initialized", func(p)
+{
+    if (p.getValue()) {
+        print("Init EFIS...");
+        DM_init();
+    }
+}, 1, 0);
