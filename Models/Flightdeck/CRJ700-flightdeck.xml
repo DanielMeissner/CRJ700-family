@@ -4,15 +4,15 @@
 <!-- Flight deck, all variants -->
 
 <PropertyList>
-    
+
     <path>CRJ700-flightdeck.ac</path>
-    
+
     <panel-marking-emit>
         <red>1</red>
         <green>0.871</green>
         <blue>0.427</blue>
     </panel-marking-emit>
-    
+
     <button-emit-white>
         <red>1</red>
         <green>0.871</green>
@@ -37,20 +37,21 @@
     <cover-rotate-deg type="float">110</cover-rotate-deg>
     <switch-rotate-deg type="float">35</switch-rotate-deg>
     <switch-rotate-neg-deg type="float">-35</switch-rotate-neg-deg>
-    
+
     <animation>
         <type>range</type>
         <min-m>0</min-m>
         <max-m>50</max-m>
     </animation>
-    
+
     <!-- Pilot-side instruments -->
     <model>
         <path>Models/Instruments/EFIS/EFIS1.xml</path>
         <overlay>
             <params>
                 <ScreenID>PFD1</ScreenID>
-                <powerN>/systems/DC/outputs/pfd1</powerN>
+                <powerN>systems/DC/outputs/pfd1</powerN>
+                <dimN>controls/lighting[0]/display-norm</dimN>
                 <indicated-pitch-deg>instrumentation/attitude-indicator[0]/indicated-pitch-deg</indicated-pitch-deg>
                 <indicated-roll-deg>instrumentation/attitude-indicator[0]/indicated-roll-deg</indicated-roll-deg>
                 <indicated-altitude-ft>instrumentation/altimeter[0]/indicated-altitude-ft</indicated-altitude-ft>
@@ -61,14 +62,10 @@
                 <radar-altitude-ft>instrumentation/radar-altimeter[0]/radar-altitude-ft</radar-altitude-ft>
                 <altimeter-setting-inhg>instrumentation/altimeter[0]/setting-inhg</altimeter-setting-inhg>
                 <lightmap-texture-path>Models/Effects/Lightmaps/pfd-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
-            <!--
-                <x-m>-1.896</x-m>
-                <y-m>-0.518</y-m>
-            <z-m>0.835</z-m>-->
-            
             <x-m>-1.9025</x-m>
             <y-m>-0.51396</y-m>
             <z-m>0.87135</z-m>
@@ -80,7 +77,8 @@
         <overlay>
             <params>
                 <ScreenID>MFD2</ScreenID>
-                <powerN>/systems/DC/outputs/mfd1</powerN>
+                <powerN>systems/DC/outputs/mfd1</powerN>
+                <dimN>controls/lighting[0]/display-norm</dimN>
                 <page>instrumentation/mfd[0]/page</page>
                 <tcas>instrumentation/mfd[0]/tcas</tcas>
                 <wx>instrumentation/mfd[0]/wx</wx>
@@ -88,17 +86,13 @@
                 <true-airspeed-kt>instrumentation/airspeed-indicator[0]/true-speed-kt</true-airspeed-kt>
                 <radar-range>instrumentation/efis/inputs/range</radar-range>
                 <lightmap-texture-path>Models/Effects/Lightmaps/mfd-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
-            <!--
-                <x-m>-1.896</x-m>
-                <y-m>-0.342</y-m>
-                <z-m>0.835</z-m>
-            -->
             <x-m>-1.9025</x-m>
             <y-m>-0.34116</y-m>
-            <z-m>0.87135</z-m>		
+            <z-m>0.87135</z-m>
             <pitch-deg>-10</pitch-deg>
         </offsets>
     </model>
@@ -107,8 +101,10 @@
         <overlay>
             <params>
                 <ScreenID>EICAS1</ScreenID>
-                <page>instrumentation/eicas[0]/page</page>
+                <powerN>systems/DC/outputs/eicas-disp</powerN>
+                <dimN>controls/lighting[0]/display-norm</dimN>
                 <lightmap-texture-path>Models/Effects/Lightmaps/eicas-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
@@ -124,6 +120,7 @@
             <params>
                 <powerN>systems/DC/outputs/clock1</powerN>
                 <lightmap-texture-path>Models/Effects/Lightmaps/clock-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
@@ -137,12 +134,19 @@
         <path>Models/Instruments/SidePanel1/sidepanel.xml</path>
         <overlay>
             <params>
+                <barometer>instrumentation/altimeter[0]/setting-hpa</barometer>
+                <brg-src1>controls/efis/sidepanel[0]/brg-src1</brg-src1>
+                <brg-src2>controls/efis/sidepanel[0]/brg-src2</brg-src2>
+                <display-mode>controls/efis/src-mfd-pilot</display-mode>
                 <mfd-tcas>instrumentation/mfd[0]/tcas</mfd-tcas>
                 <mfd-wx>instrumentation/mfd[0]/wx</mfd-wx>
-                <mfd-page>instrumentation/efis/mfd/mode-num</mfd-page>
+                <mfd-page>instrumentation/efis/mfd[0]/mode-num</mfd-page>
                 <radar-range>instrumentation/efis/inputs/range</radar-range>
+                <use-QNH>controls/efis/sidepanel[0]/use-QNH</use-QNH>
                 <lightmap-texture-path>Models/Effects/Lightmaps/sidepanel1-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
                 <powerN>systems/AC/outputs/pilot-panel-int-lights</powerN>
+                <panel-lights>controls/lighting[0]/panel-norm</panel-lights>
             </params>
         </overlay>
         <offsets>
@@ -158,7 +162,11 @@
             <params>
                 <wiper>controls/anti-ice/wiper[0]</wiper>
                 <lightmap-texture-path>Models/Effects/Lightmaps/sidepanel2-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
                 <powerN>systems/AC/outputs/pilot-panel-int-lights</powerN>
+                <display-lights>controls/lighting[0]/display-norm</display-lights>
+                <panel-lights>controls/lighting[0]/panel-norm</panel-lights>
+                <flood-lights>controls/lighting[0]/panel-flood-norm</flood-lights>
             </params>
         </overlay>
         <offsets>
@@ -173,7 +181,8 @@
         <overlay>
             <params>
                 <powerN>systems/AC/outputs/pilot-panel-int-lights</powerN>
-            </params>
+                <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
+           </params>
         </overlay>
         <offsets>
             <x-m>-1.68245</x-m>
@@ -187,6 +196,8 @@
         <overlay>
             <params>
                 <lightmap-texture-path>Models/Effects/Lightmaps/cdu-left-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
+                <panel-lights>controls/lighting[2]/panel-norm</panel-lights>
                 <powerN>systems/DC/outputs/bus1</powerN>
             </params>
         </overlay>
@@ -199,6 +210,12 @@
     </model>
     <model>
         <path>Models/Instruments/RadioPanel/radiopanel-left.xml</path>
+        <overlay>
+            <params>
+                <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
+                <display-norm>controls/lighting[2]/display-norm</display-norm>
+            </params>
+        </overlay>
         <offsets>
             <x-m>-1.311</x-m>
             <y-m>-0.157</y-m>
@@ -206,7 +223,7 @@
             <pitch-deg>-64.5</pitch-deg>
         </offsets>
     </model>
-    
+
     <!-- Shared instruments -->
     <model>
         <path>Models/Instruments/MCP/mcp.xml</path>
@@ -268,14 +285,15 @@
             <pitch-deg>-10</pitch-deg>
         </offsets>
     </model>
-    
+
     <!-- Copilot-side instruments -->
     <model>
         <path>Models/Instruments/EFIS/EFIS6.xml</path>
         <overlay>
             <params>
-                <name>PFD2</name>
-                <powerN>/systems/DC/outputs/pfd2</powerN>
+                <ScreenID>PFD2</ScreenID>
+                <powerN>systems/DC/outputs/pfd2</powerN>
+                <dimN>controls/lighting[1]/display-norm</dimN>
                 <indicated-pitch-deg>instrumentation/attitude-indicator[2]/indicated-pitch-deg</indicated-pitch-deg>
                 <indicated-roll-deg>instrumentation/attitude-indicator[2]/indicated-roll-deg</indicated-roll-deg>
                 <indicated-altitude-ft>instrumentation/altimeter[2]/indicated-altitude-ft</indicated-altitude-ft>
@@ -286,6 +304,7 @@
                 <radar-altitude-ft>instrumentation/radar-altimeter[1]/radar-altitude-ft</radar-altitude-ft>
                 <altimeter-setting-inhg>instrumentation/altimeter[1]/setting-inhg</altimeter-setting-inhg>
                 <lightmap-texture-path>Models/Effects/Lightmaps/pfd-right-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
@@ -299,8 +318,9 @@
         <path>Models/Instruments/EFIS/EFIS5.xml</path>
         <overlay>
             <params>
-                <name>MFD2</name>
-                <powerN>/systems/DC/outputs/mfd2</powerN>
+                <ScreenID>MFD2</ScreenID>
+                <powerN>systems/DC/outputs/mfd2</powerN>
+                <dimN>controls/lighting[1]/display-norm</dimN>
                 <page>instrumentation/mfd[1]/page</page>
                 <tcas>instrumentation/mfd[1]/tcas</tcas>
                 <wx>instrumentation/mfd[1]/wx</wx>
@@ -308,6 +328,7 @@
                 <true-airspeed-kt>instrumentation/airspeed-indicator[2]/true-speed-kt</true-airspeed-kt>
                 <radar-range>instrumentation/radar[1]/range</radar-range>
                 <lightmap-texture-path>Models/Effects/Lightmaps/mfd-right-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
@@ -321,10 +342,11 @@
         <path>Models/Instruments/EFIS/EFIS4.xml</path>
         <overlay>
             <params>
-                <name>EICAS2</name>
+                <ScreenID>EICAS2</ScreenID>
                 <powerN>/systems/DC/outputs/eicas-disp</powerN>
-                <page>instrumentation/eicas[1]/page</page>
+                <dimN>controls/lighting[1]/display-norm</dimN>
                 <lightmap-texture-path>Models/Effects/Lightmaps/eicas-right-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
@@ -340,6 +362,7 @@
             <params>
                 <lightmap-texture-path>Models/Effects/Lightmaps/clock-right-lightmap.png</lightmap-texture-path>
                 <powerN>systems/DC/outputs/clock2</powerN>
+                <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
             </params>
         </overlay>
         <offsets>
@@ -353,12 +376,19 @@
         <path>Models/Instruments/SidePanel1/sidepanel.xml</path>
         <overlay>
             <params>
+                <barometer>instrumentation/altimeter[1]/setting-hpa</barometer>
+                <brg-src1>controls/efis/sidepanel[1]/brg-src1</brg-src1>
+                <brg-src2>controls/efis/sidepanel[1]/brg-src2</brg-src2>
+                <display-mode>controls/efis/src-mfd-copilot</display-mode>
                 <mfd-tcas>instrumentation/mfd[1]/tcas</mfd-tcas>
                 <mfd-wx>instrumentation/mfd[1]/wx</mfd-wx>
-                <mfd-page>instrumentation/efis/mfd/mode-num</mfd-page>
+                <mfd-page>instrumentation/efis/mfd[1]/mode-num</mfd-page>
                 <radar-range>instrumentation/radar[1]/range</radar-range>
+                <use-QNH>controls/efis/sidepanel[1]/use-QNH</use-QNH>
                 <lightmap-texture-path>Models/Effects/Lightmaps/sidepanel1-right-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
                 <powerN>systems/AC/outputs/copilot-panel-int-lights</powerN>
+                <panel-lights>controls/lighting[1]/panel-norm</panel-lights>
             </params>
         </overlay>
         <offsets>
@@ -374,7 +404,11 @@
             <params>
                 <wiper>controls/anti-ice/wiper[1]</wiper>
                 <lightmap-texture-path>Models/Effects/Lightmaps/sidepanel2-right-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
                 <powerN>systems/AC/outputs/copilot-panel-int-lights</powerN>
+                <display-lights>controls/lighting[1]/display-norm</display-lights>
+                <panel-lights>controls/lighting[1]/panel-norm</panel-lights>
+                <flood-lights>controls/lighting[1]/panel-flood-norm</flood-lights>
             </params>
         </overlay>
         <offsets>
@@ -389,6 +423,8 @@
         <overlay>
             <params>
                 <lightmap-texture-path>Models/Effects/Lightmaps/cdu-right-lightmap.png</lightmap-texture-path>
+                <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
+                <panel-lights>controls/lighting[2]/panel-norm</panel-lights>
                 <powerN>systems/DC/outputs/bus2</powerN>
             </params>
         </overlay>
@@ -401,6 +437,12 @@
     </model>
     <model>
         <path>Models/Instruments/RadioPanel/radiopanel-right.xml</path>
+        <overlay>
+            <params>
+                <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
+                <display-norm>controls/lighting[2]/display-norm</display-norm>
+            </params>
+        </overlay>
         <offsets>
             <x-m>-1.311</x-m>
             <y-m>0.157</y-m>
@@ -408,7 +450,7 @@
             <pitch-deg>-64.5</pitch-deg>
         </offsets>
     </model>
-    
+
     <!-- Generic pilot models -->
     <model>
         <name>Captain</name>
@@ -454,7 +496,7 @@
             <z-m>0.752</z-m>
         </offsets>
     </model>
-    
+
     <!-- "Virtual cockpit" 2d panel/3d panel toggle -->
     <animation>
         <type>select</type>
@@ -462,7 +504,7 @@
             <property>sim/virtual-cockpit</property>
         </condition>
     </animation>
-    
+
     <!-- all objects that do emit normally and should be excluded from dome light animation -->
     <animation>
         <name>FlightdeckElementsEmit</name>
@@ -618,7 +660,7 @@
         <object-name>YawDamperDisc</object-name>
         <object-name>YokeFloorBases</object-name>
     </animation>
-    
+
     <animation>
         <type>material</type>
         <object-name>FlightdeckElements</object-name>
@@ -634,7 +676,7 @@
         <object-name>Sidepanel2Elements</object-name>
         <object-name>StandbyElements</object-name>
         <object-name>UpperPanelElements</object-name>
-        
+
         <condition>
             <!-- powered by battery direct bus -->
             <property>controls/lighting/dome</property>
@@ -645,7 +687,7 @@
             <blue>0.14</blue>
         </emission>
     </animation>
-    
+
     <animation>
         <type>material</type>
         <object-name>PedestalMarkings</object-name>
@@ -659,11 +701,11 @@
             <red alias="../../../panel-marking-emit/red" />
             <green alias="../../../panel-marking-emit/green" />
             <blue alias="../../../panel-marking-emit/blue" />
-            <factor-prop>controls/lighting/panel-norm</factor-prop>
+            <factor-prop>controls/lighting[2]/panel-norm</factor-prop>
         </emission>
     </animation>
-    
-    
+
+
     <!-- Registration text -->
     <text>
         <name>Left registration</name>
@@ -722,9 +764,9 @@
             <blue>1</blue>
         </diffuse>
     </animation>
-    
+
     <!-- Not implemented -->
-    
+
     <!-- Wiper blades -->
     <animation>
         <type>rotate</type>
@@ -784,7 +826,7 @@
             <z2-m>1.202</z2-m>
         </axis>
     </animation>
-    
+
     <!-- Yokes -->
     <animation>
         <type>pick</type>
@@ -919,7 +961,7 @@
             <z-m>0.117</z-m>
         </center>
     </animation>
-    
+
     <!-- Glareshield warning lights -->
     <animation>
         <type>pick</type>
@@ -934,13 +976,13 @@
             </binding>
             <binding>
                 <condition>
-                    <property>controls/ailerons/plt-roll</property>				
+                    <property>controls/ailerons/plt-roll</property>
                 </condition>
                 <command>property-assign</command>
                 <property>controls/ailerons/cplt-roll</property>
                 <value>false</value>
             </binding>
-        </action>    
+        </action>
     </animation>
     <animation>
         <type>pick</type>
@@ -955,15 +997,15 @@
             </binding>
             <binding>
                 <condition>
-                    <property>controls/ailerons/cplt-roll</property>				
+                    <property>controls/ailerons/cplt-roll</property>
                 </condition>
                 <command>property-assign</command>
                 <property>controls/ailerons/plt-roll</property>
                 <value>false</value>
             </binding>
-        </action>    
+        </action>
     </animation>
-    
+
     <animation>
         <type>material</type>
         <object-name>APRollSelL</object-name>
@@ -980,13 +1022,13 @@
                 </or>
             </and>
         </condition>
-        <diffuse>	
+        <diffuse>
             <red alias="../../../button-emit-amber/red" />
             <green alias="../../../button-emit-amber/green" />
             <blue alias="../../../button-emit-amber/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </diffuse>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-amber/red" />
             <green alias="../../../button-emit-amber/green" />
             <blue alias="../../../button-emit-amber/blue" />
@@ -1008,13 +1050,13 @@
                 </or>
             </and>
         </condition>
-        <diffuse>	
+        <diffuse>
             <red alias="../../../button-emit-green/red" />
             <green alias="../../../button-emit-green/green" />
             <blue alias="../../../button-emit-green/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </diffuse>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-green/red" />
             <green alias="../../../button-emit-green/green" />
             <blue alias="../../../button-emit-green/blue" />
@@ -1036,13 +1078,13 @@
                 </or>
             </and>
         </condition>
-        <diffuse>	
+        <diffuse>
             <red alias="../../../button-emit-green/red" />
             <green alias="../../../button-emit-green/green" />
             <blue alias="../../../button-emit-green/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </diffuse>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-green/red" />
             <green alias="../../../button-emit-green/green" />
             <blue alias="../../../button-emit-green/blue" />
@@ -1065,13 +1107,13 @@
                 </or>
             </and>
         </condition>
-        <diffuse>	
+        <diffuse>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </diffuse>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
@@ -1093,13 +1135,13 @@
                 </or>
             </and>
         </condition>
-        <diffuse>	
+        <diffuse>
             <red alias="../../../button-emit-amber/red" />
             <green alias="../../../button-emit-amber/green" />
             <blue alias="../../../button-emit-amber/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </diffuse>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-amber/red" />
             <green alias="../../../button-emit-amber/green" />
             <blue alias="../../../button-emit-amber/blue" />
@@ -1121,20 +1163,20 @@
                 </or>
             </and>
         </condition>
-        <diffuse>	
+        <diffuse>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </diffuse>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <!-- GPWS -->
     <animation>
         <type>material</type>
@@ -1151,7 +1193,7 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
@@ -1173,7 +1215,7 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-amber/red" />
             <green alias="../../../button-emit-amber/green" />
             <blue alias="../../../button-emit-amber/blue" />
@@ -1223,7 +1265,7 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
@@ -1261,7 +1303,7 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-green/red" />
             <green alias="../../../button-emit-green/green" />
             <blue alias="../../../button-emit-green/blue" />
@@ -1495,7 +1537,7 @@
             </binding>
         </action>
     </animation>
-    
+
     <!-- Pedals -->
     <animation>
         <type>translate</type>
@@ -1541,7 +1583,7 @@
             <z>0</z>
         </axis>
     </animation>
-    
+
     <!-- Tiller -->
     <animation>
         <type>pick</type>
@@ -1601,7 +1643,7 @@
             <z-m>0</z-m>
         </center>
     </animation>
-    
+
     <!-- Gear lever -->
     <animation>
         <type>pick</type>
@@ -1631,7 +1673,7 @@
             <z-m>0.74718</z-m>
         </center>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>MuteHornBtn</object-name>
@@ -1672,15 +1714,15 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
-    
+
+
     <animation>
         <type>pick</type>
         <object-name>GearLever_0</object-name>
@@ -1740,7 +1782,7 @@
             <z-m>0.64082</z-m>
         </center>
     </animation>
-    
+
     <animation>
         <type>material</type>
         <object-name>EngHighPwrLight</object-name>
@@ -1755,14 +1797,14 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <!-- Light test switch -->
     <animation>
         <type>pick</type>
@@ -1792,7 +1834,7 @@
             <z-m>0.639</z-m>
         </center>
     </animation>
-    
+
     <!-- Ind light switch -->
     <animation>
         <type>pick</type>
@@ -1829,7 +1871,7 @@
             <z-m>0.614</z-m>
         </center>
     </animation>
-    
+
     <!-- GPWS overrides -->
     <animation>
         <type>pick</type>
@@ -1887,7 +1929,7 @@
             <z-m>0.58852</z-m>
         </center>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>GPWSTerrainBtn</object-name>
@@ -1928,14 +1970,14 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>GPWSFlapBtn</object-name>
@@ -1976,14 +2018,14 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <!-- Spoilers/thrust reversers -->
     <animation>
         <type>pick</type>
@@ -2082,7 +2124,7 @@
             <z-m>0.572</z-m>
         </center>
     </animation>
-    
+
     <!-- Speedbrake lever -->
     <animation>
         <type>pick</type>
@@ -2130,7 +2172,7 @@
             <z-m>0.524</z-m>
         </center>
     </animation>
-    
+
     <!-- Engine 1 thrust lever -->
     <animation>
         <type>pick</type>
@@ -2317,7 +2359,7 @@
             <entry><ind>1</ind><dep>0</dep></entry>
             <entry><ind>2</ind><dep>-11</dep></entry>
             <entry><ind>3</ind><dep>-28</dep></entry>
-        </interpolation>		
+        </interpolation>
         <axis>
             <x>0</x>
             <y>1</y>
@@ -2329,7 +2371,7 @@
             <z-m>0.517</z-m>
         </center>
     </animation>
-    
+
     <!-- Engine 2 thrust lever -->
     <animation>
         <type>pick</type>
@@ -2517,7 +2559,7 @@
             <entry><ind>1</ind><dep>0</dep></entry>
             <entry><ind>2</ind><dep>-11</dep></entry>
             <entry><ind>3</ind><dep>-28</dep></entry>
-        </interpolation>		
+        </interpolation>
         <axis>
             <x>0</x>
             <y>1</y>
@@ -2529,7 +2571,7 @@
             <z-m>0.517</z-m>
         </center>
     </animation>
-    
+
     <!-- Metric altitude -->
     <animation>
         <type>pick</type>
@@ -2560,7 +2602,7 @@
             <z-m>0.565</z-m>
         </center>
     </animation>
-    
+
     <!-- Flaps/slats lever -->
     <animation>
         <type>pick</type>
@@ -2609,7 +2651,7 @@
             <z-m>0.556</z-m>
         </center>
     </animation>
-    
+
     <!-- EICAS controls -->
     <animation>
         <type>pick</type>
@@ -2619,7 +2661,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>1</value>
             </binding>
         </action>
@@ -2637,7 +2679,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>2</value>
             </binding>
         </action>
@@ -2645,7 +2687,7 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_Stat</tooltip-id>
             <label>EICAS Status</label>
-        </binding></hovered>		
+        </binding></hovered>
     </animation>
     <!--animation>
         <type>pick</type>
@@ -2655,7 +2697,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>3</value>
             </binding>
         </action>
@@ -2663,7 +2705,7 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_ECS</tooltip-id>
             <label>EICAS ECS</label>
-        </binding></hovered>		
+        </binding></hovered>
     </animation-->
     <animation>
         <type>pick</type>
@@ -2673,7 +2715,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>4</value>
             </binding>
         </action>
@@ -2681,7 +2723,7 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_Hyd</tooltip-id>
             <label>EICAS Hydraulic</label>
-        </binding></hovered>		
+        </binding></hovered>
     </animation>
     <animation>
         <type>pick</type>
@@ -2691,7 +2733,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-cycle</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>5</value>
                 <value>6</value>
             </binding>
@@ -2700,7 +2742,7 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_Elec</tooltip-id>
             <label>EICAS Electrical</label>
-        </binding></hovered>		
+        </binding></hovered>
     </animation>
     <animation>
         <type>pick</type>
@@ -2710,7 +2752,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>7</value>
             </binding>
         </action>
@@ -2718,7 +2760,7 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_Fuel</tooltip-id>
             <label>EICAS Fuel</label>
-        </binding></hovered>		
+        </binding></hovered>
     </animation>
     <animation>
         <type>pick</type>
@@ -2728,7 +2770,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>8</value>
             </binding>
         </action>
@@ -2736,8 +2778,8 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_FCTL</tooltip-id>
             <label>EICAS Flight Controlls</label>
-        </binding></hovered>		
-    </animation>	
+        </binding></hovered>
+    </animation>
     <animation>
         <type>pick</type>
         <object-name>EICAS_AICE</object-name>
@@ -2746,7 +2788,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>9</value>
             </binding>
         </action>
@@ -2754,7 +2796,7 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_AICE</tooltip-id>
             <label>EICAS Anti Ice</label>
-        </binding></hovered>		
+        </binding></hovered>
     </animation>
     <animation>
         <type>pick</type>
@@ -2764,7 +2806,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property>instrumentation/eicas[1]/page</property>
+                <property>instrumentation/eicas/page</property>
                 <value>10</value>
             </binding>
         </action>
@@ -2772,9 +2814,9 @@
             <command>set-tooltip</command>
             <tooltip-id>EP_Doors</tooltip-id>
             <label>EICAS Doors</label>
-        </binding></hovered>		
-    </animation>	
-    
+        </binding></hovered>
+    </animation>
+
     <!-- Aileron/rudder trim -->
     <animation>
         <type>pick</type>
@@ -2860,7 +2902,7 @@
             <z-m>0.52276</z-m>
         </center>
     </animation>
-    
+
     <!-- Lighting -->
     <animation>
         <type>pick</type>
@@ -2871,7 +2913,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property>controls/lighting/display-norm</property>
+                <property>controls/lighting[2]/display-norm</property>
                 <step>0.05</step>
                 <max>1</max>
             </binding>
@@ -2882,16 +2924,16 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property>controls/lighting/display-norm</property>
+                <property>controls/lighting[2]/display-norm</property>
                 <step>-0.05</step>
-                <min>0</min>
+                <min>0.1</min>
             </binding>
         </action>
     </animation>
     <animation>
         <type>rotate</type>
         <object-name>DisplayLights</object-name>
-        <property>controls/lighting/display-norm</property>
+        <property>controls/lighting[2]/display-norm</property>
         <factor>-280</factor>
         <offset-deg>140</offset-deg>
         <axis>
@@ -2914,7 +2956,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property>controls/lighting/panel-norm</property>
+                <property>controls/lighting[2]/panel-norm</property>
                 <step>0.05</step>
                 <max>1</max>
             </binding>
@@ -2925,16 +2967,16 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property>controls/lighting/panel-norm</property>
+                <property>controls/lighting[2]/panel-norm</property>
                 <step>-0.05</step>
-                <min>0</min>
+                <min>0.1</min>
             </binding>
         </action>
     </animation>
     <animation>
         <type>rotate</type>
         <object-name>PanelLights</object-name>
-        <property>controls/lighting/panel-norm</property>
+        <property>controls/lighting[2]/panel-norm</property>
         <factor>-280</factor>
         <offset-deg>140</offset-deg>
         <axis>
@@ -2957,7 +2999,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property>controls/lighting/panel-flood-norm</property>
+                <property>controls/lighting[2]/panel-flood-norm</property>
                 <step>0.05</step>
                 <max>1</max>
             </binding>
@@ -2968,7 +3010,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property>controls/lighting/panel-flood-norm</property>
+                <property>controls/lighting[2]/panel-flood-norm</property>
                 <step>-0.05</step>
                 <min>0</min>
             </binding>
@@ -2977,7 +3019,7 @@
     <animation>
         <type>rotate</type>
         <object-name>FloodLights</object-name>
-        <property>controls/lighting/panel-flood-norm</property>
+        <property>controls/lighting[2]/panel-flood-norm</property>
         <factor>-280</factor>
         <offset-deg>140</offset-deg>
         <axis>
@@ -2991,7 +3033,7 @@
             <z-m>0.50575</z-m>
         </center>
     </animation>
-    
+
     <!-- Yaw dampers -->
     <animation>
         <type>pick</type>
@@ -3051,7 +3093,7 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
@@ -3098,14 +3140,14 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <!-- trim -->
     <animation>
         <type>material</type>
@@ -3116,13 +3158,13 @@
                 <greater-than-equals>
                     <property>systems/DC/outputs/efis</property>
                     <value>15</value>
-                </greater-than-equals>			
+                </greater-than-equals>
                 <or>
                     <property>controls/lighting/lt-test</property>
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-white/red" />
             <green alias="../../../button-emit-white/green" />
             <blue alias="../../../button-emit-white/blue" />
@@ -3143,54 +3185,55 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-amber/red" />
             <green alias="../../../button-emit-amber/green" />
             <blue alias="../../../button-emit-amber/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <!-- Display controls-->
     <animation>
         <type>pick</type>
         <object-name>DispCtrlAttdHdg</object-name>
         <action>
             <button>0</button>
-            <button>3</button>
+            <button>4</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-attdhdg</property>
-                <wrap>0</wrap>
-                <value type="int">2</value>
-                <value type="int">0</value>
-                <value type="int">1</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-attdhdg</property>
+                <step type="int">-1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
         <action>
             <button>1</button>
-            <button>4</button>
+            <button>3</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-attdhdg</property>
-                <wrap>0</wrap>
-                <value type="int">1</value>
-                <value type="int">0</value>
-                <value type="int">2</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-attdhdg</property>
+                <step type="int">1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
     </animation>
     <animation>
         <type>rotate</type>
         <object-name>DispCtrlAttdHdg</object-name>
-        <property>controls/efis/dc-attdhdg</property>
-        <interpolation>
-            <entry><ind>1</ind><dep>-45</dep></entry>
-            <entry><ind>0</ind><dep>0</dep></entry>
-            <entry><ind>2</ind><dep>45</dep></entry>
-        </interpolation>
+        <expression>
+            <prod>
+                <sum>
+                    <property>controls/efis/src-attdhdg</property>
+                    <value>-1</value>
+                </sum>
+                <value>-45</value>
+            </prod>
+        </expression>
         <axis>
             <x>0.476975533</x>
             <y>0</y>
@@ -3202,46 +3245,47 @@
             <z-m>0.45695</z-m>
         </center>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>DispCtrlAirdata</object-name>
         <action>
             <button>0</button>
-            <button>3</button>
+            <button>4</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-airdata</property>
-                <wrap>0</wrap>
-                <value type="int">2</value>
-                <value type="int">0</value>
-                <value type="int">1</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-airdata</property>
+                <step type="int">-1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
         <action>
             <button>1</button>
-            <button>4</button>
+            <button>3</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-airdata</property>
-                <wrap>0</wrap>
-                <value type="int">1</value>
-                <value type="int">0</value>
-                <value type="int">2</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-airdata</property>
+                <step type="int">1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
     </animation>
     <animation>
         <type>rotate</type>
         <object-name>DispCtrlAirdata</object-name>
-        <property>controls/efis/dc-airdata</property>
-        <interpolation>
-            <entry><ind>1</ind><dep>-45</dep></entry>
-            <entry><ind>0</ind><dep>0</dep></entry>
-            <entry><ind>2</ind><dep>45</dep></entry>
-        </interpolation>
+        <expression>
+            <prod>
+                <sum>
+                    <property>controls/efis/src-airdata</property>
+                    <value>-1</value>
+                </sum>
+                <value>-45</value>
+            </prod>
+        </expression>
         <axis>
             <x>0.476975533</x>
             <y>0</y>
@@ -3258,40 +3302,41 @@
         <object-name>DispCtrlEICAS</object-name>
         <action>
             <button>0</button>
-            <button>3</button>
+            <button>4</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-eicas</property>
-                <wrap>0</wrap>
-                <value type="int">2</value>
-                <value type="int">0</value>
-                <value type="int">1</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-eicas</property>
+                <step type="int">-1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
         <action>
             <button>1</button>
-            <button>4</button>
+            <button>3</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-eicas</property>
-                <wrap>0</wrap>
-                <value type="int">1</value>
-                <value type="int">0</value>
-                <value type="int">2</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-eicas</property>
+                <step type="int">1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
     </animation>
     <animation>
         <type>rotate</type>
         <object-name>DispCtrlEICAS</object-name>
-        <property>controls/efis/dc-eicas</property>
-        <interpolation>
-            <entry><ind>1</ind><dep>-45</dep></entry>
-            <entry><ind>0</ind><dep>0</dep></entry>
-            <entry><ind>2</ind><dep>45</dep></entry>
-        </interpolation>
+        <expression>
+            <prod>
+                <sum>
+                    <property>controls/efis/src-eicas</property>
+                    <value>-1</value>
+                </sum>
+                <value>-45</value>
+            </prod>
+        </expression>
         <axis>
             <x>0.476975533</x>
             <y>0</y>
@@ -3308,40 +3353,41 @@
         <object-name>DispCont</object-name>
         <action>
             <button>0</button>
-            <button>3</button>
+            <button>4</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-cont</property>
-                <wrap>0</wrap>
-                <value type="int">2</value>
-                <value type="int">0</value>
-                <value type="int">1</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-cont</property>
+                <step type="int">-1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
         <action>
             <button>1</button>
-            <button>4</button>
+            <button>3</button>
             <repeatable type="bool">true</repeatable>
             <binding>
-                <command>property-cycle</command>
-                <property>controls/efis/dc-cont</property>
-                <wrap>0</wrap>
-                <value type="int">1</value>
-                <value type="int">0</value>
-                <value type="int">2</value>
+                <command>property-adjust</command>
+                <property>controls/efis/src-cont</property>
+                <step type="int">1</step>
+                <min>0</min>
+                <max>2</max>
             </binding>
         </action>
     </animation>
     <animation>
         <type>rotate</type>
         <object-name>DispCont</object-name>
-        <property>controls/efis/dc-cont</property>
-        <interpolation>
-            <entry><ind>1</ind><dep>-45</dep></entry>
-            <entry><ind>0</ind><dep>0</dep></entry>
-            <entry><ind>2</ind><dep>45</dep></entry>
-        </interpolation>
+        <expression>
+            <prod>
+                <sum>
+                    <property>controls/efis/src-cont</property>
+                    <value>-1</value>
+                </sum>
+                <value>-45</value>
+            </prod>
+        </expression>
         <axis>
             <x>0.476975533</x>
             <y>0</y>
@@ -3353,7 +3399,7 @@
             <z-m>0.44736</z-m>
         </center>
     </animation>
-    
+
     <!-- cargo fire ex -->
     <animation>
         <type>pick</type>
@@ -3411,7 +3457,7 @@
             <z-m>0.42766	</z-m>
         </center>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>FwdCargoExtinBtn</object-name>
@@ -3452,14 +3498,14 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>AftCargoExtinBtn</object-name>
@@ -3500,14 +3546,14 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-red/red" />
             <green alias="../../../button-emit-red/green" />
             <blue alias="../../../button-emit-red/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
-    
+
     <animation>
         <type>pick</type>
         <object-name>CargoFirexBtn</object-name>
@@ -3551,13 +3597,13 @@
                 </or>
             </and>
         </condition>
-        <emission>	
+        <emission>
             <red alias="../../../button-emit-green/red" />
             <green alias="../../../button-emit-green/green" />
             <blue alias="../../../button-emit-green/blue" />
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
-    </animation>	
+    </animation>
     <!-- Cabin alerts -->
     <animation>
         <type>pick</type>
@@ -3617,7 +3663,7 @@
             <z-m>0.40654</z-m>
         </center>
     </animation>
-    
+
     <!-- Door -->
     <animation>
         <type>pick</type>
@@ -3649,7 +3695,7 @@
             <z-m>0</z-m>
         </center>
     </animation>
-    
+
     <!-- Lightmaps -->
     <effect>
         <inherits-from>Models/Effects/CRJ700lightmap</inherits-from>
@@ -3746,7 +3792,7 @@
         </parameters>
         <object-name>AirVents</object-name>
     </effect>
-    
+
     <!-- Rembrandt !! -->
     <effect>
         <name>REMBRANDT transparency</name>

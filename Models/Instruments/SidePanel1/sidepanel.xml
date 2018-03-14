@@ -16,6 +16,8 @@
         <radar-range />
         <use-QNH />
         <lightmap-texture-path />
+        <lightmap-factor />
+        <panel-lights />
         <powerN />
     </params>
     <panel-marking-emit>
@@ -27,8 +29,8 @@
     <animation>
         <type>range</type>
         <min-m>0</min-m>
-        <max-m>35</max-m>
-    </animation>
+        <max-m>5</max-m>
+    </animation>        
     <!-- non-emitting elements (for dome light animation) -->
     <animation>
         <name>Sidepanel1Elements</name>
@@ -55,15 +57,15 @@
         <object-name>Markings</object-name>
         <condition>
             <greater-than-equals>
-                <property alias="../../../../params/powerN" />
+                <property alias="/params/powerN" />
                 <value>100</value>
             </greater-than-equals>
         </condition>
         <emission>
-            <red alias="../../../panel-marking-emit/red" />
-            <green alias="../../../panel-marking-emit/green" />
-            <blue alias="../../../panel-marking-emit/blue" />
-            <factor-prop>controls/lighting/panel-norm</factor-prop>
+            <red alias="/panel-marking-emit/red" />
+            <green alias="/panel-marking-emit/green" />
+            <blue alias="/panel-marking-emit/blue" />
+            <factor-prop alias="/params/panel-lights" />
         </emission>
     </animation>
 
@@ -187,15 +189,15 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-toggle</command>
-                <property alias="../../../../params/mfd-wx" />
+                <property alias="/params/mfd-wx" />
             </binding>
         </action>
     </animation>
     <animation>
         <type>translate</type>
         <object-name>RadarTerrainBtn</object-name>
-        <property alias="../../params/mfd-wx" />
-        <factor alias="../../button-translate-m" />
+        <property alias="/params/mfd-wx" />
+        <factor alias="/button-translate-m" />
         <axis>
             <x>-1</x>
             <y>0</y>
@@ -211,15 +213,15 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-toggle</command>
-                <property alias="../../../../params/mfd-tcas" />
+                <property alias="/params/mfd-tcas" />
             </binding>
         </action>
     </animation>
     <animation>
         <type>translate</type>
         <object-name>TrafficBtn</object-name>
-        <property alias="../../params/mfd-tcas" />
-        <factor alias="../../button-translate-m" />
+        <property alias="/params/mfd-tcas" />
+        <factor alias="/button-translate-m" />
         <axis>
             <x>-1</x>
             <y>0</y>
@@ -305,7 +307,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property alias="../../../../params/barometer" />
+                <property alias="/params/barometer" />
                 <step type="double">1</step>
             </binding>
         </action>
@@ -315,7 +317,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property alias="../../../../params/barometer" />
+                <property alias="/params/barometer" />
                 <step type="double">-1</step>
             </binding>
         </action>
@@ -328,7 +330,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-assign</command>
-                <property alias="../../../../params/barometer" />
+                <property alias="/params/barometer" />
                 <value type="double">1013.25</value>
             </binding>
         </action>
@@ -337,7 +339,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property alias="../../../../params/barometer" />
+                <property alias="/params/barometer" />
                 <step type="double">1</step>
             </binding>
         </action>
@@ -346,7 +348,7 @@
             <repeatable type="bool">true</repeatable>
             <binding>
                 <command>property-adjust</command>
-                <property alias="../../../../params/barometer" />
+                <property alias="/params/barometer" />
                 <step type="double">-1</step>
             </binding>
         </action>	
@@ -355,7 +357,7 @@
         <type>rotate</type>
         <object-name>BarometerKnob</object-name>
         <object-name>BaroKnbFace</object-name>
-        <property alias="../../params/barometer" />
+        <property alias="/params/barometer" />
         <factor>10</factor>
         <axis>
             <x>-1</x>
@@ -377,15 +379,15 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-toggle</command>
-                <property alias="../../../../params/use-QNH" />
+                <property alias="/params/use-QNH" />
             </binding>
         </action>
     </animation>
     <animation>
         <type>translate</type>
         <object-name>HPAinBtn</object-name>
-        <property alias="../../params/use-QNH" />
-        <factor alias="../../button-translate-m" />
+        <property alias="/params/use-QNH" />
+        <factor alias="/button-translate-m" />
         <axis>
             <x>-1</x>
             <y>0</y>
@@ -401,7 +403,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-cycle</command>
-                <property alias="../../../../params/brg-src1" />
+                <property alias="/params/brg-src1" />
                 <value>FMS</value>
                 <value>VOR1</value>
                 <value>ADF1</value>
@@ -425,7 +427,7 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-cycle</command>
-                <property alias="../../../../params/brg-src2" />
+                <property alias="/params/brg-src2" />
                 <value>FMS</value>
                 <value>VOR2</value>
                 <value>ADF2</value>
@@ -497,7 +499,7 @@
     <effect>
         <inherits-from>Models/Effects/CRJ700lightmap</inherits-from>
         <parameters>
-            <lightmap-factor-prop>sim/model/lights/panel-lightmap</lightmap-factor-prop>
+            <lightmap-factor-prop alias="/params/lightmap-factor" />
             <lightmap-factor n="0">
                 <use alias="../../lightmap-factor-prop" />
             </lightmap-factor>
@@ -508,7 +510,7 @@
                 <use alias="../../lightmap-factor-prop" />
             </lightmap-factor>
             <texture n="3">
-                <image alias="../../../../params/lightmap-texture-path" />
+                <image alias="/params/lightmap-texture-path" />
             </texture>
         </parameters>
         <object-name>Panel</object-name>

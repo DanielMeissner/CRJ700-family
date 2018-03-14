@@ -21,7 +21,7 @@ var Switch_sound = {
         return m;
     },
 
-	#sound is called for each property change
+    #sound is called for each property change
     sound: func
     {
         var soundid = me.soundid += 1;
@@ -98,9 +98,6 @@ var sound_switchclick = Switch_sound.new("sim/sound/click", 0.1,
 	 "controls/engines/engine[1]/reverser-armed",
 );
 var sound_switchclick2 = Switch_sound.new("sim/sound/click2", 0.1,
-	"controls/lighting/display-norm",
-	"controls/lighting/panel-norm",
-	"controls/lighting/panel-flood-norm",
 	"controls/anti-ice/wiper",
 	"controls/autoflight/nav-source",
 	"instrumentation/use-QNH",

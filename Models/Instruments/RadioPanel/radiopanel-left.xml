@@ -4,6 +4,10 @@
 <!-- Left radio panel -->
 
 <PropertyList>
+    <params>
+        <lightmap-factor />
+        <display-norm />
+    </params>
 
 	<foo include="radiopanel-main.xml" omit-node="y" />
 
@@ -533,7 +537,7 @@
 			<red alias="../../../colors/blue/red" />
 			<green alias="../../../colors/blue/green" />
 			<blue alias="../../../colors/blue/blue" />
-			<factor-prop>controls/lighting/display-norm</factor-prop>
+			<factor-prop alias="/params/display-norm"/>
 		</emission>
 	</animation>
 	<animation>
@@ -556,7 +560,7 @@
 			<red alias="../../../colors/green/red" />
 			<green alias="../../../colors/green/green" />
 			<blue alias="../../../colors/green/blue" />
-			<factor-prop>controls/lighting/display-norm</factor-prop>
+			<factor-prop alias="/params/display-norm"/>
 		</emission>
 	</animation>
 	<animation>
@@ -590,7 +594,7 @@
 			<red alias="../../../colors/white/red" />
 			<green alias="../../../colors/white/green" />
 			<blue alias="../../../colors/white/blue" />
-			<factor-prop>controls/lighting/display-norm</factor-prop>
+			<factor-prop alias="/params/display-norm"/>
 		</emission>
 	</animation>
 

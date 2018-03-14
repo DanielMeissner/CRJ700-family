@@ -5,7 +5,9 @@
 
 <PropertyList>
 	<path>radiopanel.ac</path>
-
+    <params>
+        <display-norm>controls/lighting[2]/display-norm</display-norm>
+    </params>
 	<colors>
 		<blue>
 			<red>0.349</red>
@@ -95,7 +97,7 @@
 			<red alias="../../../panel-marking-emit/red" />
 			<green alias="../../../panel-marking-emit/green" />
 			<blue alias="../../../panel-marking-emit/blue" />
-			<factor-prop>controls/lighting/panel-norm</factor-prop>
+			<factor-prop>controls/lighting[2]/panel-norm</factor-prop>
 		</emission>
 	</animation>
 
@@ -248,7 +250,7 @@
 			<red alias="../../../colors/yellow/red" />
 			<green alias="../../../colors/yellow/green" />
 			<blue alias="../../../colors/yellow/blue" />
-			<factor-prop>controls/lighting/display-norm</factor-prop>
+			<factor-prop alias="/params/display-norm"/>
 		</emission>
 	</animation>	
 	<!-- Rembrandt !! -->
