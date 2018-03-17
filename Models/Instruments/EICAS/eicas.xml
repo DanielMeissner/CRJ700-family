@@ -1437,7 +1437,7 @@ page 10 Doors
 	<text>
 		<name>Stabilizer trim value</name>
 		<type>number-value</type>
-		<property>eicas/hstab-trim</property>
+		<property>instrumentation/eicas/hstab-trim</property>
 		<axis-alignment>yz-plane</axis-alignment>
 		<alignment>left-center</alignment>
 		<character-size>0.009</character-size>
@@ -7895,7 +7895,7 @@ DIR BUS</text>
 		<type>translate</type>
 		<object-name>ElevatorTrim</object-name>
 		<object-name>Stabilizer trim value</object-name>
-		<property>eicas/hstab-trim</property>
+		<property>instrumentation/eicas/hstab-trim</property>
 		<factor>0.00156</factor>
         <offset-m>-0.0117</offset-m>
 		<axis>

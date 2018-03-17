@@ -7,7 +7,7 @@
     <limits>
         <mtow-rw-m>1610</mtow-rw-m>
         <mlw-rw-m>1550</mlw-rw-m>
-    </limits>
+        </limits>
     <sim>
         <description>Bombardier CRJ700 series</description>
         <author>Ryan Miller, Henning S.</author>
@@ -704,9 +704,7 @@
             <seatbelt-sign type="int">1</seatbelt-sign>
         </switches>
     </controls>
-    <eicas>
-        <hstab-trim>--</hstab-trim>
-    </eicas>
+
     <engines>
         <apu>
             <info>see engine2</info>
@@ -849,10 +847,7 @@
         </fms>
         <eicas>
             <page type="int">1</page>
-        </eicas>
-        <eicas>
-            <!--page type="int">2</page-->
-            <page type="int">10</page>
+            <hstab-trim>--</hstab-trim>
         </eicas>
         <eicas-messages>
             <page>
@@ -1311,8 +1306,8 @@
            <file>Nasal/CRJ700-fuel.nas</file>
         </fuel>
         <EFIS>
-            <file>Nasal/efis.nas</file>
-            <file>Nasal/display-manager.nas</file>
+            <!-- <file>Nasal/efis.nas</file> -->
+            <file>Nasal/CRJ700-efis.nas</file>
         </EFIS>
         <raas>
             <file>Nasal/raas.nas</file>

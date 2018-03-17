@@ -2662,7 +2662,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>1</value>
+                <value>0</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2680,7 +2680,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>2</value>
+                <value>1</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2698,7 +2698,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>3</value>
+                <value>2</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2716,7 +2716,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>4</value>
+                <value>3</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2734,8 +2734,8 @@
             <binding>
                 <command>property-cycle</command>
                 <property>instrumentation/eicas/page</property>
+                <value>4</value>
                 <value>5</value>
-                <value>6</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2753,7 +2753,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>7</value>
+                <value>6</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2771,7 +2771,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>8</value>
+                <value>7</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2789,7 +2789,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>9</value>
+                <value>8</value>
             </binding>
         </action>
         <hovered><binding>
@@ -2807,7 +2807,7 @@
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>
-                <value>10</value>
+                <value>9</value>
             </binding>
         </action>
         <hovered><binding>
