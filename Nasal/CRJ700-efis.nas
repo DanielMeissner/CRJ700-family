@@ -76,20 +76,20 @@ var mappings = [
         [ {EICAS1: 3, EICAS2: -1}, {EICAS1: 2, EICAS2: 3}, {EICAS1: -1, EICAS2: 2} ],
     ];
 
-
-io.include("Models/Instruments/EFIS/pfd.nas");
-io.include("Models/Instruments/EFIS/eicas-doors.nas");
-#io.include("Models/Instruments/EFIS/EICAS.nas");
-#io.include("Models/Instruments/EFIS/EICAS2.nas");
+var nasal_path = "Models/Instruments/EFIS/";
+var svg_path = "Models/Instruments/EFIS/";
+io.include(nasal_path~"pfd.nas");
+io.include(nasal_path~"eicas-doors.nas");
+#io.include(nasal_path~"Models/Instruments/EFIS/EICAS.nas");
 
 var pfd1 = nil;
 var pfd2 = nil;
 var eicas = nil;
 
 var EFISSetup = func() {
-    pfd1 = PFDCanvas.new(sources[0].root, "Models/Instruments/EFIS/PFD.svg",0);
-    pfd2 = PFDCanvas.new(sources[5].root, "Models/Instruments/EFIS/PFD.svg",1);
-    eicas = EICASDoorsCanvas.new(sources[eicas_sources[9]].root, "Models/Instruments/EFIS/doors.svg");
+    pfd1 = PFDCanvas.new(sources[0].root, svg_path~"PFD.svg",0);
+    pfd2 = PFDCanvas.new(sources[5].root, svg_path~"PFD.svg",1);
+    eicas = EICASDoorsCanvas.new(sources[eicas_sources[9]].root, svg_path~"doors.svg");
 
     #pfd1.update();
     #pfd2.update();

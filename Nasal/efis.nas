@@ -69,11 +69,11 @@ var DisplayUnit =
         me.root = me.canvas.createGroup();
         
         #-- for development: create test image
-        var x = num(me.canvas_settings.size[0])/2 or 20;
-        var y = num(me.canvas_settings.size[1])/2 or 20;
+        var x = num(me.canvas_settings.view[0])/2 or 20;
+        var y = num(me.canvas_settings.view[1])/2 or 20;
         me.root.createChild("text").setText(me.name ~ " -- no source").setColor(1,1,1,1).setAlignment("center-center").setTranslation(x, y);
         me.root.createChild("path", "outline")
-            .rect(0, 0, me.canvas_settings.size[0], me.canvas_settings.size[1])
+            .rect(0, 0, me.canvas_settings.view[0], me.canvas_settings.view[1])
             .setStrokeLineWidth(2)
             .setColor(1,1,1,1);
         var L = 80;
@@ -84,8 +84,8 @@ var DisplayUnit =
         me.root.createChild("path", "square-top-left").rect(0, 0, L, L)
             .setStrokeLineWidth(2)
             .setColor(1,0,0,1);
-        x = me.canvas_settings.size[0]-L;
-        y = me.canvas_settings.size[1]-L;
+        x = me.canvas_settings.view[0]-L;
+        y = me.canvas_settings.view[1]-L;
         me.root.createChild("path", "square-btm-right").rect(x, y, L, L)
             .setStrokeLineWidth(2)
             .setColor(0,0,1,1);
