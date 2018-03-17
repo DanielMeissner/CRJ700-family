@@ -9,7 +9,7 @@
         <name>EFIS4</name>
         <powerN />
         <dimN />
-        <lightmap-texture-path>Aircraft/Generic/generic-lightmap.png</lightmap-texture-path>
+        <lightmap-texture-path />
         <lightmap-factor />
     </params>
     <animation>

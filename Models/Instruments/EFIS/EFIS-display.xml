@@ -1,88 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- 
-	Collins Proline 4 CRT display model
+<!--
+    Collins Proline 4 CRT display model
 -->
 
 <PropertyList>
-	
-    <path>EFIS-display.ac</path>
-	
+    <path>EFIS$N.ac</path>
     <params>
-		<ScreenID>Screen</ScreenID>
-		<powerN>/systems/DC/outputs/mfd1</powerN>	
-		<dimN>controls/lighting/display-norm</dimN>
-		<lightmap-texture-path>Aircraft/Generic/generic-lightmap.png</lightmap-texture-path>
-	</params>
+        <ScreenID>Screen</ScreenID>
+        <name>EFIS$N</name>
+        <powerN>/systems/DC/outputs/mfd1</powerN>
+        <dimN>controls/lighting/display-norm</dimN>
+        <lightmap-texture-path />
+        <lightmap-factor />
+    </params>
+    <animation>
+        <type>pick</type>
+        <object-name alias="/params/name" />
+        <action>
+            <button>0</button>
+            <repeatable>false</repeatable>
+            <binding>
+                <command>nasal</command>
+                <script>EFIS.efis.displayWindow($N);</script>
+            </binding>
+        </action>
+    </animation>
+    <animation>
+        <type>range</type>
+        <min-m>0</min-m>
+        <max-m>35</max-m>
+    </animation>
 
     <animation>
-		<type>range</type>
-		<min-m>0</min-m>
-		<max-m>35</max-m>
-	</animation>
-
-	<animation>
-		<!-- <name>PFD1</name>  -->
-		<name alias="/params/ScreenID" />
-		<object-name>EFIS_Screen</object-name>
-	</animation>
-
-<!-- 	<animation>
-		<object-name alias="/params/ScreenID" />
-		<type>select</type>
-		<condition>
-			<greater-than-equals>
-				<property alias="/params/powerN" />
-				<value>24</value>
-			</greater-than-equals>
-		</condition>
-	</animation>
- -->
+        <!-- <name>PFD1</name>  -->
+        <name alias="/params/ScreenID" />
+        <object-name>EFIS_Screen</object-name>
+    </animation>
     <animation>
-		<type>material</type>
-		<object-name alias="/params/ScreenID" />
-		<condition>
-			<greater-than>
-				<property alias="/params/powerN" />
-				<value>24</value>
-			</greater-than>		
-		</condition>
-		<emission>
-			<red>1</red>
-			<green>1</green>
-			<blue>1</blue>
-			<factor-prop alias="/params/dimN" />
-		</emission>
-	</animation> 
-<!-- 
-	<animation>
-		<object-name>EFIS_Screen.001</object-name>
-		<object-name>EFIS_Screen.002</object-name>
-		<object-name>EFIS_Screen.003</object-name>
-		<object-name>EFIS_Screen.004</object-name>
-		<object-name>EFIS_Screen.005</object-name>
-		<object-name>EFIS_Screen.006</object-name>
-		<type>select</type>
-	</animation> -->
- 	
+        <type>material</type>
+        <object-name alias="/params/ScreenID" />
+        <condition>
+            <greater-than>
+                <property alias="/params/powerN" />
+                <value>24</value>
+            </greater-than>
+        </condition>
+        <emission>
+            <red>1</red>
+            <green>1</green>
+            <blue>1</blue>
+            <factor-prop alias="/params/dimN" />
+        </emission>
+    </animation>
     <!-- Lightmaps -->
-<!--     <effect>
-		<inherits-from>Aircraft/CRJ700-family/Models/Effects/CRJ700lightmap</inherits-from>
-		<parameters>
-			<lightmap-factor-prop>sim/model/lights/panel-lightmap</lightmap-factor-prop>
-			<lightmap-factor n="0">
-				<use alias="../../lightmap-factor-prop" />
-			</lightmap-factor>
-			<lightmap-factor n="1">
-				<use alias="../../lightmap-factor-prop" />
-			</lightmap-factor>
-			<lightmap-factor n="2">
-				<use alias="../../lightmap-factor-prop" />
-			</lightmap-factor>
-			<texture n="3">
-				<image alias="/params/lightmap-texture-path" />
-			</texture>
-		</parameters>
-		<object-name>Border</object-name>
-	</effect>
-	 -->
+    <effect>
+        <inherits-from>Models/Effects/CRJ700lightmap</inherits-from>
+        <parameters>
+            <lightmap-factor-prop alias="/params/lightmap-factor"/>
+            <lightmap-factor n="0">
+                <use alias="../../lightmap-factor-prop" />
+            </lightmap-factor>
+            <lightmap-factor n="1">
+                <use alias="../../lightmap-factor-prop" />
+            </lightmap-factor>
+            <lightmap-factor n="2">
+                <use alias="../../lightmap-factor-prop" />
+            </lightmap-factor>
+            <texture n="3">
+                <image alias="/params/lightmap-texture-path" />
+            </texture>
+        </parameters>
+        <object-name>Border</object-name>
+    </effect>
 </PropertyList>
