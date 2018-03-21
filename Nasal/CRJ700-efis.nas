@@ -75,10 +75,15 @@ var mappings = [
         [ {PFD2: -1, MFD2: 5}, {PFD2: 5, MFD2: 4}, {PFD2: 5, MFD2: 3} ],
         [ {EICAS1: 3, EICAS2: -1}, {EICAS1: 2, EICAS2: 3}, {EICAS1: -1, EICAS2: 2} ],
     ];
-
+#-- load EICAS pages ------------------
 var nasal_path = "Models/Instruments/EFIS/";
 var svg_path = "Models/Instruments/EFIS/";
 io.include(nasal_path~"pfd.nas");
+io.include(nasal_path~"eicas-pri.nas");
+io.include(nasal_path~"eicas-stat.nas");
+io.include(nasal_path~"eicas-ac.nas");
+io.include(nasal_path~"eicas-dc.nas");
+io.include(nasal_path~"eicas-fctl.nas");
 io.include(nasal_path~"eicas-doors.nas");
 #io.include(nasal_path~"Models/Instruments/EFIS/EICAS.nas");
 
@@ -87,27 +92,23 @@ var pfd2 = nil;
 var eicas = nil;
 
 var EFISSetup = func() {
-    pfd1 = PFDCanvas.new(sources[0].root, svg_path~"PFD.svg",0);
-    pfd2 = PFDCanvas.new(sources[5].root, svg_path~"PFD.svg",1);
-    eicas = EICASDoorsCanvas.new(sources[eicas_sources[9]].root, svg_path~"doors.svg");
+    #pfd1 = PFDCanvas.new(sources[0].root, svg_path~"PFD.svg",0);
+    #pfd2 = PFDCanvas.new(sources[5].root, svg_path~"PFD.svg",1);
+    eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]].root, svg_path~"eicas-pri.svg");
+    eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]].root, svg_path~"eicas-stat.svg");
+    p3 = EFISCanvas.new(sources[eicas_sources[2]].root, svg_path~"ecs.svg");
+    hydr = EFISCanvas.new(sources[eicas_sources[3]].root, svg_path~"hydraulics.svg");
+    ac = EICASACCanvas.new(sources[eicas_sources[4]].root, svg_path~"eicas-ac.svg");
+    dc = EICASDCCanvas.new(sources[eicas_sources[5]].root, svg_path~"eicas-dc.svg");
+    fuel = EFISCanvas.new(sources[eicas_sources[6]].root, svg_path~"fuel.svg");
+    fctl = EICASFctlCanvas.new(sources[eicas_sources[7]].root, svg_path~"eicas-fctl.svg");
+    aice = EFISCanvas.new(sources[eicas_sources[8]].root, svg_path~"template.svg");
+    doors = EICASDoorsCanvas.new(sources[eicas_sources[9]].root, svg_path~"eicas-doors.svg");
 
     #pfd1.update();
     #pfd2.update();
-    eicas.update();
-    foreach (var i; [1,2,4]) {
-        sources[i].root.createChild("text")
-            .setText(display_names[i] ~ " dummy")
-            .setFontSize(70)
-            .setColor(1,1,1,1).setAlignment("left-center")
-            .setTranslation(150,150);
-    }
-    foreach (var s; eicas_sources) {
-        sources[s].root.createChild("text")
-            .setText(sources[s].name ~ " dummy")
-            .setFontSize(70)
-            .setColor(1,1,1,1).setAlignment("left-center")
-            .setTranslation(150,150);
-    }
+    doors.update();
+
     #-- add display routing controls
     forindex (var i; src_selectors) {
         var prop_path = src_selector_base~src_selectors[i];

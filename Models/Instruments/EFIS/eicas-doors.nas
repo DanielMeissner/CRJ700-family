@@ -5,10 +5,6 @@
 #
 
 var EICASDoorsCanvas = {
-    color_red: [1,0,0],
-    color_amber: [1,0.682,0],
-    color_green : [0.133,0.667,0.133],
-
     new: func(canvas_group, file) {
         var obj = { 
             parents: [EICASDoorsCanvas , EFISCanvas.new()],
@@ -20,13 +16,9 @@ var EICASDoorsCanvas = {
                 "aft-cargo"],
             prop_sufix: "/position-norm",
         };
+        obj.loadsvg(canvas_group, file);
+        obj.init();
         obj.setupUpdate("instrumentation/efis/update/doors", 0.9);
-        obj.init(canvas_group, file);
-        if (substr(getprop("sim/aero"), 0,6) == "CRJ700") {
-            obj["laftemer"].hide();
-            obj["raftemer"].hide();
-            obj["fwdcargo"].hide();
-        }
         return obj;
     },
 
@@ -34,6 +26,14 @@ var EICASDoorsCanvas = {
         return me.svg_keys;
     },
 
+    init: func() {
+        if (substr(getprop("sim/aero"), 0,6) == "CRJ700") {
+            me["laftemer"].hide();
+            me["raftemer"].hide();
+            me["fwdcargo"].hide();
+        }
+    },
+        
     update: func() {
         if (me._updateN == nil or !me._updateN.getValue()) return;
         #me.loop += 1;

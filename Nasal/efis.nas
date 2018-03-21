@@ -38,9 +38,9 @@ var DisplayUnit =
                     obj.window.del();
                     obj.window = nil;
                 }
-                if (obj.canvas != nil) {
-                    obj.canvas.del();
-                    obj.canvas = nil;
+                if (obj.du_canvas != nil) {
+                    obj.du_canvas.del();
+                    obj.du_canvas = nil;
                 }
             },
 
@@ -51,7 +51,7 @@ var DisplayUnit =
             canvas_settings: canvas_settings,
             placement_node: screen_obj,
             placement_parent: parent_obj,
-            canvas: nil,
+            du_canvas: nil,
             root: nil,
             window: nil,
 
@@ -65,8 +65,8 @@ var DisplayUnit =
 
     init: func() {
         me.canvas_settings["name"] = "DisplayUnit " ~ size(DisplayUnit._instances);
-        me.canvas = canvas.new(me.canvas_settings).setColorBackground(DisplayUnit.bgcolor);
-        me.root = me.canvas.createGroup();
+        me.du_canvas = canvas.new(me.canvas_settings).setColorBackground(DisplayUnit.bgcolor);
+        me.root = me.du_canvas.createGroup();
         
         #-- for development: create test image
         var x = num(me.canvas_settings.view[0])/2 or 20;
@@ -91,13 +91,13 @@ var DisplayUnit =
             .setColor(0,0,1,1);
         #-- end test image --
         me.img = me.root.createChild("image", "DisplayUnit "~me.name);
-        me.canvas.addPlacement({ parent: me.placement_parent, node: me.placement_node });
+        me.du_canvas.addPlacement({ parent: me.placement_parent, node: me.placement_node });
         return me;
     },
 
     # set a new source path for canvas image element
     setSource: func(path) {
-        #print("DisplayUnit.setSource for "~me.canvas.getPath()~" ("~me.name~") to "~path);
+        #print("DisplayUnit.setSource for "~me.du_canvas.getPath()~" ("~me.name~") to "~path);
         if (path == "")
             me.img.hide();
         else {
@@ -118,7 +118,7 @@ var DisplayUnit =
     asWindow: func(window_size) {
         me.window = canvas.Window.new(window_size, "dialog");
         me.window.set('title', "EFIS " ~ me.name)
-            .setCanvas(me.canvas);
+            .setCanvas(me.du_canvas);
         me.window.del = func() { call(canvas.Window.del, [], me); }
         return me.window
     },    
@@ -337,14 +337,20 @@ var EFISCanvas = {
         }
         EFISCanvas._timers = [];
     },
+    color_white: [1,1,1],
+    color_red: [1,0,0],
+    color_amber: [1,0.682,0],
+    color_green : [0.133,0.667,0.133],
+    color_blue : [0.133,0.133,1],
 
-    new: func() {
+    new: func(canvas_group=nil, file=nil) {
         var obj = {
             parents: [EFISCanvas],
             _listeners: [],
             _updateN: nil,
             _update_interval: 0.7,
             _timer: nil,
+            svg_keys: [],
             
             cleanup: func() {
                 print("EFISCanvas cleanup");
@@ -362,17 +368,17 @@ var EFISCanvas = {
             },
         };
         append(EFISCanvas._instances, obj);
+        if (canvas_group != nil and file != nil)
+            obj.loadsvg(canvas_group, file);
         return obj;
     },
     
-    init: func(canvas_group, file) {
+    loadsvg: func(canvas_group, file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";
         };
-
         canvas.parsesvg(canvas_group, file, {'font-mapper': font_mapper});
-        var svg_keys = me.getKeys();
-
+        var svg_keys = me.svg_keys;
         foreach (var key; svg_keys) {
             me[key] = canvas_group.getElementById(key);
             var clip_el = canvas_group.getElementById(key ~ "_clip");
@@ -406,11 +412,6 @@ var EFISCanvas = {
     },
 
     ## overload the following methods in derived class!     
-    #Return all valid SVG element IDs
-    getKeys: func() {
-        return [];
-    },
-    
     update: func() {
         if (me._updateN == nil or !me._updateN.getValue()) 
             return;
