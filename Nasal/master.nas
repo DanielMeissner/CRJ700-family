@@ -23,13 +23,13 @@ var Loop = func(interval, update)
         }
         settimer(func {loop.loop(thisTimerId);}, loop.interval);
     };
-    
+
     loop.start = func
     {
         timerId += 1;
         settimer(func {loop.loop(timerId);}, 0);
     };
-    
+
     loop.stop = func {timerId += 1;};
     return loop;
 };
@@ -39,7 +39,7 @@ var startid = 0;
 var startup = func {
     startid += 1;
     var id = startid;
-    
+
     var items = [
         ["controls/engines/engine[0]/cutoff", 1, 0.1],
         ["controls/engines/engine[0]/cutoff", 1, 1],
@@ -62,7 +62,7 @@ var startup = func {
         ["controls/APU/off-on", 0, 1],
         ["controls/lighting/taxi-lights", 1, 0.8],
         ["controls/hydraulic/system[0]/pump-b", 2, 0.1],
-        ["controls/hydraulic/system[2]/pump-a", 1, 0.3],							
+        ["controls/hydraulic/system[2]/pump-a", 1, 0.3],
         ["controls/hydraulic/system[2]/pump-b", 2, 0.1],
         ["controls/hydraulic/system[1]/pump-b", 2, 0.3],
     ];
@@ -95,7 +95,7 @@ var shutdown = func
         ["systems/fuel/boost-pump[1]/selected", 0, 0.8],
         ["controls/lighting/beacon", 0, 0.8],
         ["controls/hydraulic/system[0]/pump-b", 0, 0.1],
-        ["controls/hydraulic/system[2]/pump-a", 0, 0.3],							
+        ["controls/hydraulic/system[2]/pump-a", 0, 0.3],
         ["controls/hydraulic/system[2]/pump-b", 0, 0.1],
         ["controls/hydraulic/system[1]/pump-b", 0, 0.3],
         ["controls/autoflight/yaw-damper/engage", 0, 0.5],
@@ -142,52 +142,50 @@ var instastart = func
     setprop("/controls/autoflight/yaw-damper[1]/engage", 1);
 };
 
-## Prevent the gear from being retracted on the ground
-setlistener("controls/gear/gear-down", func(v)
-
 var is_slave = 0;
 if (getprop("/sim/flight-model") == "null")
 {
-	is_slave = 1;
+    is_slave = 1;
 }
 else {
-	# Engines and APU.
-	var apu = CRJ700.Engine.Apu();
-	var engines = [
-		CRJ700.Engine.Jet(0),
-		CRJ700.Engine.Jet(1)
-	];
+    # Engines and APU.
+    var apu = CRJ700.Engine.Apu();
+    var engines = [
+        CRJ700.Engine.Jet(0),
+        CRJ700.Engine.Jet(1)
+    ];
 
-	# Prevent IDG voltage drop on engine idle while in flight 
-	# (idle N1,N2 can be much lower in flight than on ground)
-	var idg1_ref = 0;
-	var idg2_ref = 0;
-	setlistener("engines/engine[0]/running-nasal", func(n)
+    # Prevent IDG voltage drop on engine idle while in flight 
+    # (idle N1,N2 can be much lower in flight than on ground)
+    var idg1_ref = 0;
+    var idg2_ref = 0;
+    setlistener("engines/engine[0]/running-nasal", func(n)
     {
-		if (n.getBoolValue()) {
-			idg1_ref = generators[0].getInputLo();
-			generators[0].setInputLo(0);
-			#print("IDG1 set 0, was "~idg1_ref);
+        if (n.getBoolValue()) {
+            idg1_ref = generators[0].getInputLo();
+            generators[0].setInputLo(0);
+            #print("IDG1 set 0, was "~idg1_ref);
         }
-		else {
-			generators[0].setInputLo(idg1_ref);
-			#print("IDG1 idg1_ref "~idg1_ref);
-		}
-}, 0, 0);
+        else {
+            generators[0].setInputLo(idg1_ref);
+            #print("IDG1 idg1_ref "~idg1_ref);
+        }
+    }, 0, 0);
 
-	setlistener("engines/engine[1]/running-nasal", func(n)
-	{
-		if (n.getBoolValue()) {
-			idg2_ref = generators[1].getInputLo();
-			generators[1].setInputLo(0);
-			#print("IDG2 set 0, was "~idg2_ref);
-		}
-		else {
-			generators[1].setInputLo(idg2_ref);
-			#print("IDG2 idg2_ref "~idg2_ref);
-		}
-	}, 0, 0);
+    setlistener("engines/engine[1]/running-nasal", func(n)
+    {
+        if (n.getBoolValue()) {
+            idg2_ref = generators[1].getInputLo();
+            generators[1].setInputLo(0);
+            #print("IDG2 set 0, was "~idg2_ref);
+        }
+        else {
+            generators[1].setInputLo(idg2_ref);
+            #print("IDG2 idg2_ref "~idg2_ref);
+        }
+    }, 0, 0);
 }
+
 # Wipers.
 var wipers = [
     CRJ700.Wiper("/controls/anti-ice/wiper[0]",
@@ -200,38 +198,36 @@ var wipers = [
                  "/systems/DC/outputs/wiper-right")
 ];
 
-
-
 # Update loops.
 var fast_loop = Loop(0, func {
-	if (!is_slave)
-	{
-		# Engines and APU.
-		CRJ700.Engine.poll_fuel_tanks();
-		#CRJ700.Engine.poll_bleed_air();
-		apu.update();
-		engines[0].update();
-		engines[1].update();
+    if (!is_slave)
+    {
+        # Engines and APU.
+        CRJ700.Engine.poll_fuel_tanks();
+        #CRJ700.Engine.poll_bleed_air();
+        apu.update();
+        engines[0].update();
+        engines[1].update();
 
-		update_electrical();
-		update_hydraulic();
-		eicas_messages_page1.update();
-		eicas_messages_page2.update();
+        update_electrical();
+        update_hydraulic();
+        eicas_messages_page1.update();
+        eicas_messages_page2.update();
 
-	}
-	
-	wipers[0].update();
-	wipers[1].update();
+    }
+    
+    wipers[0].update();
+    wipers[1].update();
 });
 
 var slow_loop = Loop(3, func {
-	if (!is_slave)
-	{
-		update_tat;
-		update_copilot_ints();
-		update_lightmaps();
-		update_pass_signs();
-	}
+    if (!is_slave)
+    {
+        update_tat;
+        update_copilot_ints();
+        update_lightmaps();
+        update_pass_signs();
+    }
 });
 
 var reload_checklists = func()
@@ -240,8 +236,8 @@ var reload_checklists = func()
     io.read_properties(path,"/sim/checklists");
 };
 
-# Cockpit position is different for C7/C9/C10 so we have to update all 
-# tutorial markes in all checklist items.	
+# Cockpit position is different for C7/C9/C10 so we have to update all
+# tutorial markes in all checklist items.
 var update_offsets = func()
 {
     var c_offset = getprop("/sim/model/dimensions/cockpit-offset-x");
@@ -262,12 +258,12 @@ var update_offsets = func()
             {
                 var m = i.getNode("marker");
                 if (m != nil)
-                {					
+                {
                     #print("  Item " ~ i.getNode("name").getValue());
                     var x = m.getNode("x-m");
                     x.setValue(x.getValue()+c_offset);
                 }
-            }						
+            }
         }
     }
     var update_tutorials = func {
@@ -282,18 +278,18 @@ var update_offsets = func()
                 #print(step.getNode("message").getValue());
                 var m = step.getNode("marker");
                 if (m != nil)
-                {					
+                {
                     var x = m.getNode("x-m");
                     x.setValue(x.getValue()+c_offset);
                 }
                 var v = step.getNode("view");
                 if (v != nil)
-                {					
+                {
                     var z = v.getNode("z-offset-m");
                     if (z != nil)
                         z.setValue(z.getValue()+c_offset);
                 }
-            }						
+            }
         }
     }
     if (c_offset)
@@ -321,23 +317,23 @@ setlistener("sim/model/start-idling", func(v)
 var gravity_xflow = {};
 setlistener("sim/signals/fdm-initialized", func
 {
-	print("CRJ700 aircraft systems ... initialized");
-	if (!is_slave) {
-		gravity_xflow = aircraft.crossfeed_valve.new(0.5, "controls/fuel/gravity-xflow", 0, 1);
-		if (getprop("/sim/time/sun-angle-rad") > 1.57) 
-			setprop("controls/lighting/dome", 1);
-		setprop("consumables/fuel/tank[0]/level-lbs", 2000);
-		setprop("consumables/fuel/tank[1]/level-lbs", 2000);
-		setprop("consumables/fuel/tank[2]/level-lbs", 100);
-	}
-	
-	fast_loop.start();
-	slow_loop.start();
-	settimer(func {
-		setprop("sim/model/sound-enabled",1);
-		print("Sound on.");
-		gui.showWeightDialog();
-		}, 3);
+    print("CRJ700 aircraft systems ... initialized");
+    if (!is_slave) {
+        gravity_xflow = aircraft.crossfeed_valve.new(0.5, "controls/fuel/gravity-xflow", 0, 1);
+        if (getprop("/sim/time/sun-angle-rad") > 1.57) 
+            setprop("controls/lighting/dome", 1);
+        setprop("consumables/fuel/tank[0]/level-lbs", 2000);
+        setprop("consumables/fuel/tank[1]/level-lbs", 2000);
+        setprop("consumables/fuel/tank[2]/level-lbs", 100);
+    }
+    
+    fast_loop.start();
+    slow_loop.start();
+    settimer(func {
+        setprop("sim/model/sound-enabled",1);
+        print("Sound on.");
+        gui.showWeightDialog();
+        }, 3);
 }, 0, 0);
 
 ## Prevent the gear from being retracted on the ground
@@ -345,13 +341,13 @@ setlistener("controls/gear/gear-down", func(v)
 {
     if (getprop("gear/on-ground")) 
     {
-		v.setBoolValue(1);
-	}
-	else setprop("controls/gear/gear-lever-moved", v.getBoolValue());
+        v.setBoolValue(1);
+    }
+    else setprop("controls/gear/gear-lever-moved", v.getBoolValue());
 }, 0, 0);
 
 var tiller_last = 0;
-setlistener("controls/gear/tiller-steer-deg", func(n) 
+setlistener("controls/gear/tiller-steer-deg", func(n)
 {
     var enabled = getprop("/sim/config/view-follows-tiller");
     if (enabled) {
@@ -383,3 +379,29 @@ if (getprop("/sim/config/allow-autothrottle") ) {
 if (getprop("/sim/config/developer") ) {
     CRJ700.dialogs.developer.open();
 }
+
+#-- support for runtime reload of nasal files --
+var namespace = "EFIS"; 
+var reloadEFIS = func() {
+    print("Removing EFIS...");
+    if (globals[namespace] == nil) print("No global namespace '"~namespace~"'");
+    elsif (globals[namespace]["efis"] == nil) print("efis instance not found");
+    else {
+        var err=[];
+        call(globals[namespace].efis.del, [], err);
+        if (size(err)) {
+            debug.printerror(err);
+        }
+    }
+    globals[namespace] = {};
+    print("Reloading EFIS...");
+    var aircraftDir = getprop("/sim/aircraft-dir");
+    io.load_nasal(aircraftDir ~ "/Nasal/CRJ700-efis.nas", namespace);
+}
+
+setlistener(globals[namespace].reloadFlag, func(n) {
+    if (n.getValue()) {
+        n.setValue(0);
+        reloadEFIS();
+    }
+});
