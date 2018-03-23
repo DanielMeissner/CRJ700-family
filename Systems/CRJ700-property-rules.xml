@@ -81,16 +81,16 @@
         <type>gain</type>
         <debug type="bool">false</debug>
         <gain>1</gain>
-        <!-- map [+2,-13]deg to [0,15]trim units -->
+        <!-- map [+2,-13]deg to [15,0]trim units -->
         <input>
             <expression>
-                <sum>
+                <difference>
+                    <value>17</value>
                     <product>
                         <property>surface-positions/hstab-rad</property>
                         <value>-57.29578</value>
                     </product>
-                    <value>2</value>
-                </sum>
+                </difference>
             </expression>
         </input>
         <output>instrumentation/eicas/hstab-trim</output>
