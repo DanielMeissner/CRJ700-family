@@ -1306,7 +1306,6 @@
            <file>Nasal/CRJ700-fuel.nas</file>
         </fuel>
         <EFIS>
-            <!-- <file>Nasal/efis.nas</file> -->
             <file>Nasal/CRJ700-efis.nas</file>
         </EFIS>
         <raas>
