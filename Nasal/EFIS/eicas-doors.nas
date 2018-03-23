@@ -18,7 +18,7 @@ var EICASDoorsCanvas = {
         };
         obj.loadsvg(canvas_group, file);
         obj.init();
-        obj.setupUpdate("instrumentation/efis/update/doors", 0.9);
+        obj.setupUpdate(0.9);
         return obj;
     },
 
@@ -38,12 +38,12 @@ var EICASDoorsCanvas = {
         if (me._updateN == nil or !me._updateN.getValue()) return;
         #me.loop += 1;
         #print("d "~me.loop);
-        var color_warn = me.color_red;
+        var color_warn = me.colors["red"];
         forindex (var i; me.prop_names) {
-            if (i > 0) color_warn = me.color_amber;
+            if (i > 0) color_warn = me.colors["amber"];
             var prop = me.prop_base~me.prop_names[i]~me.prop_sufix;
             var element = me.svg_keys[i];
-            if (getprop(prop) == 0) me[element].setColor(me.color_green)
+            if (getprop(prop) == 0) me[element].setColor(me.colors["green"]);
             else me[element].setColor(color_warn);
         }
     }, 

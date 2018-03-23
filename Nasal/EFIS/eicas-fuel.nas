@@ -1,35 +1,28 @@
 # EFIS for CRJ700 familiy 
-# EICAS DC electrical page
+# EICAS primary page
 # Author:  jsb
 # Created: 03/2018
 #
 
-var EICASDCCanvas = {
+var EICASFuelCanvas = {
 
     new: func(canvas_group, file) {
         var obj = { 
-            parents: [EICASDCCanvas , EFISCanvas.new()],
+            parents: [EICASFuelCanvas , EFISCanvas.new()],
             loop: 0,
             svg_keys: [
-                    #"eng1", "eng2", "apu", 
-                    #"idg1", "idg2", "idgdisc1", "idgdisc2",
-                    
+                                       
                 ],
-                prop_base: "systems/dc/",
-            prop_names: [],
-            
+           
         };
         obj.loadsvg(canvas_group, file);
         obj.init();
-        obj.setupUpdate("instrumentation/efis/update/dc", 0.1);
+        obj.setupUpdate(0.8);
         return obj;
     },
 
-    getKeys: func() {
-        return me.svg_keys;
-    },
-    
     #-- listeners for rare events --
+    
     init: func() {
     },
     

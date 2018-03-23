@@ -7,7 +7,19 @@ print("-- EFIS --");
 var reloadFlag = "/instrumentation/efis/reload";
 props.getNode(reloadFlag,1).setIntValue(0);
 
-io.include("efis.nas");
+var svg_path = "Models/Instruments/EFIS/";
+var nasal_path = "Nasal/EFIS/";
+io.include(nasal_path~"efis.nas");
+io.include(nasal_path~"pfd.nas");
+io.include(nasal_path~"eicas-pri.nas");
+io.include(nasal_path~"eicas-stat.nas");
+io.include(nasal_path~"eicas-hydraulics.nas");
+io.include(nasal_path~"eicas-ac.nas");
+io.include(nasal_path~"eicas-dc.nas");
+io.include(nasal_path~"eicas-fuel.nas");
+io.include(nasal_path~"eicas-fctl.nas");
+io.include(nasal_path~"eicas-aice.nas");
+io.include(nasal_path~"eicas-doors.nas");
 
 # identifiers for display units
 var display_names = ["PFD1", "MFD1", "EICAS1", "EICAS2", "MFD2", "PFD2"];
@@ -32,7 +44,9 @@ forindex (var i; display_names) {
 # efis will create one display canvas and one source canvas per display unit automatically
 # more pages can be added e.g. for EICAS
 var EICASpages = ["ECS", "HYD", "AC", "DC", "FUEL", "F-CTL", "A-ICE", "Doors"];
-var eicas_sources = [2,3];
+# get the two sources created by efis module automatically
+var eicas_sources = [2,3]; 
+# add more sources for the remaining pages
 foreach (var name; EICASpages) {
     append(eicas_sources, efis.addSource(name));
 }
@@ -75,39 +89,25 @@ var mappings = [
         [ {PFD2: -1, MFD2: 5}, {PFD2: 5, MFD2: 4}, {PFD2: 5, MFD2: 3} ],
         [ {EICAS1: 3, EICAS2: -1}, {EICAS1: 2, EICAS2: 3}, {EICAS1: -1, EICAS2: 2} ],
     ];
-#-- load EICAS pages ------------------
-var nasal_path = "Models/Instruments/EFIS/";
-var svg_path = "Models/Instruments/EFIS/";
-io.include(nasal_path~"pfd.nas");
-io.include(nasal_path~"eicas-pri.nas");
-io.include(nasal_path~"eicas-stat.nas");
-io.include(nasal_path~"eicas-ac.nas");
-io.include(nasal_path~"eicas-dc.nas");
-io.include(nasal_path~"eicas-fctl.nas");
-io.include(nasal_path~"eicas-doors.nas");
-#io.include(nasal_path~"Models/Instruments/EFIS/EICAS.nas");
+
 
 var pfd1 = nil;
 var pfd2 = nil;
 var eicas = nil;
 
 var EFISSetup = func() {
-    #pfd1 = PFDCanvas.new(sources[0].root, svg_path~"PFD.svg",0);
-    #pfd2 = PFDCanvas.new(sources[5].root, svg_path~"PFD.svg",1);
+    pfd1 = PFDCanvas.new(sources[0].root, svg_path~"PFD.svg",0);
+    pfd2 = PFDCanvas.new(sources[5].root, svg_path~"PFD.svg",1);
     eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]].root, svg_path~"eicas-pri.svg");
     eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]].root, svg_path~"eicas-stat.svg");
     p3 = EFISCanvas.new(sources[eicas_sources[2]].root, svg_path~"ecs.svg");
-    hydr = EFISCanvas.new(sources[eicas_sources[3]].root, svg_path~"hydraulics.svg");
+    hydr = EICASHydraulicsCanvas.new(sources[eicas_sources[3]].root, svg_path~"hydraulics.svg");
     ac = EICASACCanvas.new(sources[eicas_sources[4]].root, svg_path~"eicas-ac.svg");
     dc = EICASDCCanvas.new(sources[eicas_sources[5]].root, svg_path~"eicas-dc.svg");
-    fuel = EFISCanvas.new(sources[eicas_sources[6]].root, svg_path~"fuel.svg");
+    fuel = EICASFuelCanvas.new(sources[eicas_sources[6]].root, svg_path~"fuel.svg");
     fctl = EICASFctlCanvas.new(sources[eicas_sources[7]].root, svg_path~"eicas-fctl.svg");
-    aice = EFISCanvas.new(sources[eicas_sources[8]].root, svg_path~"template.svg");
+    aice = EICASAIceCanvas.new(sources[eicas_sources[8]].root, svg_path~"template.svg");
     doors = EICASDoorsCanvas.new(sources[eicas_sources[9]].root, svg_path~"eicas-doors.svg");
-
-    #pfd1.update();
-    #pfd2.update();
-    doors.update();
 
     #-- add display routing controls
     forindex (var i; src_selectors) {
@@ -116,9 +116,6 @@ var EFISSetup = func() {
         setprop(prop_path,1);
         efis.addDisplaySwapControl(prop_path, mappings[i], callbacks[i]);
     }
-    #-- add ECP handler --
-    
-    
 };
 
 var initL = setlistener("sim/signals/fdm-initialized", func(p)

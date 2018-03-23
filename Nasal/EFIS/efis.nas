@@ -337,19 +337,26 @@ var EFISCanvas = {
         }
         EFISCanvas._timers = [];
     },
-    color_white: [1,1,1],
-    color_red: [1,0,0],
-    color_amber: [1,0.682,0],
-    color_green : [0.133,0.667,0.133],
-    color_blue : [0.133,0.133,1],
+    colors: { 
+        white: [1,1,1],
+        red: [1,0,0],
+        green : [0.133,0.667,0.133],
+        blue : [0.133,0.133,1],
+        yellow: [1,1,0],
+        cyan: [0,1,1],
+        magenta: [1,0,1],
+        amber: [1,0.682,0],
+    },
 
     new: func(canvas_group=nil, file=nil) {
         var obj = {
             parents: [EFISCanvas],
+            _id: nil,
             _listeners: [],
             _updateN: nil,
             _update_interval: 0.7,
             _timer: nil,
+            _root: nil,
             svg_keys: [],
             
             cleanup: func() {
@@ -363,47 +370,56 @@ var EFISCanvas = {
 
             setlistener: func(p, f, s=0, r=1) {
                 var handle = setlistener(p,f,s,r);
-                print("EFISCanvas add L: "~handle);
+                #print("EFISCanvas add L: "~handle);
                 append(obj._listeners, handle);
             },
         };
+        obj._id = size(EFISCanvas._instances);
         append(EFISCanvas._instances, obj);
         if (canvas_group != nil and file != nil)
             obj.loadsvg(canvas_group, file);
         return obj;
     },
     
+    _updateClip: func(key) {
+        var clip_el = me._root.getElementById(key ~ "_clip");
+        if (clip_el != nil) {
+            clip_el.setVisible(0);
+            var tran_rect = clip_el.getTransformedBounds();
+            var clip_rect = sprintf("rect(%d,%d, %d,%d)",
+            tran_rect[1], # 0 ys
+            tran_rect[2], # 1 xe
+            tran_rect[3], # 2 ye
+            tran_rect[0]); #3 xs
+            #   coordinates are top,right,bottom,left (ys, xe, ye, xs) ref: l621 of simgear/canvas/CanvasElement.cxx
+            me[key].set("clip", clip_rect);
+            me[key].set("clip-frame", canvas.Element.PARENT);
+        }
+    },
+    
     loadsvg: func(canvas_group, file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";
         };
+        me._root = canvas_group;
         canvas.parsesvg(canvas_group, file, {'font-mapper': font_mapper});
         var svg_keys = me.svg_keys;
         foreach (var key; svg_keys) {
             me[key] = canvas_group.getElementById(key);
-            var clip_el = canvas_group.getElementById(key ~ "_clip");
-            if (clip_el != nil) {
-                clip_el.setVisible(0);
-                var tran_rect = clip_el.getTransformedBounds();
-                var clip_rect = sprintf("rect(%d,%d, %d,%d)",
-                tran_rect[1], # 0 ys
-                tran_rect[2], # 1 xe
-                tran_rect[3], # 2 ye
-                tran_rect[0]); #3 xs
-                #   coordinates are top,right,bottom,left (ys, xe, ye, xs) ref: l621 of simgear/canvas/CanvasElement.cxx
-                me[key].set("clip", clip_rect);
-                me[key].set("clip-frame", canvas.Element.PARENT);
-            }
+            me._updateClip(key);
         }
-        me.page = canvas_group;
         return me;
     },
 
-    setupUpdate: func(updateN, interval) {
+    setupUpdate: func(interval, updateN=nil) {
+        if (updateN == nil)
+            updateN = "/instrumentation/efis/update/i"~me._id;
+        elsif(typeof(updateN) == "scalar")
+            updateN = "/instrumentation/efis/update/"~updateN;
         me._updateN = props.globals.getNode(updateN,1);
         me._updateN.setBoolValue(1);
         interval = num(interval);
-        if (interval == nil or interval < 0.1) 
+        if (interval == nil or interval < 0) 
             me._update_interval = 0.7;
         else me._update_interval = interval;
         var timer = maketimer(me._update_interval, me, me.update);

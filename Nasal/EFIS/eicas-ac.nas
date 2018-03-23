@@ -21,7 +21,7 @@ var EICASACCanvas = {
         };
         obj.loadsvg(canvas_group, file);
         obj.init();
-        obj.setupUpdate("instrumentation/efis/update/ac", 0.1);
+        obj.setupUpdate(0.1);
         return obj;
     },
 
@@ -34,7 +34,7 @@ var EICASACCanvas = {
         return func(n) {
             if (n.getValue()) {
                 me["idgdisc"~idx].show();
-                me["idg"~idx].setColor(me.color_white);
+                me["idg"~idx].setColor(me.colors["white"]);
             }
         };
     },

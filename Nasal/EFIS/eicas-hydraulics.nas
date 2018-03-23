@@ -4,11 +4,11 @@
 # Created: 03/2018
 #
 
-var EICASPriCanvas = {
+var EICASHydraulicsCanvas = {
 
     new: func(canvas_group, file) {
         var obj = { 
-            parents: [EICASPriCanvas , EFISCanvas.new()],
+            parents: [EICASHydraulicsCanvas , EFISCanvas.new()],
             loop: 0,
             svg_keys: [
                                        
@@ -17,7 +17,7 @@ var EICASPriCanvas = {
         };
         obj.loadsvg(canvas_group, file);
         obj.init();
-        obj.setupUpdate("instrumentation/efis/update/pri", 0.05);
+        obj.setupUpdate(0.2, "hyd");
         return obj;
     },
 

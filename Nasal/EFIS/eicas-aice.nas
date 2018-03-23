@@ -1,14 +1,14 @@
 # EFIS for CRJ700 familiy 
-# EICAS status page
+# EICAS primary page
 # Author:  jsb
 # Created: 03/2018
 #
 
-var EICASStatCanvas = {
+var EICASAIceCanvas = {
 
     new: func(canvas_group, file) {
         var obj = { 
-            parents: [EICASStatCanvas , EFISCanvas.new()],
+            parents: [EICASAIceCanvas , EFISCanvas.new()],
             loop: 0,
             svg_keys: [
                                        
@@ -17,12 +17,8 @@ var EICASStatCanvas = {
         };
         obj.loadsvg(canvas_group, file);
         obj.init();
-        obj.setupUpdate("instrumentation/efis/update/stat", 0.1);
+        obj.setupUpdate(1);
         return obj;
-    },
-
-    getKeys: func() {
-        return me.svg_keys;
     },
 
     #-- listeners for rare events --
