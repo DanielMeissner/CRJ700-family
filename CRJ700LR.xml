@@ -73,8 +73,8 @@
 		<control-input axis="/surface-positions/right-ob-mfs-pos-norm" side="right" control="SPOILER" />
 		<control-input axis="/surface-positions/right-ib-mfs-pos-norm" side="right" control="SPOILER" />
 		<control-output control="FLAP0" prop="/surface-positions/flap-pos-norm" />
-		<control-output control="FLAP1" side="left" prop="/surface-positions/left-aileron-pos-norm" />
-		<control-output control="FLAP1" side="right" prop="/surface-positions/right-aileron-pos-norm" />
+		<control-output control="FLAP1" side="left" prop="/surface-positions/left-aileron-pos-norm" min="-1.0" max="1.0" />
+		<control-output control="FLAP1" side="right" prop="/surface-positions/right-aileron-pos-norm" min="-1.0" max="1.0" />
 		<control-output control="SLAT" prop="/surface-positions/slat-pos-norm" />
 		<control-output control="SPOILER" side="left" prop="/surface-positions/fdm-spoiler-outer-pos-norm" />
 		<control-speed control="FLAP0" transition-time="16.72" />
