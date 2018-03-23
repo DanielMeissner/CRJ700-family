@@ -33,10 +33,10 @@
         <type>material</type>
         <object-name alias="/params/name" />
         <condition>
-            <greater-than>
+            <greater-than-equals>
                 <property alias="/params/powerN" />
                 <value>24</value>
-            </greater-than>
+            </greater-than-equals>
         </condition>
         <emission>
             <red>1</red>
