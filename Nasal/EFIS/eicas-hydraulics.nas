@@ -6,18 +6,17 @@
 
 var EICASHydraulicsCanvas = {
 
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = { 
-            parents: [EICASHydraulicsCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASHydraulicsCanvas , EFISCanvas.new(source_record)],
             svg_keys: [
                                        
                 ],
            
         };
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.2, "hyd");
+        obj.setUpdateInterval(0.2,);
         return obj;
     },
 
@@ -27,8 +26,7 @@ var EICASHydraulicsCanvas = {
     },
     
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        #me.loop += 1;
-        #print("d "~me.loop);
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
     }, 
 };

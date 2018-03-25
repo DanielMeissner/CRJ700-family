@@ -54,10 +54,9 @@ var DisplayUnit =
             du_canvas: nil,
             root: nil,
             window: nil,
-
             name: name,
             img: nil,     # canvas image element, shall use other canvas as source
-            powerN: nil
+            powerN: nil,
         };
         append(DisplayUnit._instances, obj);
         return obj.init();
@@ -145,41 +144,43 @@ var EFIS = {
     },
     window_size: [500,600],
 
-    new: func(display_names, object_names, power_props) {
+    new: func(display_names, object_names, power_props=nil, minimum_power=0) {
         if (typeof(display_names) != "vector") {
             print("EFIS.new: 'display_names' not a vector!");
             return;
         }
         var obj = {
-                parents: [EFIS],
-                _listeners: [],
-                display_units: [],
-                sources: [],        #[] of canvas
-                display_names: display_names,
-                controls: {},
-                source_records: [], 
+            parents: [EFIS],
+            _listeners: [],
+            display_units: [],
+            sources: [],        #[] of canvas
+            display_names: display_names,
+            controls: {},
+            source_records: [], 
+            active_sources: [],
+            
+            cleanup: func() {
+                foreach (var id; obj._listeners) {
+                    removelistener(id);
+                    print("EFIS remove L: "~id);
+                }
+                obj._listeners = [];
+                foreach (var sr; obj.source_records) {
+                    sr.canvas.del();
+                }
+                obj.source_records = [];
+            },
 
-                cleanup: func() {
-                    foreach (var id; obj._listeners) {
-                        removelistener(id);
-                        print("EFIS remove L: "~id);
-                    }
-                    obj._listeners = [];
-                    foreach (var sr; obj.source_records) {
-                        sr.canvas.del();
-                    }
-                    obj.source_records = [];
-                },
-
-                setlistener: func(p, f, s=0, r=1) {
-                    append(obj._listeners, setlistener(p,f,s,r));
-                },
-            };
+            setlistener: func(p, f, s=0, r=1) {
+                append(obj._listeners, setlistener(p,f,s,r));
+            },
+        };
         if (object_names != nil and typeof(object_names) == "vector"
             and size(display_names) == size(object_names))
         {
             while (size(obj.display_units) < size(display_names)) {
                 append(obj.display_units, {});
+                append(obj.active_sources, -1);
             }
             var settings = obj._defaultcanvas_settings;
             forindex (var id; display_names)
@@ -190,6 +191,10 @@ var EFIS = {
             }
         }
         append(EFIS._instances, obj);
+        if (power_props != nil)
+            forindex (var i; display_names) {
+                obj.display_units[i].setPowerSource(power_props[i], minimum_power);
+            }        
         return obj;
     }, #new
 
@@ -204,10 +209,21 @@ var EFIS = {
     #switch display unit du_id to source source_id
     _setDisplaySource: func(du_id, source_id)
     {
+        #print("setDisplaySource unit "~du_id~" s "~source_id);
+        var prev_source = me.active_sources[du_id];
+        if (prev_source >= 0)
+            me.source_records[prev_source].visibleN.setValue(
+                me.source_records[prev_source].visibleN.getValue() - 1
+            );
         var path = "";
-        if (source_id >= 0)
+        if (source_id >= 0) {
             path = me.sources[source_id].getPath();
+        }
         me.display_units[du_id].setSource(path);
+        me.active_sources[du_id] = source_id;
+        me.source_records[source_id].visibleN.setValue(
+            me.source_records[source_id].visibleN.getValue() + 1
+        );
     },
     
     # mapping: 
@@ -234,15 +250,23 @@ var EFIS = {
             }
         }
     },
-    
+  
     #-- public methods -----------------------
     addSource: func(name) {
-    var settings = me._defaultcanvas_settings;
+        var settings = me._defaultcanvas_settings;
         settings["name"] = name;
         var _canvas = canvas.new(settings);
         var _root = _canvas.createGroup();
         var srcID = me._addSourceCanvas(_canvas);
-        append(me.source_records, {id: srcID, name: name, canvas: _canvas, root: _root});
+        var visibleN = props.getNode("instrumentation/efis/update/visible"~srcID, 1);
+        visibleN.setIntValue(0);
+        append(me.source_records, {
+            id: srcID,
+            name: name,
+            canvas: _canvas,
+            root: _root, 
+            visibleN: visibleN,
+        });
         return srcID;
     },
 
@@ -348,16 +372,11 @@ var EFISCanvas = {
         amber: [1,0.682,0],
     },
 
-    new: func(canvas_group=nil, file=nil) {
+    new: func(source_record, file=nil) {
         var obj = {
             parents: [EFISCanvas],
             _id: nil,
             _listeners: [],
-            _updateN: nil,
-            _update_interval: 0.7,
-            _timer: nil,
-            _root: nil,
-            svg_keys: [],
             
             cleanup: func() {
                 print("EFISCanvas cleanup");
@@ -373,11 +392,20 @@ var EFISCanvas = {
                 #print("EFISCanvas add L: "~handle);
                 append(obj._listeners, handle);
             },
+            
+            updateN: nil,
+            updateCountP: "instrumentation/efis/update/count"~source_record.id,
+            _update_interval: 0.7,
+            _timer: nil,
+            _root: nil,
+            svg_keys: [],
         };
         obj._id = size(EFISCanvas._instances);
         append(EFISCanvas._instances, obj);
-        if (canvas_group != nil and file != nil)
-            obj.loadsvg(canvas_group, file);
+        obj.updateN = source_record.visibleN;
+        props.getNode(obj.updateCountP, 1).setIntValue(0);
+        if (file != nil)
+            obj.loadsvg(source_record.root, file);
         return obj;
     },
     
@@ -411,25 +439,19 @@ var EFISCanvas = {
         return me;
     },
 
-    setupUpdate: func(interval, updateN=nil) {
-        if (updateN == nil)
-            updateN = "/instrumentation/efis/update/i"~me._id;
-        elsif(typeof(updateN) == "scalar")
-            updateN = "/instrumentation/efis/update/"~updateN;
-        me._updateN = props.globals.getNode(updateN,1);
-        me._updateN.setBoolValue(1);
+    setUpdateInterval: func(interval) {
         interval = num(interval);
         if (interval == nil or interval < 0) 
             me._update_interval = 0.7;
         else me._update_interval = interval;
-        var timer = maketimer(me._update_interval, me, me.update);
-        append(EFISCanvas._timers, timer);
-        timer.start();
+        me._timer = maketimer(me._update_interval, me, me.update);
+        append(EFISCanvas._timers, me._timer);
+        me._timer.start();
     },
 
     ## overload the following methods in derived class!     
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) 
+        if (me.updateN == nil or !me.updateN.getValue()) 
             return;
     },
 };

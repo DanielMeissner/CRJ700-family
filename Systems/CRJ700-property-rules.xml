@@ -85,11 +85,11 @@
         <input>
             <expression>
                 <difference>
-                    <value>17</value>
                     <product>
                         <property>surface-positions/hstab-rad</property>
-                        <value>-57.29578</value>
+                        <value>57.29578</value>
                     </product>
+                    <value>17</value>
                 </difference>
             </expression>
         </input>
@@ -280,7 +280,7 @@
         <output>sim/alarms/master-warning</output>
     </logic>
 
-    <filter>
+<!--     <filter>
         <name>flapsbar</name>
         <type>gain</type>
         <debug type="bool">false</debug>
@@ -300,7 +300,7 @@
         <output>instrumentation/eicas/flaps-bar</output>
     </filter>
 
-
+ -->
     <filter>
         <name>pfd_pitch</name>
         <type>gain</type>

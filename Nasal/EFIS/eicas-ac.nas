@@ -6,10 +6,9 @@
 
 var EICASACCanvas = {
 
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = { 
-            parents: [EICASACCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASACCanvas , EFISCanvas.new(source_record)],
             svg_keys: ["gen1", "gen2", "gen3", "gen4", "gen5",
                     "eng1", "eng2", "apu", 
                     "idg1", "idg2", "idgdisc1", "idgdisc2",
@@ -19,9 +18,9 @@ var EICASACCanvas = {
             prop_names: [],
             
         };
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.1);
+        obj.setUpdateInterval(0.1);
         return obj;
     },
 
@@ -47,9 +46,8 @@ var EICASACCanvas = {
     },
     
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        #me.loop += 1;
-        #print("d "~me.loop);
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
         
     }, 
 };

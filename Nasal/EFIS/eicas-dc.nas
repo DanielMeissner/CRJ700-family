@@ -6,10 +6,9 @@
 
 var EICASDCCanvas = {
 
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = { 
-            parents: [EICASDCCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASDCCanvas , EFISCanvas.new(source_record)],
             svg_keys: [
                     #"eng1", "eng2", "apu", 
                     #"idg1", "idg2", "idgdisc1", "idgdisc2",
@@ -19,9 +18,9 @@ var EICASDCCanvas = {
             prop_names: [],
             
         };
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.1);
+        obj.setUpdateInterval(0.1);
         return obj;
     },
 
@@ -34,8 +33,7 @@ var EICASDCCanvas = {
     },
     
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        #me.loop += 1;
-        #print("d "~me.loop);
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
     }, 
 };

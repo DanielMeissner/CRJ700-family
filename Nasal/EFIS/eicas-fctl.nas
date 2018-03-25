@@ -6,10 +6,9 @@
 
 var EICASFctlCanvas = {
 
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = { 
-            parents: [EICASFctlCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASFctlCanvas , EFISCanvas.new(source_record)],
             svg_keys: [
                     "ail0", "ail1", "ailTrim",
                     "slats0", "slats1",
@@ -24,9 +23,9 @@ var EICASFctlCanvas = {
                     "rudder", "rudderTrim", "rudderLimit0", "rudderLimit1",
                 ],
         };
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.07);
+        obj.setUpdateInterval(0.07);
         return obj;
     },
 
@@ -37,13 +36,13 @@ var EICASFctlCanvas = {
     },
     
     _addGndSpoilerL: func(){
-        me.setlistener("spoiler-ob-ground-pos-norm", func(n) {
+        me.setlistener("/surface-positions/spoiler-ob-ground-pos-norm", func(n) {
             var v = n.getValue() or 0;
             me["spoilerIndL3"].setTranslation(0, -139.46 * v);
             me["spoilerIndR3"].setTranslation(0, -139.46 * v);
         
         }, 1, 0);
-        me.setlistener("spoiler-ib-ground-pos-norm", func(n) {
+        me.setlistener("/surface-positions/spoiler-ib-ground-pos-norm", func(n) {
             var v = n.getValue() or 0;
             me["spoilerIndL4"].setTranslation(0, -139.46 * v);
             me["spoilerIndR4"].setTranslation(0, -139.46 * v);
@@ -56,8 +55,8 @@ var EICASFctlCanvas = {
     },
     
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
         var flaps_deg = math.round(me.getSurf("flap-pos-norm")*45);
         var slats_deg = math.round(me.getSurf("slat-pos-norm")*25);
         var ail = [0,0];

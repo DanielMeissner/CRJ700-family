@@ -88,7 +88,7 @@
 	<vstab x="-4.012" y="-11.332" z="-1.844" length="1.49" chord="1.12" taper="0.25" dihedral="104.4" sweep="34.9" idrag="-0.5" />
 
 	<!-- Horizontal stabilizers -->
-	<hstab x="-15.62" y="0.149" z="2.851" length="4.6" chord="2.574" sweep="26.0" taper="0.4" dihedral="-5.2" camber="-0.12" twist="-1.0" idrag="1.0">
+	<hstab x="-15.62" y="0.149" z="2.851" length="4.6" chord="2.574" sweep="26.0" taper="0.4" dihedral="-5.2" camber="-0.12" twist="-1.0" incidence="10.0">
 		<stall aoa="15.0" width="7" peak="1.5" />
 		<flap0 start="0.0" end="0.82" lift="1.5" drag="1.4" />
 		<control-input axis="/fcs/elevator-cmd-norm" control="FLAP0" />

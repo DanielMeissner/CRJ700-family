@@ -36,10 +36,10 @@ var power_props = [
 ];
 var minimum_power = 22;
 
-var efis = EFIS.new(display_names, display_objects, power_props);
-forindex (var i; display_names) {
-    efis.getDU(i).setPowerSource(power_props[i], minimum_power);
-}  
+var efis = EFIS.new(display_names, display_objects, power_props, minimum_power);
+#forindex (var i; display_names) {
+#    efis.getDU(i).setPowerSource(power_props[i], minimum_power);
+#}
 
 # efis will create one display canvas and one source canvas per display unit automatically
 # more pages can be added e.g. for EICAS
@@ -56,8 +56,8 @@ var sources = efis.getSources();
 var eicas_pageP = "instrumentation/eicas/page";
 var ecp_targetN = props.globals.getNode("instrumentation/eicas/ecp-target",1);
 ecp_targetN.setIntValue(3);
-var dev_targetN = props.globals.getNode("/dev/efis-target",1);
-dev_targetN.setIntValue(4);
+#var dev_targetN = props.globals.getNode("/dev/efis-target",1);
+#dev_targetN.setIntValue(4);
 efis.addSourceSelector(eicas_pageP, ecp_targetN, eicas_sources);
 
 # display selectors allow to re-route certain displays
@@ -96,18 +96,18 @@ var pfd2 = nil;
 var eicas = nil;
 
 var EFISSetup = func() {
-    pfd1 = PFDCanvas.new(sources[0].root, svg_path~"PFD.svg",0);
-    pfd2 = PFDCanvas.new(sources[5].root, svg_path~"PFD.svg",1);
-    eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]].root, svg_path~"eicas-pri.svg");
-    eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]].root, svg_path~"eicas-stat.svg");
-    p3 = EFISCanvas.new(sources[eicas_sources[2]].root, svg_path~"ecs.svg");
-    hydr = EICASHydraulicsCanvas.new(sources[eicas_sources[3]].root, svg_path~"hydraulics.svg");
-    ac = EICASACCanvas.new(sources[eicas_sources[4]].root, svg_path~"eicas-ac.svg");
-    dc = EICASDCCanvas.new(sources[eicas_sources[5]].root, svg_path~"eicas-dc.svg");
-    fuel = EICASFuelCanvas.new(sources[eicas_sources[6]].root, svg_path~"fuel.svg");
-    fctl = EICASFctlCanvas.new(sources[eicas_sources[7]].root, svg_path~"eicas-fctl.svg");
-    aice = EICASAIceCanvas.new(sources[eicas_sources[8]].root, svg_path~"template.svg");
-    doors = EICASDoorsCanvas.new(sources[eicas_sources[9]].root, svg_path~"eicas-doors.svg");
+    pfd1 = PFDCanvas.new(sources[0], svg_path~"PFD.svg",0);
+    pfd2 = PFDCanvas.new(sources[5], svg_path~"PFD.svg",1);
+    eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]], svg_path~"eicas-pri.svg");
+    eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]], svg_path~"eicas-stat.svg");
+    p3 = EFISCanvas.new(sources[eicas_sources[2]], svg_path~"ecs.svg");
+    hydr = EICASHydraulicsCanvas.new(sources[eicas_sources[3]], svg_path~"hydraulics.svg");
+    ac = EICASACCanvas.new(sources[eicas_sources[4]], svg_path~"eicas-ac.svg");
+    dc = EICASDCCanvas.new(sources[eicas_sources[5]], svg_path~"eicas-dc.svg");
+    fuel = EICASFuelCanvas.new(sources[eicas_sources[6]], svg_path~"fuel.svg");
+    fctl = EICASFctlCanvas.new(sources[eicas_sources[7]], svg_path~"eicas-fctl.svg");
+    aice = EICASAIceCanvas.new(sources[eicas_sources[8]], svg_path~"template.svg");
+    doors = EICASDoorsCanvas.new(sources[eicas_sources[9]], svg_path~"eicas-doors.svg");
 
     #-- add display routing controls
     forindex (var i; src_selectors) {

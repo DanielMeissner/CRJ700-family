@@ -5,10 +5,9 @@
 #
 
 var EICASDoorsCanvas = {
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = { 
-            parents: [EICASDoorsCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASDoorsCanvas , EFISCanvas.new(source_record)],
             svg_keys: ["passenger", "fwdservice", "avionics", "fwdcargo", "ctrcargo",
                     "aftcargo", "lfwdemer", "laftemer", "rfwdemer","raftemer"],
             prop_base: "sim/model/door-positions/",
@@ -16,9 +15,9 @@ var EICASDoorsCanvas = {
                 "aft-cargo"],
             prop_sufix: "/position-norm",
         };
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.9);
+        obj.setUpdateInterval(0.9);
         return obj;
     },
 
@@ -35,9 +34,8 @@ var EICASDoorsCanvas = {
     },
         
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        #me.loop += 1;
-        #print("d "~me.loop);
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
         var color_warn = me.colors["red"];
         forindex (var i; me.prop_names) {
             if (i > 0) color_warn = me.colors["amber"];

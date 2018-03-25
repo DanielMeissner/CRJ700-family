@@ -54,7 +54,7 @@ var Eicas_messages =
         # first, acquire the current message element
         var this_priority_level = me.messages[me._current_level];
         var this_message = this_priority_level[me._current_message];
-	
+
         # decide whether or not to display it
         if (props.condition(this_message.condition))
         {

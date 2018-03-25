@@ -26,9 +26,9 @@
      borderopacity="1"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.74808584"
-     inkscape:cx="216.18228"
-     inkscape:cy="532.39479"
+     inkscape:zoom="2.5920005"
+     inkscape:cx="287.43998"
+     inkscape:cy="378.07383"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -602,7 +602,8 @@
        sodipodi:nodetypes="cccc" />
     <g
        id="elevTrim"
-       inkscape:label="#g4931">
+       inkscape:label="#g4931"
+       transform="translate(0,140.3858)">
       <path
          inkscape:connector-curvature="0"
          id="path4922"

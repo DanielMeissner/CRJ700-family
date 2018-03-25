@@ -6,10 +6,9 @@
 
 var EICASPriCanvas = {
 
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = {
-            parents: [EICASPriCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASPriCanvas , EFISCanvas.new(source_record)],
             svg_keys: [
                 "N10", "N11", "N1pointer0", "N1pointer1",
                 "rev0", "rev1", "apr0", "apr1", "thrustMode",
@@ -20,17 +19,16 @@ var EICASPriCanvas = {
                 "oilPress0", "oilPress1",
                 "gOil", "oilPointer0", "oilPointer1",
                 "gFanVib", "fanPointer0", "fanPointer1", "fanArcAmber0", "fanArcAmber1",
-                "gGear", "gear0", "gear1", "gear2", "tGear0", "tGear1", "tGear2",
+                "gGear", "gear0", "gear1", "gear2", "tGear0", "tGear1", "tGear2", "gearInTransit0", "gearInTransit1", "gearInTransit2",
                 "slatsBar", "slatsBar_clip", "flapsBar", "flapsPos",
                 "gFuelValues", "fuelQty0", "fuelQty1", "fuelQty2", "fuelTotal",
                 ],
 
         };
         for (var i = 1; i <= 16; i += 1) append(obj.svg_keys, "message"~i);
-        print("message"~i);
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.5, "eicas-primary");
+        obj.setUpdateInterval(0.050);
         return obj;
     },
 
@@ -79,17 +77,16 @@ var EICASPriCanvas = {
         if (pos == 0) {
             me["tGear"~idx].setText("UP");
             me["gear"~idx].setColor(me.colors["white"]);
-            me["gear"~idx].setColorFill([0,0,0,0]);
+            me["gearInTransit"~idx].hide();
         }
         elsif (pos == 1) {
             me["tGear"~idx].setText("DN");
             me["gear"~idx].setColor(me.colors["green"]);
-            me["gear"~idx].setColorFill([0,0,0,0]);
+            me["gearInTransit"~idx].hide();
         }
         else {
+            me["gearInTransit"~idx].show();
             me["tGear"~idx].setText("");
-            me["gear"~idx].setColor(me.colors["yellow"]);
-            me["gear"~idx].setColorFill(me.colors["yellow"]);
         }
     },
 
@@ -132,10 +129,8 @@ var EICASPriCanvas = {
     },
 
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        #me.loop += 1;
-        #print("d "~me.loop);
-        #if (both enging oilprssure > 25 psi) hideOilShowFanVib
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
         var oilp = [0,0];
         foreach (var i; [0,1]) {
             value = me.getEng(i, "rpm");
@@ -147,7 +142,7 @@ var EICASPriCanvas = {
             value = me.getEng(i, "rpm2");
             me["N2"~i].setText(sprintf("%3.1f", value));
             me["N2pointer"~i].setRotation(value * 0.04189);
-            me["oilTemp"~i].setText(sprintf("%3d", me.getEng(i, "oilt-norm")*170));
+            me["oilTemp"~i].setText(sprintf("%3d", me.getEng(i, "oilt-norm")*163));
             oilp[i] = me.getEng(i, "oilp-norm")*780;
             me["oilPress"~i].setText(sprintf("%3d", oilp[i]));
             me.updateOilGauge(i, oilp[i]);

@@ -6,10 +6,9 @@
 
 var EICASStatCanvas = {
 
-    new: func(canvas_group, file) {
+    new: func(source_record, file) {
         var obj = { 
-            parents: [EICASStatCanvas , EFISCanvas.new()],
-            loop: 0,
+            parents: [EICASStatCanvas , EFISCanvas.new(source_record)],
             svg_keys: [
                 "elevTrim", "elevTrimValue", "ailTrim", "rudderTrim",
                 "gAPU", "rpm", "rpmPointer", "egt", "egtPointer",
@@ -17,9 +16,9 @@ var EICASStatCanvas = {
             ],
            
         };
-        obj.loadsvg(canvas_group, file);
+        obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setupUpdate(0.1, "eicas-status");
+        obj.setUpdateInterval(0.100);
         return obj;
     },
 
@@ -61,9 +60,8 @@ var EICASStatCanvas = {
     
     #-- listeners for rare events --
     update: func() {
-        if (me._updateN == nil or !me._updateN.getValue()) return;
-        #me.loop += 1;
-        #print("d "~me.loop);
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        setprop(me.updateCountP, getprop(me.updateCountP)+1);
         value = me.getEng(2, "rpm");
         me["rpm"].setText(sprintf("%3.0f", value));
         me["rpmPointer"].setRotation(value * 0.04189);
