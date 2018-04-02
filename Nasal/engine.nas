@@ -408,7 +408,6 @@ Engine.Jet = func(n)
             if (jet.running) {
                 jet.starter_node.setValue(0); #write status of starter, used by OHP switch light
                 jet.controls.starter_cmd = 0;
-                #jet.fdm_throttle = jet.fdm_throttle_idle + (1 - jet.fdm_throttle_idle) * jet.controls.throttle;
                 jet.fdm_throttle = jet.controls.throttle;
                 jet.n1 = jet.fdm_n1;
                 jet.n2 = jet.fdm_n2;
@@ -435,8 +434,6 @@ Engine.Jet = func(n)
                 jet.fdm_throttle = 0;
             }
             jet.running_node.setBoolValue(jet.running);
-            #jet.fuel_flow_gph = jet.fuel_flow_gph_node.getValue();
-            #jet.fuel_flow_pph_node.setValue(jet.fuel_flow_gph * Engine.fuel_density());
         }
         elsif (flight_model == "jsb")
         {
@@ -487,7 +484,7 @@ Engine.Jet = func(n)
         if (v.getBoolValue())
         {
             print("Engine " ~ n ~ " on fire!");
-            jet.serviceable_node.setBoolValue(0);
+            settimer(func {jet.serviceable_node.setBoolValue(0); }, 10);
         }
     },0,0);
 
