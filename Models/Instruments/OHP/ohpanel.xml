@@ -4,15 +4,15 @@
 <!-- Overhead panel -->
 
 <PropertyList>
-	
+
     <path>ohpanel.ac</path>
-	
+
     <panel-marking-emit>
 		<red>1</red>
 		<green>0.871</green>
 		<blue>0.427</blue>
 	</panel-marking-emit>
-	
+
     <button-emit-white>
 		<red>1</red>
 		<green>0.871</green>
@@ -28,19 +28,19 @@
 		<green>0.304</green>
 		<blue>0.007</blue>
 	</button-emit-amber>
-	
+
     <button-translate-m type="float">0.001</button-translate-m>
     <cover-rotate-deg type="float">110</cover-rotate-deg>
     <switch-rotate-deg type="float">35</switch-rotate-deg>
     <switch-rotate-neg-deg type="float">-35</switch-rotate-neg-deg>
-	
+
     <!-- Visible only within 1/2 km -->
     <animation>
 		<type>range</type>
 		<min-m>0</min-m>
 		<max-m>50</max-m>
 	</animation>
-	
+
     <animation>
 		<type>material</type>
 		<object-name>Markings</object-name>
@@ -183,7 +183,7 @@
 		<object-name>XflowBtn</object-name>
 		<object-name>XflowManBtn</object-name>
 		<object-name>XflowToLeft</object-name>
-		<object-name>XflowToRight</object-name>		
+		<object-name>XflowToRight</object-name>
 	</animation>
     <!-- Electrical power -->
     <animation>
@@ -288,7 +288,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-green/red" />
 			<green alias="../../../button-emit-green/green" />
 			<blue alias="../../../button-emit-green/blue" />
@@ -314,14 +314,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<!-- IDG switch -->
     <animation>
 		<type>pick</type>
@@ -379,7 +379,7 @@
 			<z-m>0.11024</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>IDG1Btn</object-name>
@@ -423,7 +423,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -445,14 +445,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>IDG2Btn</object-name>
@@ -496,7 +496,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -518,14 +518,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<!-- AC ESS xfer switch -->
     <animation>
 		<type>pick</type>
@@ -567,14 +567,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<!-- Auto xfer switches -->
     <animation>
 		<type>pick</type>
@@ -618,7 +618,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -640,14 +640,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>IDG2TransferBtn</object-name>
@@ -690,7 +690,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -712,14 +712,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<!-- generators -->
     <animation>
 		<type>pick</type>
@@ -805,7 +805,7 @@
 			<z-m>0.054</z-m>
 		</center>
 	</animation>
-	
+
 	<!-- Hyd SOV -->
     <animation>
 		<type>pick</type>
@@ -863,7 +863,7 @@
 			<z-m>-0.06482</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>HydSOVBtnL</object-name>
@@ -883,7 +883,7 @@
 		<object-name>HydSOVLightL</object-name>
 		<condition>
 			<not><property>controls/hydraulic/system[0]/pump-a</property></not>
-		</condition>		
+		</condition>
 		<factor alias="../../button-translate-m" />
 		<axis>
 			<x>-1</x>
@@ -903,17 +903,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<not><property>controls/hydraulic/system[0]/pump-a</property></not>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>HydSOVBtnR</object-name>
@@ -933,7 +933,7 @@
 		<object-name>HydSOVLightR</object-name>
 		<condition>
 			<not><property>controls/hydraulic/system[1]/pump-a</property></not>
-		</condition>		
+		</condition>
 		<factor alias="../../button-translate-m" />
 		<axis>
 			<x>-1</x>
@@ -953,17 +953,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<not><property>controls/hydraulic/system[1]/pump-a</property></not>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <!-- External lights -->
     <animation>
 		<type>pick</type>
@@ -994,7 +994,7 @@
 			<z-m>-0.142</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>BeaconLightSwitch</object-name>
@@ -1024,7 +1024,7 @@
 			<z-m>-0.142</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>StrobeLightSwitch</object-name>
@@ -1054,7 +1054,7 @@
 			<z-m>-0.142</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>LogoLightSwitch</object-name>
@@ -1084,7 +1084,7 @@
 			<z-m>-0.142</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>WingLightSwitch</object-name>
@@ -1114,7 +1114,7 @@
 			<z-m>-0.142</z-m>
 		</center>
 	</animation>
-	
+
     <!-- Fuel -->
     <animation>
 		<type>pick</type>
@@ -1158,7 +1158,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -1181,14 +1181,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>XflowBtn</object-name>
@@ -1228,10 +1228,10 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>systems/fuel/gravity-xflow/open</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -1250,17 +1250,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>systems/fuel/gravity-xflow/fail</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>RFuelBtn</object-name>
@@ -1303,7 +1303,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -1326,14 +1326,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<!-- Xflow -->
     <animation>
 		<type>pick</type>
@@ -1380,7 +1380,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -1402,14 +1402,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>XflowManBtn</object-name>
@@ -1450,14 +1450,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>XflowToRight</object-name>
@@ -1503,7 +1503,7 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -1525,14 +1525,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <!-- Bleed air -->
     <animation>
 		<type>pick</type>
@@ -1661,7 +1661,7 @@
 			<z-m>0.02296</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>BleedSourceKnob</object-name>
@@ -1708,7 +1708,7 @@
 			<z-m>0.02068</z-m>
 		</center>
 	</animation>
-	
+
     <!-- APU -->
     <animation>
 		<type>pick</type>
@@ -1753,13 +1753,13 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
-	</animation>    
+	</animation>
 	<animation>
 		<type>material</type>
 		<object-name>APUSOVFail</object-name>
@@ -1775,14 +1775,14 @@
 				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>APUStartBtn</object-name>
@@ -1832,10 +1832,10 @@
 							<value>46</value>
 						</less-than>
 					</and>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -1857,17 +1857,17 @@
 						<property>controls/APU/off-on</property>
 						<property>engines/engine[2]/running</property>
 					</and>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-green/red" />
 			<green alias="../../../button-emit-green/green" />
 			<blue alias="../../../button-emit-green/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <!-- Engine controls -->
     <animation>
 		<type>pick</type>
@@ -1907,17 +1907,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>engines/engine[0]/starter</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<animation>
 		<type>pick</type>
 		<object-name>Eng1StopBtn</object-name>
@@ -1931,7 +1931,7 @@
 				<value type="bool">false</value>
 			</binding>
 		</action>
-	</animation>	
+	</animation>
 	<!--     <animation>
 		<type>translate</type>
 		<object-name>Eng1StopBtn</object-name>
@@ -1963,17 +1963,17 @@
 							<value>10</value>
 						</greater-than>
 					</and>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>Eng2StartBtn</object-name>
@@ -2012,17 +2012,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>engines/engine[1]/starter</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>Eng2StopBtn</object-name>
@@ -2068,17 +2068,17 @@
 							<value>10</value>
 						</greater-than>
 					</and>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
 	<animation>
 		<type>pick</type>
 		<object-name>CONTBtn</object-name>
@@ -2092,7 +2092,7 @@
 				<value type="bool">false</value>
 			</binding>
 		</action>
-	</animation>	
+	</animation>
     <animation>
 		<type>translate</type>
 		<object-name>CONTBtn</object-name>
@@ -2104,7 +2104,7 @@
 			<y>0</y>
 			<z>0</z>
 		</axis>
-	</animation> 
+	</animation>
     <animation>
 		<type>material</type>
 		<object-name>CONTLight</object-name>
@@ -2117,17 +2117,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/engines/cont-ignition</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <!-- Hydraulic switches -->
 	<animation>
 		<type>pick</type>
@@ -2178,7 +2178,7 @@
 			<z-m>-0.14211</z-m>
 		</center>
 	</animation>
-	
+
 	<animation>
 		<type>pick</type>
 		<object-name>Hydraulic3ASwitch</object-name>
@@ -2208,7 +2208,7 @@
 			<z-m>-0.14211</z-m>
 		</center>
 	</animation>
-	
+
 	<animation>
 		<type>pick</type>
 		<object-name>Hydraulic3BSwitch</object-name>
@@ -2258,7 +2258,7 @@
 			<z-m>-0.14211</z-m>
 		</center>
 	</animation>
-	
+
 	<animation>
 		<type>pick</type>
 		<object-name>Hydraulic2Switch</object-name>
@@ -2307,8 +2307,8 @@
 			<y-m>0</y-m>
 			<z-m>-0.14211</z-m>
 		</center>
-	</animation>	
-	
+	</animation>
+
     <!-- Cabin Press -->
     <animation>
 		<type>pick</type>
@@ -2340,7 +2340,7 @@
 			<z-m>0.120</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>EmerDepressBtn</object-name>
@@ -2378,17 +2378,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/emer-depress</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>PressContBtn</object-name>
@@ -2428,10 +2428,10 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/press-man</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -2450,18 +2450,18 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<!-- FIXME -->
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
-	
+
+
     <!-- Pack controls -->
     <animation>
 		<type>pick</type>
@@ -2502,10 +2502,10 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/pack-l-off</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -2524,17 +2524,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<!-- FIXME -->
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>PackRBtn</object-name>
@@ -2574,10 +2574,10 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/pack-r-off</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
@@ -2596,17 +2596,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<!-- FIXME -->
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>PackLManBtn</object-name>
@@ -2644,17 +2644,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/pack-l-man</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>PackRManBtn</object-name>
@@ -2692,18 +2692,18 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/pack-r-man</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
-	
+
+
     <!-- Ram Air  -->
     <animation>
 		<type>pick</type>
@@ -2770,17 +2770,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/ECS/ram-air</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-white/red" />
 			<green alias="../../../button-emit-white/green" />
 			<blue alias="../../../button-emit-white/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <!-- Anti-ice -->
     <animation>
 		<type>pick</type>
@@ -2866,7 +2866,7 @@
 			<z-m>-0.05</z-m>
 		</center>
 	</animation>
-	
+
     <animation>
 		<type>pick</type>
 		<object-name>AITestBtn</object-name>
@@ -2904,17 +2904,17 @@
 				<or>
 					<property>controls/lighting/lt-test</property>
 					<property>controls/anti-ice/det-test</property>
-				</or>					
+				</or>
 			</and>
 		</condition>
-		<emission>	
+		<emission>
 			<red alias="../../../button-emit-amber/red" />
 			<green alias="../../../button-emit-amber/green" />
 			<blue alias="../../../button-emit-amber/blue" />
 			<factor-prop>controls/lighting/ind-lts-norm</factor-prop>
 		</emission>
 	</animation>
-	
+
     <!-- Miscellaneous lights -->
     <animation>
 		<type>pick</type>
@@ -3019,7 +3019,7 @@
 			<z-m>-0.144</z-m>
 		</center>
 	</animation>
-    
+
     <!-- Rembrandt !! -->
     <effect>
 		<name>REMBRANDT transparency</name>
@@ -3034,5 +3034,5 @@
 		<object-name>IDG1Cover</object-name>
 		<object-name>IDG2Cover</object-name>
 	</effect>
-	
+
 </PropertyList>

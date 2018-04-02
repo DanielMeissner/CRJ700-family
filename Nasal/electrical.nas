@@ -5,7 +5,7 @@
 # The CRJ700 electrical system consists of an AC part and a DC part.
 # Multiple redundant buses distribute the power to the electrical loads.
 #
-# AC (115V@400Hz) 
+# AC (115V@400Hz)
 # Feed by APU generator, engine generators or ext. power while on ground.
 # If all regular AC power fails, the ADG will generate AC power in flight
 # while airspeed >= 135kt
@@ -17,14 +17,14 @@
 
 ## FG properties used
 # controls/AC/system[n]/
-# systems/AC/system[]/* 
+# systems/AC/system[]/*
 # systems/AC/outputs/bus<n>		the outputs of the AC power center feeding AC bus<n>
-# systems/AC/outputs/*	
+# systems/AC/outputs/*
 #
 # controls/DC/system[n]/
-# systems/DC/system[]/* 
+# systems/DC/system[]/*
 # systems/DC/outputs/bus<n>		the outputs of the DCC power center feeding DC bus<n>
-# systems/DC/outputs/*	
+# systems/DC/outputs/*
 #
 
 # IDG (engine generator)
@@ -68,20 +68,20 @@ var IDG = {
 			me.fakeinputN = tmp;
 		}
 	},
-	
+
 	_update_output: func {
 		#var i = int(me.inputN.getValue());
 		#if (me.running and int(me.input) == i) return;
-		
+
 		call(EnergyConv._update_output, [], me);
 		#simulate frequency
 		me.freq = 0;
-		if (me.output and me.input > me.input_min) {			
+		if (me.output and me.input > me.input_min) {
 			if (!me.input_lo) me.freq = 400;
-			elsif (me.input < 57.5) 
+			elsif (me.input < 57.5)
 				#me.freq = 375 * (me.input - me.input_min)/5;
 				me.freq = 75 * int(me.input - me.input_min);
-			elsif (me.input < me.input_lo) 
+			elsif (me.input < me.input_lo)
 				#me.freq = 375 + 25 * (me.input - 57.5)/2.5;
 				me.freq = 375 + int(10 * (me.input - 57.5));
 			else me.freq = 400;
@@ -124,7 +124,7 @@ var APUGen = {
 };
 
 # ADG will work down to 135kt airspeed (according to FOM)
-# 
+#
 var ADG = {
 	new: func (bus, name="adg" , input="/instrumentation/airspeed-indicator/indicated-speed-kt") {
 		var obj = {
@@ -144,11 +144,11 @@ var ADG = {
 	#will deploy on first "switch on"
 	_switch_listener: func(v){
 		me.switch = v.getValue();
-		if (me.serviceableN.getBoolValue() and me.switch) 
+		if (me.serviceableN.getBoolValue() and me.switch)
 			interpolate(me.positionN, 1, 2);
 		me._update_output();
 	},
-		
+
 	_update_output: func {
 		#var i = int(me.inputN.getValue());
 		#if (me.running and int(me.input) == i) return;
@@ -156,9 +156,9 @@ var ADG = {
 		call(EnergyConv._update_output, [], me);
 		me.freq = 0;
 		if (me.input > 120) {
-			if (me.input < 130) 
+			if (me.input < 130)
 				me.freq = 37.5 * int(me.input - 120);
-			elsif (me.input < 135) 
+			elsif (me.input < 135)
 				me.freq = 375 + int(5 * (me.input - 130));
 			else me.freq = 400;
 		}
@@ -189,11 +189,11 @@ var ACext = {
 		call(EnergyConv.init,[], me);
 		var gear = props.getNode("gear").getChildren("gear");
 		me.gear_cnt = size(gear);
-		#foreach(g; gear) {			
-		#	append(me.listeners, setlistener(g.getChild("has-brake"), func(v) {me._gearL(v);}, 1 , 0));			
+		#foreach(g; gear) {
+		#	append(me.listeners, setlistener(g.getChild("has-brake"), func(v) {me._gearL(v);}, 1 , 0));
 		#}
-		append(me.listeners, setlistener(props.globals.getNode("controls/gear/brake-parking"), func(v) {me._gearL(v);}, 1 , 0));			
-		append(me.listeners, setlistener(props.globals.getNode("controls/electric/ac-service-selected"), func(v) {me._selectedL(v);}, 1 , 0));			
+		append(me.listeners, setlistener(props.globals.getNode("controls/gear/brake-parking"), func(v) {me._gearL(v);}, 1 , 0));
+		append(me.listeners, setlistener(props.globals.getNode("controls/electric/ac-service-selected"), func(v) {me._selectedL(v);}, 1 , 0));
 		return me;
 	},
 
@@ -202,8 +202,8 @@ var ACext = {
 			setprop("controls/electric/ac-service-in-use", me.selected);
 			me._update_output();
 	},
-	
-	
+
+
 	_gearL: func(v) {
 		if (v.getBoolValue()) {
 			if  (me.parking_brake < me.gear_cnt) me.parking_brake += 1;
@@ -211,12 +211,12 @@ var ACext = {
 		else if (me.parking_brake > 0) me.parking_brake -= 1;
 		if (me.parking_brake) {
 			setprop("controls/electric/ac-service-avail", 1);
-		}			
+		}
 		else {
 			setprop("controls/electric/ac-service-avail", 0);
 		}
 	},
-		
+
 	_update_output: func {
 		#var i = int(me.inputN.getValue());
 		#if (me.running and int(me.input) == i) return;
@@ -234,7 +234,7 @@ var ACBus = {
 		obj = { parents : [ACBus, EnergyBus.new("AC", sysid, name, outputs)],
 			freq: 0, #Hz
 			load: 0, #kVA
-		};		
+		};
 		return obj;
 	},
 };
@@ -242,7 +242,7 @@ var ACBus = {
 var DCBus = {
 	new: func (sysid, name, outputs) {
 		obj = { parents : [DCBus, EnergyBus.new("DC", sysid, name, outputs)],
-		};		
+		};
 		return obj;
 	},
 };
@@ -258,20 +258,20 @@ var ACPC = {
 			in_flight: 0,
 		};
 		print("AC power center "~obj.parents[1].system_path);
-		return obj;		
+		return obj;
 	},
-	
-	readProps: func {		
+
+	readProps: func {
 		me.output = me.outputN.getValue();
 		me.serviceable = me.serviceableN.getValue();
 		me.acext_selected = getprop("controls/electric/ac-service-selected");
 		me.in_flight = (getprop("velocities/airspeed-kt") > 120 );
 	},
-		
+
 	#
 	# ACPC logic
 	#
-	# On ground ext. AC can be used. Ext. AC will automatically disconnect on 
+	# On ground ext. AC can be used. Ext. AC will automatically disconnect on
 	# any on-board AC generator comming online.
 	# The APU generator will auto disconnect when 2nd IDG comes online
 	#
@@ -283,7 +283,7 @@ var ACPC = {
 			var apu = me.inputs[2].getValue();
 			var ep = me.inputs[3].getValue();
 			var adg = me.inputs[4].getValue();
-			
+
 			#print("ACPC g1:"~g1~", g2:"~g2~", a:"~apu~", e:"~ep~", adg:"~adg);
 			if (me.acext_selected) {
 				if (apu > 90 or g1 or g2) {
@@ -295,9 +295,9 @@ var ACPC = {
 			else ep = 0;
 
 			var v = 0;
-			#ADG			
+			#ADG
 			me.outputs[4].setValue(adg);
-			
+
 			#use ext. AC until APU avail
 			if (!apu) apu = ep;
 			if (g1 < apu) g1 = apu;
@@ -309,19 +309,19 @@ var ACPC = {
 			me.outputs[0].setValue(g1);
 			#AC2
 			me.outputs[1].setValue(g2);
-			
+
 			#AC_ESS (prio: adg,ac1,ac2)
 			v = (g1 >= g2) ? g1 : g2;
 			v = (adg > v) ? adg : v;
-			me.outputs[2].setValue(v);			
+			me.outputs[2].setValue(v);
 
 			#AC_SERVICE
 			v = (g2 >= ep) ? g2 : ep;
 			me.outputs[3].setValue(v);
-			if (!me.inputs[0].isRunning() and 
-				!me.inputs[1].isRunning() and 
-				!me.inputs[2].isRunning() and 
-				!me.inputs[4].isRunning() and 
+			if (!me.inputs[0].isRunning() and
+				!me.inputs[1].isRunning() and
+				!me.inputs[2].isRunning() and
+				!me.inputs[4].isRunning() and
 				me.in_flight)
 			{
 				print("ACPC: !! ADG auto deploy !!");
@@ -343,15 +343,15 @@ var DCPC = {
 			dcservice: 0,
 		};
 		print("DC power center "~obj.parents[1].system_path);
-		return obj;		
+		return obj;
 	},
-	
-	readProps: func {		
+
+	readProps: func {
 		me.output = me.outputN.getValue();
 		me.serviceable = me.serviceableN.getValue();
 		me.dcservice = getprop("controls/electric/dc-service-switch");
 	},
-		
+
 	update: func {
 		me.readProps();
 		if (me.serviceable) {
@@ -362,21 +362,21 @@ var DCPC = {
 			var apubatt = me.inputs[4].getValue();
 			var mainbatt = me.inputs[5].getValue();
 			var batt = (apubatt > mainbatt) ? apubatt : mainbatt;
-			
+
 			#print("DCPC "~t1~", "~t2~", "~et1~", "~et2~", "~batt);
 			var v = 0;
-			
+
 			#Battery
 			me.outputs[4].setValue(batt);
 
 			#DC1
 			v = (t1 >= batt) ? t1 : batt;
 			me.outputs[0].setValue(v);
-			
+
 			#DC2
 			v = (t2 >= batt) ? t2 : batt;
 			me.outputs[1].setValue(v);
-	
+
 			#DC_SERVICE
 			if (me.dcservice) me.outputs[3].setValue(apubatt);
 			else me.outputs[3].setValue(v);
@@ -393,61 +393,61 @@ var DCPC = {
 print("Creating electrical system ...");
 
 # Define electrical buses and their outputs. Output will be set to bus voltage.
-# Output can be defined as ["output-name", "controls/path/to/switch"] or just 
+# Output can be defined as ["output-name", "controls/path/to/switch"] or just
 # as "output-name" (always on).
 
-var ac_buses = [ 
+var ac_buses = [
 	ACBus.new(1, "AC1", ["aoa-heater-r", "egpws", "flaps-a-1",
 		["hyd-pump2B", "controls/hydraulic/system[1]/pump-b"],
 		["hyd-pump3B-1", "controls/hydraulic/system[2]/pump-b"],
-		"pitch-trim1", "pitot-heater-r", "tru1", 
+		"pitch-trim1", "pitot-heater-r", "tru1",
 		]),
-	ACBus.new(2, "AC2",	["copilot-panel-int-lights", "esstru2", "flaps-b-1", 
-		["hyd-pump1B", "controls/hydraulic/system[0]/pump-b"], 
+	ACBus.new(2, "AC2",	["copilot-panel-int-lights", "esstru2", "flaps-b-1",
+		["hyd-pump1B", "controls/hydraulic/system[0]/pump-b"],
 		["hyd-pump3A", "controls/hydraulic/system[2]/pump-a"],
-		"pitch-trim2-1", "tru2", 
+		"pitch-trim2-1", "tru2",
 		]),
-	ACBus.new(3, "AC-ESS", ["aoa-heater-l", "cabin-lights", 
-		"center-panel-int-lights", "esstru1", "ignition-a", "ohp-int-lights", 
-		"pilot-panel-int-lights", "pitot-heater-l", "tcas", "xflow-pump", 
+	ACBus.new(3, "AC-ESS", ["aoa-heater-l", "cabin-lights",
+		"center-panel-int-lights", "esstru1", "ignition-a", "ohp-int-lights",
+		"pilot-panel-int-lights", "pitot-heater-l", "tcas", "xflow-pump",
 		]),
 	ACBus.new(4, "AC-Service", ["apu-charger", "cabin-lights",
-		["logo-lights", "controls/lighting/logo-lights"], 
+		["logo-lights", "controls/lighting/logo-lights"],
 		]),
 	ACBus.new(5, "ADG",["flaps-a-2", "flaps-b-2", "hyd-pump3B-2", "pitch-trim2-2"]),
 ];
 
 var dc_buses = [
-	DCBus.new(1, "DC1", ["dme1", "eicas-disp", "gps1", 
+	DCBus.new(1, "DC1", ["dme1", "eicas-disp", "gps1",
 		["landing-lights[1]", "controls/lighting/landing-lights[1]"],
-		"nwsteering", "passenger-door", "radio-altimeter1", 
+		"nwsteering", "passenger-door", "radio-altimeter1",
 		["rear-ac-light", "sim/model/lights/strobe/state"],
 		["taxi-lights", "controls/lighting/taxi-lights"],
 		["wing-lights", "controls/lighting/wing-lights"],
-		"wiper-left", 
+		"wiper-left",
 		"wradar",
 		]),
 	DCBus.new(2, "DC2", ["afcs-r", "clock2", "fuel-pump-right", "mfd2", "pfd2",
 		"rtu2",	"vhf-com2", "vhf-nav2",
 		["wing-ac-lights", "sim/model/lights/strobe/state"],
 		]),
-	DCBus.new(3, "DC-ESS", ["efis", "instrument-flood-lights", "mfd1", 
+	DCBus.new(3, "DC-ESS", ["efis", "instrument-flood-lights", "mfd1",
 		"pfd1", "reversers", "rtu1", "transponder1", "vhf-nav1", "wiper-right",
 		]),
 	DCBus.new(4, "DC-Service", ["boarding-lights", "galley-lights",
 		["beacon", "sim/model/lights/beacon/state"],
 		["nav-lights", "controls/lighting/nav-lights"],
-		"service-lights", 
+		"service-lights",
 		]),
 	DCBus.new(5, "Battery", ["adg-deploy", "afcs-l", "clock1", "eicas-disp", "fuel-sov",
 		"fuel-pump-left",
-		"gravity-xflow", 
+		"gravity-xflow",
 		["landing-lights[0]", "controls/lighting/landing-lights[0]"],
 		["landing-lights[2]", "controls/lighting/landing-lights[2]"],
 		["ohp-lights", "controls/lighting/ind-lts-norm"],
-		"passenger-signs", 
+		"passenger-signs",
 		["standby-instrument", "controls/lighting/standby-compass"],
-		"vhf-com1", 
+		"vhf-com1",
 		]),
 	DCBus.new(6, "Utility", []),
 ];
