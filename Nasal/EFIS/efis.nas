@@ -4,6 +4,7 @@
 # created:      12/2017
 #------------------------------------------
 
+io.include(nasal_path~"eicas-message-sys.nas");
 
 # Class DisplayUnit (DU) - handels a named display 3D object in the cockpit
 # creates a canvas that is placed on the 3D object once

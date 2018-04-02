@@ -1103,7 +1103,7 @@
                 </greater-than-equals>
                 <or>
                     <property>controls/lighting/lt-test</property>
-                    <property>sim/alarms/master-warning</property>
+                    <property>instrumentation/eicas/master-warning-light/state</property>
                 </or>
             </and>
         </condition>
@@ -1121,6 +1121,23 @@
         </emission>
     </animation>
     <animation>
+        <type>pick</type>
+        <object-name>MasterWarningLt</object-name>
+        <action>
+            <button>0</button>
+            <repeatable type="bool">false</repeatable>
+            <binding>
+                <command>property-assign</command>
+                <property>instrumentation/eicas/master-warning</property>
+                <value>0</value>
+            </binding>
+            <binding>
+                <command>property-toggle</command>
+                <property>controls/switchlight-click</property>
+            </binding>
+        </action>
+    </animation>
+    <animation>
         <type>material</type>
         <object-name>MasterCautionLt</object-name>
         <condition>
@@ -1131,7 +1148,7 @@
                 </greater-than-equals>
                 <or>
                     <property>controls/lighting/lt-test</property>
-                    <property>sim/alarms/master-caution</property>
+                    <property>instrumentation/eicas/master-caution-light/state</property>
                 </or>
             </and>
         </condition>
@@ -1148,6 +1165,24 @@
             <factor-prop>controls/lighting/ind-lts-norm</factor-prop>
         </emission>
     </animation>
+    <animation>
+        <type>pick</type>
+        <object-name>MasterCautionLt</object-name>
+        <action>
+            <button>0</button>
+            <repeatable type="bool">false</repeatable>
+            <binding>
+                <command>property-assign</command>
+                <property>instrumentation/eicas/master-caution</property>
+                <value>0</value>
+            </binding>
+            <binding>
+                <command>property-toggle</command>
+                <property>controls/switchlight-click</property>
+            </binding>
+        </action>
+    </animation>
+    
     <animation>
         <type>material</type>
         <object-name>StallLt</object-name>

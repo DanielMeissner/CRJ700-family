@@ -82,6 +82,7 @@ var MessageSystem = {
     new: func(page_length, prop_path) {
         var obj = {
             parents: [MessageSystem],
+            rootN : props.getNode(prop_path,1),
             pager: Pager.new(page_length, prop_path),
             classes: [],
             messages: [],       # vector of vector of messages
@@ -95,6 +96,8 @@ var MessageSystem = {
 
     addMessages: func(name, messages, pageable, color = nil) {
         var class = size(me.classes);
+        me["new-msg"~class] = me.rootN.getNode("new-msg-"~name,1);
+        me["new-msg"~class].setIntValue(0);
         append(me.classes, MessageClass.new(name, pageable).setColor(color));
         append(me.messages, messages);
         append(me.active, []);
@@ -167,8 +170,12 @@ var MessageSystem = {
         if (!me.update_flag)
             me.first_upd = me.pager.page_length;
 
-        #add message at head of list, remove duplicate if any
-        if (visible) me.active[class] = [msg]~me.active[class];
+        #add message at head of list
+        if (visible) {
+            me.active[class] = [msg]~me.active[class];
+            #-- set new-msg flag in prop tree, e.g. to trigger sounds
+            me["new-msg"~class].setIntValue(1);
+        }
         else me.active[class] = me._remove(class, msg);
         var unchanged = 0;
         for (var i = 0; i < class; i += 1)

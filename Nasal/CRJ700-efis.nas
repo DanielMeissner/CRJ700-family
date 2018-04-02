@@ -41,7 +41,6 @@ var cleanup = func()
 var svg_path = "Models/Instruments/EFIS/";
 var nasal_path = "Nasal/EFIS/";
 io.include(nasal_path~"efis.nas");
-io.include(nasal_path~"eicas-message-sys.nas");
 io.include(nasal_path~"pfd.nas");
 io.include(nasal_path~"eicas-messages-crj700.nas");
 io.include(nasal_path~"eicas-pri.nas");
@@ -145,6 +144,21 @@ var EFISSetup = func() {
         setprop(prop_path,1);
         efis.addDisplaySwapControl(prop_path, mappings[i], callbacks[i]);
     }
+    
+    #-- EICAS master warning/caution --
+    # reset new-msg flags to trigger sounds again
+    setlistener("instrumentation/eicas/msgsys1/new-msg-warning", func(n) {
+        if (n.getValue()) {
+            settimer(func { n.setIntValue(0); }, 1.7);
+            setprop("instrumentation/eicas/master-warning",1);
+        }
+    },1);
+    setlistener("instrumentation/eicas/msgsys1/new-msg-caution", func(n) {
+        if (n.getValue()) {
+            settimer(func { n.setIntValue(0); }, 0.6);
+            setprop("instrumentation/eicas/master-caution",1);
+        }
+    },1);
 };
 
 var initL = setlistener("sim/signals/fdm-initialized", func(p)

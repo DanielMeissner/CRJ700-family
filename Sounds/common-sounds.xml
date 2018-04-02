@@ -123,10 +123,18 @@ positions or are almost the same position for C700/900/1000.
         <!-- Alarms -->
         <alarm>
             <name>Master warning</name>
-            <mode>looped</mode>
-            <path>Sounds/warning.wav</path>
+            <mode>once</mode>
+            <path>Sounds/triple-chime.wav</path>
             <condition>
-                <property>sim/alarms/master-warning</property>
+                <property>instrumentation/eicas/msgsys1/new-msg-warning</property>
+            </condition>
+        </alarm>
+        <alarm>
+            <name>Master caution</name>
+            <mode>once</mode>
+            <path>Sounds/single-chime.wav</path>
+            <condition>
+                <property>instrumentation/eicas/msgsys1/new-msg-caution</property>
             </condition>
         </alarm>
         <alarm>

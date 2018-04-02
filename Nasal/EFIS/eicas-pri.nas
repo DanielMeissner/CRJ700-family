@@ -24,7 +24,7 @@ var EICASPriCanvas = {
                 "slatsBar", "slatsBar_clip", "flapsBar", "flapsPos",
                 "gFuelValues", "fuelQty0", "fuelQty1", "fuelQty2", "fuelTotal",
             ],
-            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/EICAS/msgsys1"),
+            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys1"),
         };
         for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
         obj.loadsvg(source_record.root, file);
@@ -46,8 +46,8 @@ var EICASPriCanvas = {
         me._addFlapsL();
         me.hideGearT = maketimer(30, me, func() {me["gGear"].hide();});
         me.hideGearT.singleShot = 1;
-        me.msgsys.addMessages("Warning", EICASWarningMessages, 0, efis.colors["red"]);
-        me.msgsys.addMessages("Caution", EICASCautionMessages, 1, efis.colors["amber"]);
+        me.msgsys.addMessages("warning", EICASWarningMessages, 0, efis.colors["red"]);
+        me.msgsys.addMessages("caution", EICASCautionMessages, 1, efis.colors["amber"]);
     },
 
     #-- listeners for rare events --

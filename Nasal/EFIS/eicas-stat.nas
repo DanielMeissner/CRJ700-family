@@ -15,7 +15,7 @@ var EICASStatCanvas = {
                 "gAPU", "rpm", "rpmPointer", "egt", "egtPointer",
                 "doorMsg", "apuoff",
             ],
-            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/EICAS/msgsys2"),
+            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys2"),
         };
         for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
         obj.loadsvg(source_record.root, file);
@@ -29,8 +29,8 @@ var EICASStatCanvas = {
     init: func() {
         me._addApuL();
         me._addApuDoorL();
-        me.msgsys.addMessages("Advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
-        me.msgsys.addMessages("Status", EICASStatusMessages, 1);
+        me.msgsys.addMessages("advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
+        me.msgsys.addMessages("status", EICASStatusMessages, 1);
     },
 
     _addApuL: func() {
