@@ -28,12 +28,7 @@ var DisplayUnit =
     new: func(name, canvas_settings, screen_obj, parent_obj = nil) {
         var obj = {
             parents: [DisplayUnit],
-            _listeners: [],
             cleanup: func() {
-                foreach (var id; obj._listeners) {
-                    removelistener(id);
-                }
-                obj._listeners = [];
                 if (obj.window != nil) {
                     obj.window.del();
                     obj.window = nil;
@@ -43,11 +38,6 @@ var DisplayUnit =
                     obj.du_canvas = nil;
                 }
             },
-
-            setlistener: func(p, f, s=0, r=1) {
-                append(obj._listeners, setlistener(p,f,s,r));
-            },
-
             canvas_settings: canvas_settings,
             placement_node: screen_obj,
             placement_parent: parent_obj,
@@ -108,7 +98,7 @@ var DisplayUnit =
 
     setPowerSource: func(prop, min) {
         me.powerN = props.getNode(prop,1);
-        me.setlistener(me.powerN, func(n) {
+        setlistener(me.powerN, func(n) {
             if ((n.getValue() or 0) > min) me.root.show();
             else me.root.hide();
         }, 1,0);
@@ -143,7 +133,19 @@ var EFIS = {
         "mipmapping": 1
     },
     window_size: [500,600],
-
+    
+    colors: { 
+        transparent: [1,0,0,0],
+        white: [1,1,1],
+        red: [1,0,0],
+        green : [0,1,0],
+        blue : [0,0,1],
+        yellow: [1,1,0],
+        cyan: [0,1,1],
+        magenta: [1,0,1],
+        amber: [1,0.682,0],
+    },
+    
     new: func(display_names, object_names, power_props=nil, minimum_power=0) {
         if (typeof(display_names) != "vector") {
             print("EFIS.new: 'display_names' not a vector!");
@@ -151,7 +153,6 @@ var EFIS = {
         }
         var obj = {
             parents: [EFIS],
-            _listeners: [],
             display_units: [],
             sources: [],        #[] of canvas
             display_names: display_names,
@@ -160,29 +161,20 @@ var EFIS = {
             active_sources: [],
             
             cleanup: func() {
-                foreach (var id; obj._listeners) {
-                    removelistener(id);
-                    print("EFIS remove L: "~id);
-                }
-                obj._listeners = [];
                 foreach (var sr; obj.source_records) {
                     sr.canvas.del();
                 }
                 obj.source_records = [];
             },
-
-            setlistener: func(p, f, s=0, r=1) {
-                append(obj._listeners, setlistener(p,f,s,r));
-            },
         };
         if (object_names != nil and typeof(object_names) == "vector"
             and size(display_names) == size(object_names))
         {
-            while (size(obj.display_units) < size(display_names)) {
-                append(obj.display_units, {});
+            foreach (var i; display_names) {
                 append(obj.active_sources, -1);
             }
             var settings = obj._defaultcanvas_settings;
+            setsize(obj.display_units, size(display_names));
             forindex (var id; display_names)
             {
                 obj.display_units[id] = DisplayUnit.new(obj.display_names[id],
@@ -209,12 +201,15 @@ var EFIS = {
     #switch display unit du_id to source source_id
     _setDisplaySource: func(du_id, source_id)
     {
-        #print("setDisplaySource unit "~du_id~" s "~source_id);
         var prev_source = me.active_sources[du_id];
-        if (prev_source >= 0)
+        print("setDisplaySource unit "~du_id~" src "~source_id~" prev "~prev_source);
+        if (prev_source >= 0) {
+            if (me.source_records[prev_source] == nil)
+                print("_setDisplaySource error: prev: "~prev_source~" #"~size(me.source_records));
             me.source_records[prev_source].visibleN.setValue(
                 me.source_records[prev_source].visibleN.getValue() - 1
             );
+        }
         var path = "";
         if (source_id >= 0) {
             path = me.sources[source_id].getPath();
@@ -293,7 +288,7 @@ var EFIS = {
                 }
             }
         #print("addDisplayControl "~ctrl);
-        me.controls[ctrl] = {L: me.setlistener(ctrlN, listener, 0, 0), mappings: mappings};
+        me.controls[ctrl] = {L: setlistener(ctrlN, listener, 0, 0), mappings: mappings};
     },
     
     # creates a listener for selection which contains the source number (integer)
@@ -308,7 +303,7 @@ var EFIS = {
             for (var i = 0; i < size(me.sources); i += 1)
                 append(sources, i);
         }
-        me.setlistener(selection, func(node){
+        setlistener(selection, func(node){
             var src = node.getValue();
             var destination = targetN.getValue();
             if (src >= 0 and src < size(sources))
@@ -351,7 +346,6 @@ var EFISCanvas = {
     _timers: [],
     del: func() {
         foreach (var instance; EFISCanvas._instances) {
-            print("EFISCanvas cleanup ");
             instance.cleanup();
         }
         EFISCanvas._instances = [];
@@ -361,17 +355,9 @@ var EFISCanvas = {
         }
         EFISCanvas._timers = [];
     },
-    colors: { 
-        white: [1,1,1],
-        red: [1,0,0],
-        green : [0.133,0.667,0.133],
-        blue : [0.133,0.133,1],
-        yellow: [1,1,0],
-        cyan: [0,1,1],
-        magenta: [1,0,1],
-        amber: [1,0.682,0],
-    },
-
+    
+    colors: EFIS.colors,
+    
     new: func(source_record, file=nil) {
         var obj = {
             parents: [EFISCanvas],
@@ -379,24 +365,9 @@ var EFISCanvas = {
             _listeners: [],
             
             cleanup: func() {
-                print("EFISCanvas cleanup");
-                foreach (var id; obj._listeners) {
-                    removelistener(id);
-                    print("EFISCanvas remove L: "~id);
-                }
-                obj._listeners = [];
             },
-
-            setlistener: func(p, f, s=0, r=1) {
-                var handle = setlistener(p,f,s,r);
-                #print("EFISCanvas add L: "~handle);
-                append(obj._listeners, handle);
-            },
-            
             updateN: nil,
             updateCountP: "instrumentation/efis/update/count"~source_record.id,
-            _update_interval: 0.7,
-            _timer: nil,
             _root: nil,
             svg_keys: [],
         };
@@ -439,14 +410,13 @@ var EFISCanvas = {
         return me;
     },
 
-    setUpdateInterval: func(interval) {
+    addUpdateFunction: func(f, interval) {
         interval = num(interval);
-        if (interval == nil or interval < 0) 
-            me._update_interval = 0.7;
-        else me._update_interval = interval;
-        me._timer = maketimer(me._update_interval, me, me.update);
-        append(EFISCanvas._timers, me._timer);
-        me._timer.start();
+        if (interval != nil and interval >= 0) {
+            var timer = maketimer(interval, me, f);
+            append(EFISCanvas._timers, timer);
+            timer.start();
+        }
     },
 
     ## overload the following methods in derived class!     
@@ -454,4 +424,5 @@ var EFISCanvas = {
         if (me.updateN == nil or !me.updateN.getValue()) 
             return;
     },
+
 };

@@ -3,14 +3,47 @@
 # Author:  jsb
 # Created: Feb. 2018
 #
+
+#-- begin development --
 print("-- EFIS --");
 var reloadFlag = "/instrumentation/efis/reload";
 props.getNode(reloadFlag,1).setIntValue(0);
+setprop ("/sim/startup/terminal-ansi-colors",0);
+
+var _efis_listeners = [];
+var real_setlistener = setlistener;
+
+var setlistener = func(p, f, s=0, r=1) {
+    var lid = real_setlistener(p,f,s,r);
+    append(_efis_listeners, lid);
+    #print("EFIS add listener "~lid~" p:");
+    #debug.dump(p);
+};
+
+var removelisteners = func() {
+    var msg = "Removing listeners ";
+    foreach (var id; _efis_listeners) {
+        removelistener(id);
+        msg = msg~" "~id;
+    }
+    print(msg);
+    _efis_listeners = [];
+};
+
+var cleanup = func()
+{
+        print("EFIS cleanup... ");
+        removelisteners();
+        efis.del();
+};
+#-- end development --
 
 var svg_path = "Models/Instruments/EFIS/";
 var nasal_path = "Nasal/EFIS/";
 io.include(nasal_path~"efis.nas");
+io.include(nasal_path~"eicas-message-sys.nas");
 io.include(nasal_path~"pfd.nas");
+io.include(nasal_path~"eicas-messages-crj700.nas");
 io.include(nasal_path~"eicas-pri.nas");
 io.include(nasal_path~"eicas-stat.nas");
 io.include(nasal_path~"eicas-hydraulics.nas");
@@ -36,10 +69,9 @@ var power_props = [
 ];
 var minimum_power = 22;
 
+EFIS.colors["green"] = [0.133,0.667,0.133];
+EFIS.colors["blue"] = [0.133,0.133,1];
 var efis = EFIS.new(display_names, display_objects, power_props, minimum_power);
-#forindex (var i; display_names) {
-#    efis.getDU(i).setPowerSource(power_props[i], minimum_power);
-#}
 
 # efis will create one display canvas and one source canvas per display unit automatically
 # more pages can be added e.g. for EICAS
@@ -85,26 +117,23 @@ var callbacks = [
 ];
 # mappings per src_selector
 var mappings = [ 
-        [ {PFD1: -1, MFD1: 0}, {PFD1: 0, MFD1: 1}, {PFD1: 0, MFD1: 3} ],
-        [ {PFD2: -1, MFD2: 5}, {PFD2: 5, MFD2: 4}, {PFD2: 5, MFD2: 3} ],
-        [ {EICAS1: 3, EICAS2: -1}, {EICAS1: 2, EICAS2: 3}, {EICAS1: -1, EICAS2: 2} ],
-    ];
-
-
-var pfd1 = nil;
-var pfd2 = nil;
-var eicas = nil;
+    [ {PFD1: -1, MFD1: 0}, {PFD1: 0, MFD1: 1}, {PFD1: 0, MFD1: 3} ],
+    [ {PFD2: -1, MFD2: 5}, {PFD2: 5, MFD2: 4}, {PFD2: 5, MFD2: 3} ],
+    [ {EICAS1: 3, EICAS2: -1}, {EICAS1: 2, EICAS2: 3}, {EICAS1: -1, EICAS2: 2} ],
+];
 
 var EFISSetup = func() {
     pfd1 = PFDCanvas.new(sources[0], svg_path~"PFD.svg",0);
     pfd2 = PFDCanvas.new(sources[5], svg_path~"PFD.svg",1);
     eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]], svg_path~"eicas-pri.svg");
     eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]], svg_path~"eicas-stat.svg");
-    p3 = EFISCanvas.new(sources[eicas_sources[2]], svg_path~"ecs.svg");
+    EICASMessageSystem1 = eicas1.msgsys;
+    EICASMessageSystem2 = eicas2.msgsys;
+    ecs = EFISCanvas.new(sources[eicas_sources[2]], svg_path~"ecs.svg");
     hydr = EICASHydraulicsCanvas.new(sources[eicas_sources[3]], svg_path~"hydraulics.svg");
     ac = EICASACCanvas.new(sources[eicas_sources[4]], svg_path~"eicas-ac.svg");
     dc = EICASDCCanvas.new(sources[eicas_sources[5]], svg_path~"eicas-dc.svg");
-    fuel = EICASFuelCanvas.new(sources[eicas_sources[6]], svg_path~"fuel.svg");
+    fuel = EICASFuelCanvas.new(sources[eicas_sources[6]], svg_path~"eicas-fuel.svg");
     fctl = EICASFctlCanvas.new(sources[eicas_sources[7]], svg_path~"eicas-fctl.svg");
     aice = EICASAIceCanvas.new(sources[eicas_sources[8]], svg_path~"template.svg");
     doors = EICASDoorsCanvas.new(sources[eicas_sources[9]], svg_path~"eicas-doors.svg");
@@ -125,12 +154,3 @@ var initL = setlistener("sim/signals/fdm-initialized", func(p)
         EFISSetup();
     }
 }, 1, 0);
-
-var cleanup = setlistener(reloadFlag, func(p)
-{
-    if (p.getValue()) {
-        print("DM cleanup");
-        removelistener(initL);
-        removelistener(cleanup);
-    }
-});

@@ -1,35 +1,40 @@
-# EFIS for CRJ700 familiy 
+# EFIS for CRJ700 familiy
 # EICAS status page
 # Author:  jsb
 # Created: 03/2018
 #
 
 var EICASStatCanvas = {
+    MAX_MSG: 16,    #number of message lines
 
     new: func(source_record, file) {
-        var obj = { 
+        var obj = {
             parents: [EICASStatCanvas , EFISCanvas.new(source_record)],
             svg_keys: [
                 "elevTrim", "elevTrimValue", "ailTrim", "rudderTrim",
                 "gAPU", "rpm", "rpmPointer", "egt", "egtPointer",
                 "doorMsg", "apuoff",
             ],
-           
+            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/EICAS/msgsys2"),
         };
+        for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
         obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setUpdateInterval(0.100);
+        obj.addUpdateFunction(obj.update, 0.100);
+        obj.addUpdateFunction(obj.updateMessages, 0.500);
         return obj;
     },
 
-    
+
     init: func() {
         me._addApuL();
         me._addApuDoorL();
+        me.msgsys.addMessages("Advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
+        me.msgsys.addMessages("Status", EICASStatusMessages, 1);
     },
-    
+
     _addApuL: func() {
-        me.setlistener("controls/APU/electronic-control-unit", func(n) {
+        setlistener("controls/APU/electronic-control-unit", func(n) {
             if (n.getValue()) {
                 me["gAPU"].show();
                 me["apuoff"].hide();
@@ -40,39 +45,56 @@ var EICASStatCanvas = {
             }
         }, 1);
     },
-    
+
     _addApuDoorL: func() {
-        me.setlistener("engines/engine[2]/door-msg", func(n) {
+        setlistener("engines/engine[2]/door-msg", func(n) {
             var value = n.getValue();
             me["doorMsg"].setText(value);
             if (value == "----") me["doorMsg"].setColor(me.colors["amber"]);
             else me["doorMsg"].setColor(me.colors["white"]);
         }, 1);
     },
-        
+
     getEng: func(idx, prop) {
         return (getprop("engines/engine["~idx~"]/"~prop) or 0);
-    },    
+    },
 
     getSurf: func(name) {
         return (getprop("/surface-positions/"~name) or 0);
     },
     
+    updateMessages: func() {
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        if (!me.msgsys.needsUpdate())
+            return;
+        var messages = me.msgsys.get();
+        #print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIdx());        
+        for (var i = me.msgsys.getFirstUpdateIdx(); i < size(messages); i += 1) {
+            #print("message"~i~" "~messages[i].text);
+            me["message"~i].setText(messages[i].text);
+            me["message"~i].setColor(messages[i].color);
+        }
+        for (i; i < me.MAX_MSG; i += 1) {
+            #print("clear m"~i);
+            me["message"~i].setText("");
+        }
+    },
+    
     #-- listeners for rare events --
     update: func() {
         if (me.updateN == nil or !me.updateN.getValue()) return;
-        setprop(me.updateCountP, getprop(me.updateCountP)+1);
+        #setprop(me.updateCountP, getprop(me.updateCountP)+1);
         value = me.getEng(2, "rpm");
         me["rpm"].setText(sprintf("%3.0f", value));
         me["rpmPointer"].setRotation(value * 0.04189);
         value = me.getEng(2, "egt-degc");
         me["egt"].setText(sprintf("%3.0f", value));
         me["egtPointer"].setRotation(value * 0.003696);
-        
+
         me["rudderTrim"].setRotation(-getprop("controls/flight/rudder-trim"));
         me["ailTrim"].setRotation(getprop("controls/flight/aileron-trim"));
         var trim = getprop("/instrumentation/eicas/hstab-trim");
         me["elevTrim"].setTranslation(0, 9.4785*trim);
         me["elevTrimValue"].setText(sprintf("%1.1f", trim));
-    }, 
+    },
 };

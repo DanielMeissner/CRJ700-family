@@ -5,6 +5,7 @@
 #
 
 var EICASPriCanvas = {
+    MAX_MSG: 16,    #number of message lines
 
     new: func(source_record, file) {
         var obj = {
@@ -22,16 +23,16 @@ var EICASPriCanvas = {
                 "gGear", "gear0", "gear1", "gear2", "tGear0", "tGear1", "tGear2", "gearInTransit0", "gearInTransit1", "gearInTransit2",
                 "slatsBar", "slatsBar_clip", "flapsBar", "flapsPos",
                 "gFuelValues", "fuelQty0", "fuelQty1", "fuelQty2", "fuelTotal",
-                ],
-
+            ],
+            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/EICAS/msgsys1"),
         };
-        for (var i = 1; i <= 16; i += 1) append(obj.svg_keys, "message"~i);
+        for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
         obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setUpdateInterval(0.050);
+        obj.addUpdateFunction(obj.update, 0.050);
+        obj.addUpdateFunction(obj.updateSlow, 0.500);
         return obj;
     },
-
 
     init: func() {
         var amber = me.colors["amber"];
@@ -45,12 +46,14 @@ var EICASPriCanvas = {
         me._addFlapsL();
         me.hideGearT = maketimer(30, me, func() {me["gGear"].hide();});
         me.hideGearT.singleShot = 1;
+        me.msgsys.addMessages("Warning", EICASWarningMessages, 0, efis.colors["red"]);
+        me.msgsys.addMessages("Caution", EICASCautionMessages, 1, efis.colors["amber"]);
     },
 
     #-- listeners for rare events --
     _addThrustModeL: func(engine) {
         var apr = "apr"~engine;
-        me.setlistener("controls/engines/engine["~engine~"]/thrust-mode", func(n) {
+        setlistener("controls/engines/engine["~engine~"]/thrust-mode", func(n) {
             var m = n.getValue();
             if (m == 3) {
                 me["thrustMode"].setText("APR");
@@ -66,36 +69,19 @@ var EICASPriCanvas = {
 
     _addReverseL: func(engine) {
         var rev = "rev"~engine;
-        me.setlistener("engines/engine["~engine~"]/reverser-pos-norm", func(n) {
+        setlistener("engines/engine["~engine~"]/reverser-pos-norm", func(n) {
             var pos = n.getValue();
             if (pos == 0) me[rev].hide();
             else me[rev].show();
         }, 1);
     },
 
-    updateGear: func(idx, pos) {
-        if (pos == 0) {
-            me["tGear"~idx].setText("UP");
-            me["gear"~idx].setColor(me.colors["white"]);
-            me["gearInTransit"~idx].hide();
-        }
-        elsif (pos == 1) {
-            me["tGear"~idx].setText("DN");
-            me["gear"~idx].setColor(me.colors["green"]);
-            me["gearInTransit"~idx].hide();
-        }
-        else {
-            me["gearInTransit"~idx].show();
-            me["tGear"~idx].setText("");
-        }
-    },
-
     _addFlapsL: func() {
-        me.setlistener("surface-positions/slat-pos-norm", func(n) {
+        setlistener("surface-positions/slat-pos-norm", func(n) {
             me["slatsBar_clip"].setTranslation(-100 * n.getValue(), 0);
             me._updateClip("slatsBar");
         }, 1, 0);
-        me.setlistener("surface-positions/flap-pos-norm", func(n) {
+        setlistener("surface-positions/flap-pos-norm", func(n) {
             var value = n.getValue();
             me["flapsBar"].setTranslation(296 * value, 0);
             me["flapsPos"].setText(sprintf("%2d", math.round(45*value)));
@@ -125,40 +111,24 @@ var EICASPriCanvas = {
         me["oilPointer"~i].setRotation(value);
     },
 
-    updateSlow: func() {
+    updateGear: func(idx, pos) {
+        if (pos == 0) {
+            me["tGear"~idx].setText("UP");
+            me["gear"~idx].setColor(me.colors["white"]);
+            me["gearInTransit"~idx].hide();
+        }
+        elsif (pos == 1) {
+            me["tGear"~idx].setText("DN");
+            me["gear"~idx].setColor(me.colors["green"]);
+            me["gearInTransit"~idx].hide();
+        }
+        else {
+            me["gearInTransit"~idx].show();
+            me["tGear"~idx].setText("");
+        }
     },
 
-    update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        setprop(me.updateCountP, getprop(me.updateCountP)+1);
-        var oilp = [0,0];
-        foreach (var i; [0,1]) {
-            value = me.getEng(i, "rpm");
-            me["N1"~i].setText(sprintf("%3.1f", value));
-            me["N1pointer"~i].setRotation(value * 0.04189);
-            value = me.getEng(i, "itt-norm")*100;
-            me["ITT"~i].setText(sprintf("%3d", value*10));
-            me["ITTpointer"~i].setRotation(value * 0.04189);
-            value = me.getEng(i, "rpm2");
-            me["N2"~i].setText(sprintf("%3.1f", value));
-            me["N2pointer"~i].setRotation(value * 0.04189);
-            me["oilTemp"~i].setText(sprintf("%3d", me.getEng(i, "oilt-norm")*163));
-            oilp[i] = me.getEng(i, "oilp-norm")*780;
-            me["oilPress"~i].setText(sprintf("%3d", oilp[i]));
-            me.updateOilGauge(i, oilp[i]);
-        }
-        if (CRJ700.engines[0].running and CRJ700.engines[1].running) {
-            if( oilp[0] > 24 and oilp[1] > 24)
-            {
-                me["gOil"].hide();
-                me["gFanVib"].show();
-            }
-        } 
-        else {
-            me["gOil"].show();
-            me["gFanVib"].hide();
-        }
-
+    updateGearIndicators: func() {
         var flapsCtrl = getprop("controls/flight/flaps");
         var gp0 = getprop("gear/gear[0]/position-norm");
         var gp1 = getprop("gear/gear[1]/position-norm");
@@ -171,17 +141,75 @@ var EICASPriCanvas = {
             me.updateGear(2,gp2);
         }
         else if(!me.hideGearT.isRunning) me.hideGearT.start();
+    },
 
+    updateFuel: func() {
         me["fuelQty0"].setText(sprintf("%3d", me.getTank(0)));
         me["fuelQty1"].setText(sprintf("%3d", me.getTank(1)));
         me["fuelQty2"].setText(sprintf("%3d", me.getTank(2)));
         var totalFuel = getprop("consumables/fuel/total-fuel-lbs");
-        var imba = getprop("systems/fuel/imbalance-lbs");
+        var imba = getprop("systems/fuel/imbalance");
         me["fuelTotal"].setText(sprintf("%3d", totalFuel*LB2KG));
-        if (imba > 800 or totalFuel < 900) {
+        if (imba or totalFuel < 900) {
             me["gFuelValues"].setColor(me.colors["amber"]);
         }
         else me["gFuelValues"].setColor(me.colors["green"]);
+    },
 
+    updateMessages: func() {
+        if (!me.msgsys.needsUpdate())
+            return;
+        var messages = me.msgsys.get();
+        #print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIdx());        
+        for (var i = me.msgsys.getFirstUpdateIdx(); i < size(messages); i += 1) {
+            #print("message"~i~" "~messages[i].text);
+            me["message"~i].setText(messages[i].text);
+            me["message"~i].setColor(messages[i].color);
+        }
+        for (i; i < me.MAX_MSG; i += 1) {
+            #print("clear m"~i);
+            me["message"~i].setText("");
+        }
+    },
+
+    updateSlow: func() {
+        if (me.updateN == nil or !me.updateN.getValue())
+            return;
+        me.updateGearIndicators();
+        me.updateFuel();
+        me.updateMessages();
+        if (CRJ700.engines[0].running and CRJ700.engines[1].running) {
+            if(me.oilp[0] > 24 and me.oilp[1] > 24)
+            {
+                me["gOil"].hide();
+                me["gFanVib"].show();
+            }
+        }
+        else {
+            me["gOil"].show();
+            me["gFanVib"].hide();
+        }
+    },
+
+    update: func() {
+        if (me.updateN == nil or !me.updateN.getValue()) return;
+        #setprop(me.updateCountP, getprop(me.updateCountP)+1);
+        me.oilp = [0,0];
+        foreach (var i; [0,1]) {
+            value = me.getEng(i, "rpm");
+            me["N1"~i].setText(sprintf("%3.1f", value));
+            me["N1pointer"~i].setRotation(value * 0.04189);
+            value = me.getEng(i, "itt-norm")*100;
+            me["ITT"~i].setText(sprintf("%3d", value*10));
+            me["ITTpointer"~i].setRotation(value * 0.04189);
+            value = me.getEng(i, "rpm2");
+            me["N2"~i].setText(sprintf("%3.1f", value));
+            me["N2pointer"~i].setRotation(value * 0.04189);
+            me["fuelFlow"~i].setText(sprintf("%4d", getprop("engines/engine["~i~"]/fuel-flow-pph")));
+            me["oilTemp"~i].setText(sprintf("%3d", me.getEng(i, "oilt-norm")*163));
+            me.oilp[i] = me.getEng(i, "oilp-norm")*780;
+            me["oilPress"~i].setText(sprintf("%3d", me.oilp[i]));
+            me.updateOilGauge(i, me.oilp[i]);
+        }
     },
 };

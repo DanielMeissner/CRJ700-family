@@ -16,7 +16,7 @@ var EICASHydraulicsCanvas = {
         };
         obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setUpdateInterval(0.2,);
+        obj.addUpdateFunction(obj.update, 0.2,);
         return obj;
     },
 

@@ -25,7 +25,7 @@ var EICASFctlCanvas = {
         };
         obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setUpdateInterval(0.07);
+        obj.addUpdateFunction(obj.update, 0.07);
         return obj;
     },
 
@@ -36,13 +36,13 @@ var EICASFctlCanvas = {
     },
     
     _addGndSpoilerL: func(){
-        me.setlistener("/surface-positions/spoiler-ob-ground-pos-norm", func(n) {
+        setlistener("/surface-positions/spoiler-ob-ground-pos-norm", func(n) {
             var v = n.getValue() or 0;
             me["spoilerIndL3"].setTranslation(0, -139.46 * v);
             me["spoilerIndR3"].setTranslation(0, -139.46 * v);
         
         }, 1, 0);
-        me.setlistener("/surface-positions/spoiler-ib-ground-pos-norm", func(n) {
+        setlistener("/surface-positions/spoiler-ib-ground-pos-norm", func(n) {
             var v = n.getValue() or 0;
             me["spoilerIndL4"].setTranslation(0, -139.46 * v);
             me["spoilerIndR4"].setTranslation(0, -139.46 * v);

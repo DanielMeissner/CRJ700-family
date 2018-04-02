@@ -20,7 +20,7 @@ var EICASACCanvas = {
         };
         obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setUpdateInterval(0.1);
+        obj.addUpdateFunction(obj.update, 0.1);
         return obj;
     },
 
@@ -35,13 +35,15 @@ var EICASACCanvas = {
                 me["idgdisc"~idx].show();
                 me["idg"~idx].setColor(me.colors["white"]);
             }
+            else
+                me["idgdisc"~idx].hide();
         };
     },
     
     init: func() {
         print("Init AC ...");
-        me.setlistener("controls/electric/idg1-disc", me._idgdiscL(1));
-        me.setlistener("controls/electric/idg2-disc", me._idgdiscL(2));
+        setlistener("controls/electric/idg1-disc", me._idgdiscL(1), 1);
+        setlistener("controls/electric/idg2-disc", me._idgdiscL(2), 1);
         print("Init AC done.");
     },
     

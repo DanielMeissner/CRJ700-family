@@ -388,7 +388,7 @@ var reloadEFIS = func() {
     elsif (globals[namespace]["efis"] == nil) print("efis instance not found");
     else {
         var err=[];
-        call(globals[namespace].efis.del, [], err);
+        call(globals[namespace].cleanup, [], err);
         if (size(err)) {
             debug.printerror(err);
         }

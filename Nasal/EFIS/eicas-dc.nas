@@ -20,7 +20,7 @@ var EICASDCCanvas = {
         };
         obj.loadsvg(source_record.root, file);
         obj.init();
-        obj.setUpdateInterval(0.1);
+        obj.addUpdateFunction(obj.update, 0.1);
         return obj;
     },
 
