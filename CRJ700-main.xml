@@ -92,9 +92,9 @@
                 <pax-right>
                     <position-norm type="float">0</position-norm>
                 </pax-right>
-                <avionic>
+                <av-bay>
                     <position-norm type="float">0</position-norm>
-                </avionic>
+                </av-bay>
                 <emer-l1>
                     <position-norm type="float">0</position-norm>
                 </emer-l1>

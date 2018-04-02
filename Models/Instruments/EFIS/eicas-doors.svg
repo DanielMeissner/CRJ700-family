@@ -15,7 +15,7 @@
    version="1.1"
    id="svg3737"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="doors.svg"
+   sodipodi:docname="eicas-doors.svg"
    style="enable-background:new">
   <defs
      id="defs3731">
@@ -60,8 +60,8 @@
      borderopacity="1"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.43650538"
-     inkscape:cx="391.18138"
+     inkscape:zoom="1.5124229"
+     inkscape:cx="275.14241"
      inkscape:cy="794.67964"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -318,8 +318,9 @@
          style="fill:none;fill-opacity:1;stroke:#10ff10;stroke-width:1.96713769;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
     <g
-       id="avionics"
-       transform="matrix(1.1708324,0,0,1.1708324,-0.03484177,-244.07948)">
+       id="av-bay"
+       transform="matrix(1.1708324,0,0,1.1708324,-0.03484177,-244.07948)"
+       inkscape:label="#avionics">
       <text
          id="txt_avionic_bay"
          y="472.06174"
