@@ -69,7 +69,7 @@ Engine.Apu = func() {
     apu.eicas_door_node = props.globals.getNode("/engines/engine[2]/door-msg", 1);
     apu.eicas_door_node.setValue(apu.eicas_door_msg[0]);
 
-    apu.running_node = props.globals.getNode("/engines/engine[2]/running", 1);
+    apu.running_node = props.globals.getNode("/engines/engine[2]/running-nasal", 1);
     apu.running_node.setBoolValue(apu.running);
 
     apu.rpm_node = props.globals.getNode("/engines/engine[2]/rpm", 1);
@@ -345,6 +345,7 @@ Engine.Jet = func(n)
         #for jsbsim
         jet.controls.starter_node = props.globals.getNode("/controls/engines/engine[" ~ n ~ "]/starter", 1);
         jet.running_node = props.globals.getNode("/engines/engine[" ~ n ~ "]/running");
+        props.globals.getNode("/engines/engine[" ~ n ~ "]/running-nasal").alias("/engines/engine[" ~ n ~ "]/running");
     }
     jet.out_of_fuel_node = props.globals.getNode("/engines/engine[" ~ n ~  "]/out-of-fuel", 1);
     jet.on_fire_node = props.globals.getNode("/engines/engine[" ~ n ~ "]/on-fire", 1);

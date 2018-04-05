@@ -159,7 +159,7 @@ var EICASPriCanvas = {
     updateMessages: func() {
         if (!me.msgsys.needsUpdate())
             return;
-        var messages = me.msgsys.get();
+        var messages = me.msgsys.getActiveMessages();
         #print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIdx());        
         for (var i = me.msgsys.getFirstUpdateIdx(); i < size(messages); i += 1) {
             #print("message"~i~" "~messages[i].text);

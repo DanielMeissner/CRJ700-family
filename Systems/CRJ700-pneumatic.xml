@@ -23,7 +23,7 @@
 						<property>controls/pneumatic/bleed-valve</property>
 						<value>1</value> 
 					</equals>
-					<property>engines/engine[2]/running</property>
+					<property>engines/engine[2]/running-nasal</property>
 					<not><property>engines/engine[0]/running-nasal</property></not>
 					<not><property>engines/engine[1]/running-nasal</property></not>
 				</and>
@@ -137,7 +137,7 @@
 				<property>systems/pneumatic/hp-ground-supply</property>
 				<and>
 					<property>systems/pneumatic/apu-valve</property>
-					<property>engines/engine[2]/running</property>
+					<property>engines/engine[2]/running-nasal</property>
 				</and>
 				<and>
 					<property>systems/pneumatic/sov-left</property>
@@ -163,7 +163,7 @@
 				</and>
 				<and>
 					<property>systems/pneumatic/apu-valve</property>
-					<property>engines/engine[2]/running</property>
+					<property>engines/engine[2]/running-nasal</property>
 					<property>systems/pneumatic/isolation-valve</property>
 				</and>
 				<and>

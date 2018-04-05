@@ -603,6 +603,9 @@
             </engine>
         </engines>
         <electric>
+            <engine><generator type="bool">false</generator></engine>
+            <engine><generator type="bool">false</generator></engine>
+            <engine><generator type="bool">false</generator></engine>
             <dc-service-switch type="bool">false</dc-service-switch>
             <battery-switch type="bool">false</battery-switch>
             <ac-service-avail type="bool">true</ac-service-avail>
@@ -613,7 +616,6 @@
                 anyhow, ac-service-selected-ext switch property is already used ;)
             -->
             <ac-service-selected-ext type="bool">false</ac-service-selected-ext>
-            <APU-generator type="bool">false</APU-generator>
             <auto-xfer1 type="bool">true</auto-xfer1>
             <auto-xfer2 type="bool">true</auto-xfer2>
             <ac-ess-xfer type="bool">false</ac-ess-xfer>

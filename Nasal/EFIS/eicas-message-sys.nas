@@ -119,7 +119,7 @@ var MessageSystem = {
         forindex (var i; messages) {
             if (messages[i].prop) {
                 #print("addMessage "~i~" t:"~messages[i].msg~" p:"~messages[i].prop);
-                var prop = props.getNode(messages[i].prop);
+                var prop = props.getNode(messages[i].prop,1);
                 while (prop.getAttribute("alias")) {
                     prop = prop.getAliasTarget();
                 }
@@ -193,9 +193,17 @@ var MessageSystem = {
         return me.first_upd;
     },
 
-    get: func {
+    getActiveMessages: func {
         me.update_flag = 0;
         return me.msg_list;
     },
 
+    #find message text, return id
+    getMessageID: func(class, msgtext) {
+        forindex (var i; me.messages[class]) {
+            if (me.messages[class][i].msg == msgtext) 
+                return i;
+        }
+        return -1;
+    },
 };

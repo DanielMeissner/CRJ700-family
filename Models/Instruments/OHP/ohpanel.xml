@@ -757,14 +757,14 @@
 			<repeatable type="bool">false</repeatable>
 			<binding>
 				<command>property-toggle</command>
-				<property>controls/electric/APU-generator</property>
+				<property>controls/electric/engine[2]/generator</property>
 			</binding>
 		</action>
 	</animation>
     <animation>
 		<type>rotate</type>
 		<object-name>APUGenSwitch</object-name>
-		<property>controls/electric/APU-generator</property>
+		<property>controls/electric/engine[2]/generator</property>
 		<factor alias="../../switch-rotate-deg" />
 		<axis>
 			<x>0</x>
@@ -1855,7 +1855,7 @@
 					<property>controls/lighting/lt-test</property>
 					<and>
 						<property>controls/APU/off-on</property>
-						<property>engines/engine[2]/running</property>
+						<property>engines/engine[2]/running-nasal</property>
 					</and>
 				</or>
 			</and>

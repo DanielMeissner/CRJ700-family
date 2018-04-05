@@ -397,6 +397,17 @@ var EFISCanvas = {
         }
     },
     
+    #generic listener to show/hide an element
+    _showHideL: func(svgkey, value=nil) {
+        if (value == nil) return func(n) {
+            if (n.getValue()) me[svgkey].show();
+            else me[svgkey].hide();
+        };
+        else return func(n) {
+            if (n.getValue() == value) me[svgkey].show();
+            else me[svgkey].hide();
+        };
+    },   
     loadsvg: func(canvas_group, file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";

@@ -122,8 +122,6 @@ var mappings = [
 ];
 
 var EFISSetup = func() {
-    pfd1 = PFDCanvas.new(sources[0], svg_path~"PFD.svg",0);
-    pfd2 = PFDCanvas.new(sources[5], svg_path~"PFD.svg",1);
     eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]], svg_path~"eicas-pri.svg");
     eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]], svg_path~"eicas-stat.svg");
     EICASMessageSystem1 = eicas1.msgsys;
@@ -136,6 +134,9 @@ var EFISSetup = func() {
     fctl = EICASFctlCanvas.new(sources[eicas_sources[7]], svg_path~"eicas-fctl.svg");
     aice = EICASAIceCanvas.new(sources[eicas_sources[8]], svg_path~"template.svg");
     doors = EICASDoorsCanvas.new(sources[eicas_sources[9]], svg_path~"eicas-doors.svg");
+
+    pfd1 = PFDCanvas.new(sources[0], svg_path~"PFD.svg",0);
+    pfd2 = PFDCanvas.new(sources[5], svg_path~"PFD.svg",1);
 
     #-- add display routing controls
     forindex (var i; src_selectors) {

@@ -50,7 +50,7 @@ var startup = func {
         ["controls/APU/off-on", 1, 22],
         ["controls/pneumatic/bleed-source", 2, 0.8],
         ["controls/electric/engine[0]/generator", 1, 0.3],
-        ["controls/electric/APU-generator", 1, 0.3],
+        ["controls/electric/engine[2]/generator", 1, 0.3],
         ["controls/electric/engine[1]/generator", 1, 1.5],
         ["systems/fuel/boost-pump[0]/selected", 1, 0.4],
         ["systems/fuel/boost-pump[1]/selected", 1, 0.8],
@@ -125,6 +125,7 @@ var instastart = func
     setprop("controls/electric/battery-switch", 1);
     setprop("controls/electric/engine[0]/generator", 1);
     setprop("controls/electric/engine[1]/generator", 1);
+    setprop("controls/electric/engine[2]/generator", 1);
     setprop("controls/lighting/nav-lights", 1);
     setprop("controls/lighting/beacon", 1);
     engines[0].on();
