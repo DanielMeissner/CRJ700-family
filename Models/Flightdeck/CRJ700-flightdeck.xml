@@ -2724,7 +2724,7 @@
             <label>EICAS Status</label>
         </binding></hovered>
     </animation>
-    <!--animation>
+    <animation>
         <type>pick</type>
         <object-name>EICAS_ECS</object-name>
         <action>
@@ -2741,7 +2741,7 @@
             <tooltip-id>EP_ECS</tooltip-id>
             <label>EICAS ECS</label>
         </binding></hovered>
-    </animation-->
+    </animation>
     <animation>
         <type>pick</type>
         <object-name>EICAS_Hyd</object-name>

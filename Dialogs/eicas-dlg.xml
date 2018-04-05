@@ -32,7 +32,6 @@
             <legend>ECS</legend>
             <pref-height>22</pref-height>
             <pref-width>55</pref-width>
-            <enabled>false</enabled>
             <binding>
                 <command>property-assign</command>
                 <property>instrumentation/eicas/page</property>

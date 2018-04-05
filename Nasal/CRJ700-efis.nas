@@ -45,6 +45,7 @@ io.include(nasal_path~"pfd.nas");
 io.include(nasal_path~"eicas-messages-crj700.nas");
 io.include(nasal_path~"eicas-pri.nas");
 io.include(nasal_path~"eicas-stat.nas");
+io.include(nasal_path~"eicas-ecs.nas");
 io.include(nasal_path~"eicas-hydraulics.nas");
 io.include(nasal_path~"eicas-ac.nas");
 io.include(nasal_path~"eicas-dc.nas");
@@ -126,7 +127,7 @@ var EFISSetup = func() {
     eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]], svg_path~"eicas-stat.svg");
     EICASMessageSystem1 = eicas1.msgsys;
     EICASMessageSystem2 = eicas2.msgsys;
-    ecs = EFISCanvas.new(sources[eicas_sources[2]], svg_path~"ecs.svg");
+    ecs = EICASECSCanvas.new(sources[eicas_sources[2]], svg_path~"eicas-ecs.svg");
     hydr = EICASHydraulicsCanvas.new(sources[eicas_sources[3]], svg_path~"hydraulics.svg");
     ac = EICASACCanvas.new(sources[eicas_sources[4]], svg_path~"eicas-ac.svg");
     dc = EICASDCCanvas.new(sources[eicas_sources[5]], svg_path~"eicas-dc.svg");

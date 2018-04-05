@@ -1109,12 +1109,13 @@
             <hp-ground-supply type="bool">false</hp-ground-supply>
             <cowl-ai-valve-left type="bool">false</cowl-ai-valve-left>
             <cowl-ai-valve-right type="bool">false</cowl-ai-valve-right>
-            <apu-valve type="bool">false</apu-valve>
-            <isolation-valve type="bool">true</isolation-valve>
             <ats-left type="bool">false</ats-left>
             <ats-right type="bool">false</ats-right>
-            <sov-left type="bool">false</sov-left>
-            <sov-right type="bool">false</sov-right>
+            <sov0 type="bool">false</sov0>
+            <sov1 type="bool">false</sov1>
+            <sov2 type="bool">false</sov2>
+            <sov3 type="bool">false</sov3>
+            <sov4 type="bool">false</sov4>
             <leak-left type="bool">false</leak-left>
             <leak-right type="bool">false</leak-right>
         </pneumatic>
