@@ -36,6 +36,7 @@ var PFDCanvas = {
         obj.loadsvg(source_record.root, file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.033);
+        obj.addUpdateFunction(obj.updateSlow, 0.1);
         return obj;
     },
 
@@ -54,11 +55,10 @@ var PFDCanvas = {
         me["mda.text"].setText(sprintf("%4d", n.getValue()));
     },
 
+    updateSlow: func() {
+    },
+    
     update: func() {
-        if (!me.updateN.getValue()) return;
-        var updates = getprop(me.updateCountP);
-        #setprop(me.updateCountP, updates + 1);
-
         #AI
         var pitch = me.getInstr("attitude-indicator", "indicated-pitch-deg");
         var roll =  me.getInstr("attitude-indicator", "indicated-roll-deg") * -D2R;

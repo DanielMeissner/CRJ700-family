@@ -33,6 +33,8 @@ var EICASFctlCanvas = {
     
     init: func() {
         me._addGndSpoilerL();
+        setlistener("/surface-positions/flap-pos-norm", me._addSlatFlapL("flaps", 45), 1, 0);
+        setlistener("/surface-positions/slat-pos-norm", me._addSlatFlapL("slats", 25), 1, 0);
     },
     
     _addGndSpoilerL: func(){
@@ -50,15 +52,20 @@ var EICASFctlCanvas = {
         }, 1, 0);
     },
     
+    _addSlatFlapL: func(svgkey, , scale) {
+        return func(n) {
+            var degree = math.round((n.getValue() or 0)*scale);
+            foreach (var i; [0,1]) {
+                me[svgkey~i].setText(sprintf("%2d", degree));
+            }
+        };
+    },
+    
     getSurf: func(name) {
         return (getprop("/surface-positions/"~name) or 0);
     },
     
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        setprop(me.updateCountP, getprop(me.updateCountP)+1);
-        var flaps_deg = math.round(me.getSurf("flap-pos-norm")*45);
-        var slats_deg = math.round(me.getSurf("slat-pos-norm")*25);
         var ail = [0,0];
         ail[0] = me.getSurf("left-aileron-pos-norm");
         ail[1] = me.getSurf("right-aileron-pos-norm");
@@ -67,8 +74,6 @@ var EICASFctlCanvas = {
         else elev *= 83; #pull
 
         foreach (var i; [0,1]) {
-            me["flaps"~i].setText(sprintf("%2d", flaps_deg));
-            me["slats"~i].setText(sprintf("%2d", slats_deg));
             if (ail[i] > 0) ail[i] *= 55;
             else ail[i] *= 81.5;
             me["ail"~i].setTranslation(0, ail[i]);
@@ -76,7 +81,6 @@ var EICASFctlCanvas = {
         }
 
         #-- spoilers --
-
         me["spoilerIndL1"].setTranslation(0, -153.53 * me.getSurf("left-ob-mfs-pos-norm"));
         me["spoilerIndL2"].setTranslation(0, -144.47 * me.getSurf("left-ib-mfs-pos-norm"));
         me["spoilerIndR2"].setTranslation(0, -144.47 * me.getSurf("right-ib-mfs-pos-norm"));

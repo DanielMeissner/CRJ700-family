@@ -25,7 +25,6 @@ var EICASStatCanvas = {
         return obj;
     },
 
-
     init: func() {
         me._addApuL();
         me._addApuDoorL();
@@ -68,22 +67,16 @@ var EICASStatCanvas = {
         if (!me.msgsys.needsUpdate())
             return;
         var messages = me.msgsys.getActiveMessages();
-        #print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIdx());        
-        for (var i = me.msgsys.getFirstUpdateIdx(); i < size(messages); i += 1) {
-            #print("message"~i~" "~messages[i].text);
-            me["message"~i].setText(messages[i].text);
-            me["message"~i].setColor(messages[i].color);
+        for (var i = me.msgsys.getFirstUpdateIndex(); i < size(messages); i += 1) {
+            me.updateTextElement("message"~i, messages[i].text, messages[i].color);
         }
         for (i; i < me.MAX_MSG; i += 1) {
-            #print("clear m"~i);
-            me["message"~i].setText("");
+            me.updateTextElement("message"~i, "");
         }
     },
     
     #-- listeners for rare events --
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        #setprop(me.updateCountP, getprop(me.updateCountP)+1);
         value = me.getEng(2, "rpm");
         me["rpm"].setText(sprintf("%3.0f", value));
         me["rpmPointer"].setRotation(value * 0.04189);

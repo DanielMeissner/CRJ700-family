@@ -45,7 +45,6 @@ var EICASECSCanvas = {
     
     _sovL: func(i) {
         return func(n) {
-            print("sovL "~i);
             if (n.getValue()) {
                 me["sov"~i].setRotation(90*D2R);
                 me["sov"~i~"line"].setColorFill(me.colors["green"]);
@@ -59,7 +58,6 @@ var EICASECSCanvas = {
     
     _lineL: func(i) {
         return func(n) {
-            print("lineL "~i);
             if (n.getValue()) {
                 if (i < 3)
                     me["line"~i].setColorFill(me.colors["green"]);
@@ -92,7 +90,5 @@ var EICASECSCanvas = {
     },
 
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        #setprop(me.updateCountP, getprop(me.updateCountP)+1);
     }, 
 };

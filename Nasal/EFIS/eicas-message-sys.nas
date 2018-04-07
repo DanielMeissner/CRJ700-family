@@ -88,7 +88,7 @@ var MessageSystem = {
             messages: [],       # vector of vector of messages
             active: [],         # lists of active message IDs per class
             msg_list: [],       # active message list (flat, sorted by class)
-            first_upd: 0,       # for later optimisation: first changed line in msg_list
+            first_needs_update: 0,       # for later optimisation: first changed line in msg_list
             update_flag: 1,
         };
         return obj;
@@ -168,7 +168,7 @@ var MessageSystem = {
         if ((isActive and visible) or (!isActive and !visible))
             return;
         if (!me.update_flag)
-            me.first_upd = me.pager.page_length;
+            me.first_needs_update = me.pager.page_length;
 
         #add message at head of list
         if (visible) {
@@ -180,8 +180,8 @@ var MessageSystem = {
         var unchanged = 0;
         for (var i = 0; i < class; i += 1)
             unchanged += size(me.active[i]);
-        if (me.first_upd > unchanged) me.first_upd = unchanged;
-        print("set c:"~class~" m:"~msg~" v:"~visible~ " fu:"~me.first_upd);
+        if (me.first_needs_update > unchanged) me.first_needs_update = unchanged;
+        print("set c:"~class~" m:"~msg~" v:"~visible~ " 1upd:"~me.first_needs_update);
         me._updateList();
     },
 
@@ -189,8 +189,8 @@ var MessageSystem = {
         return me.update_flag;
     },
 
-    getFirstUpdateIdx: func {
-        return me.first_upd;
+    getFirstUpdateIndex: func {
+        return me.first_needs_update;
     },
 
     getActiveMessages: func {

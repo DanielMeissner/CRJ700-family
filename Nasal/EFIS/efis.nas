@@ -347,11 +347,11 @@ var EFISCanvas = {
     _timers: [],
     del: func() {
         foreach (var instance; EFISCanvas._instances) {
-            instance.cleanup();
+            if (instance.cleanup != nil and typeof(instance.cleanup) == "func")
+                instance.cleanup();
         }
         EFISCanvas._instances = [];
         foreach (var timer; EFISCanvas._timers) {
-            print("EFISCanvas stop timer");
             timer.stop();
         }
         EFISCanvas._timers = [];
@@ -363,11 +363,8 @@ var EFISCanvas = {
         var obj = {
             parents: [EFISCanvas],
             _id: nil,
-            _listeners: [],
-            
-            cleanup: func() {
-            },
-            updateN: nil,
+            cleanup: func() {}, # for reload support while efis development
+            updateN: nil,       # to be used in update() to pause updates
             updateCountP: "instrumentation/efis/update/count"~source_record.id,
             _root: nil,
             svg_keys: [],
@@ -407,7 +404,8 @@ var EFISCanvas = {
             if (n.getValue() == value) me[svgkey].show();
             else me[svgkey].hide();
         };
-    },   
+    },
+    
     loadsvg: func(canvas_group, file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";
@@ -425,7 +423,12 @@ var EFISCanvas = {
     addUpdateFunction: func(f, interval) {
         interval = num(interval);
         if (interval != nil and interval >= 0) {
-            var timer = maketimer(interval, me, f);
+            #the updateCountP is ment for debug/performance monitoring
+            var timer = maketimer(interval, me, func {
+                if (me.updateN != nil and me.updateN.getValue()) 
+                    call(f, [], me);
+                setprop(me.updateCountP, getprop(me.updateCountP)+1);
+            });
             append(EFISCanvas._timers, timer);
             timer.start();
         }
@@ -436,5 +439,12 @@ var EFISCanvas = {
         if (me.updateN == nil or !me.updateN.getValue()) 
             return;
     },
-
+    
+    updateTextElement: func(svgkey, text, color = nil) {
+        if (me[svgkey] == nil or me[svgkey].setText == nil)
+            return;
+        me[svgkey].setText(text);
+        if (color != nil and me[svgkey].setColor != nil)
+            me[svgkey].setColor(color);
+    },
 };

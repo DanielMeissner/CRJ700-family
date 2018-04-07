@@ -44,11 +44,12 @@ var EICASFuelCanvas = {
             me._addPressL(i);
             me["lopress"~i].setColor(me.colors["amber"]);
         }
-        setlistener("controls/fuel/xflow-manual", func(n) {
-            if (n.getValue()) me["manualXflow"].show();
-            else me["manualXflow"].hide();
-        }, 1, 0);
-        setlistener("controls/fuel/gravity-xflow", func(n) {
+        setlistener("controls/fuel/xflow-manual", me._showHideL("manualXflow"), 1, 0);
+        setlistener("controls/fuel/gravity-xflow", me._addGXFlowL(), 1, 0);
+    },
+    
+    _addGXFlowL: func() {
+        return func(n) {
             var serviceable = getprop("systems/fuel/gravity-xflow/serviceable");
             if (serviceable) {
                 if (n.getValue()) {
@@ -70,9 +71,9 @@ var EICASFuelCanvas = {
                 me["gxflowline1"].set("fill", "none");
                 me["gxflowline2"].set("fill", "none");
             }
-        }, 1, 0);
+        };
     },
-    
+        
     _addXferValveL: func(i) {
         setlistener("consumables/fuel/tank["~i~"]/xfer-valve", func(n) {
             if (n.getValue()) {
@@ -117,10 +118,9 @@ var EICASFuelCanvas = {
     getTank: func(idx) {
         var lbs = getprop("consumables/fuel/tank["~idx~"]/level-lbs") or 0;
         return lbs * LB2KG;
-    },    
+    },
+    
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        #setprop(me.updateCountP, getprop(me.updateCountP)+1);
         var fuelQty = [0,0,0];
         foreach (var i; [0,1,2]) {
             fuelQty[i] = me.getTank(i);

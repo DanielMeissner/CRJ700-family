@@ -60,8 +60,8 @@ var EICASACCanvas = {
             me["axfail"~i].setColor(me.colors["amber"]);
             me["axfail"~i].hide();
             me["axoff"~i].hide();
-            setlistener("controls/electric/auto-xfer"~i, me._showHideL("axoff"~i));
-            setlistener("systems/AC/system["~i~"]/serviceable", me._showHideL("axfail"~i, 0));
+            setlistener("controls/electric/auto-xfer"~i, me._showHideL("axoff"~i, 0), 1);
+            setlistener("systems/AC/system["~i~"]/serviceable", me._showHideL("axfail"~i, 0), 1);
         }
     },
     
@@ -105,16 +105,12 @@ var EICASACCanvas = {
     },
 
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        setprop(me.updateCountP, getprop(me.updateCountP)+1);
-
-        if (getprop("systems/AC/system/acext-value") > me.AC_MIN_VOLTS and getprop("controls/electric/ac-service-selected-ext"))
+        if (getprop("systems/AC/system/gen3") > me.AC_MIN_VOLTS and getprop("controls/electric/ac-service-selected-ext"))
             me["servicecfg"].show();
         else me["servicecfg"].hide();
         if (getprop("systems/AC/outputs/bus4") < me.AC_MIN_VOLTS)
             me["shed"].show();
         else me["shed"].hide();
-        
 
     }, 
 };

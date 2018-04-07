@@ -31,6 +31,7 @@ var EICASPriCanvas = {
         obj.init();
         obj.addUpdateFunction(obj.update, 0.050);
         obj.addUpdateFunction(obj.updateSlow, 0.500);
+        obj.addUpdateFunction(obj.updateMessages, 0.300);
         return obj;
     },
 
@@ -157,18 +158,17 @@ var EICASPriCanvas = {
     },
 
     updateMessages: func() {
+        if (me.updateN == nil or !me.updateN.getValue())
+            return;
         if (!me.msgsys.needsUpdate())
             return;
         var messages = me.msgsys.getActiveMessages();
-        #print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIdx());        
-        for (var i = me.msgsys.getFirstUpdateIdx(); i < size(messages); i += 1) {
-            #print("message"~i~" "~messages[i].text);
-            me["message"~i].setText(messages[i].text);
-            me["message"~i].setColor(messages[i].color);
+        #print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIndex());        
+        for (var i = me.msgsys.getFirstUpdateIndex(); i < size(messages); i += 1) {
+            me.updateTextElement("message"~i, messages[i].text, messages[i].color);
         }
         for (i; i < me.MAX_MSG; i += 1) {
-            #print("clear m"~i);
-            me["message"~i].setText("");
+            me.updateTextElement("message"~i, "");
         }
     },
 
@@ -177,7 +177,6 @@ var EICASPriCanvas = {
             return;
         me.updateGearIndicators();
         me.updateFuel();
-        me.updateMessages();
         if (CRJ700.engines[0].running and CRJ700.engines[1].running) {
             if(me.oilp[0] > 24 and me.oilp[1] > 24)
             {

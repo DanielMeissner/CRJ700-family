@@ -26,7 +26,6 @@ var EICASHydraulicsCanvas = {
     },
     
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        setprop(me.updateCountP, getprop(me.updateCountP)+1);
+
     }, 
 };
