@@ -105,7 +105,7 @@ var EICASACCanvas = {
     },
 
     update: func() {
-        if (getprop("systems/AC/system/gen3") > me.AC_MIN_VOLTS and getprop("controls/electric/ac-service-selected-ext"))
+        if (getprop("systems/AC/system/gen4-value") > me.AC_MIN_VOLTS and getprop("controls/electric/ac-service-selected-ext"))
             me["servicecfg"].show();
         else me["servicecfg"].hide();
         if (getprop("systems/AC/outputs/bus4") < me.AC_MIN_VOLTS)
