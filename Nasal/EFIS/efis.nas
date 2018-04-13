@@ -203,7 +203,7 @@ var EFIS = {
     _setDisplaySource: func(du_id, source_id)
     {
         var prev_source = me.active_sources[du_id];
-        print("setDisplaySource unit "~du_id~" src "~source_id~" prev "~prev_source);
+        #print("setDisplaySource unit "~du_id~" src "~source_id~" prev "~prev_source);
         if (prev_source >= 0) {
             if (me.source_records[prev_source] == nil)
                 print("_setDisplaySource error: prev: "~prev_source~" #"~size(me.source_records));

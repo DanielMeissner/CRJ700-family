@@ -34,8 +34,6 @@ var EICASDoorsCanvas = {
     },
         
     update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
-        #setprop(me.updateCountP, getprop(me.updateCountP)+1);
         var color_warn = me.colors["red"];
         forindex (var i; me.prop_names) {
             if (i > 0) color_warn = me.colors["amber"];
