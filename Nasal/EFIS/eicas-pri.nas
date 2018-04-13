@@ -47,8 +47,10 @@ var EICASPriCanvas = {
         me._addFlapsL();
         me.hideGearT = maketimer(30, me, func() {me["gGear"].hide();});
         me.hideGearT.singleShot = 1;
-        me.msgsys.addMessages("warning", EICASWarningMessages, 0, efis.colors["red"]);
-        me.msgsys.addMessages("caution", EICASCautionMessages, 1, efis.colors["amber"]);
+        me.clsWarning = me.msgsys.addMessages("warning", EICASWarningMessages, 0, efis.colors["red"]);
+        me.clsCaution = me.msgsys.addMessages("caution", EICASCautionMessages, 1, efis.colors["amber"]);
+        me.msgOil0 = me.msgsys.getMessageID(me.clsWarning, "L ENG OIL PRESS");
+        me.msgOil1 = me.msgsys.getMessageID(me.clsWarning, "R ENG OIL PRESS");
     },
 
     #-- listeners for rare events --
@@ -208,6 +210,8 @@ var EICASPriCanvas = {
             me["oilTemp"~i].setText(sprintf("%3d", me.getEng(i, "oilt-norm")*163));
             me.oilp[i] = me.getEng(i, "oilp-norm")*780;
             me["oilPress"~i].setText(sprintf("%3d", me.oilp[i]));
+            if (me.oilp[i] < 24) me.msgsys.set(me.clsWarning, me["msgOil"~i], 1);
+            else me.msgsys.set(me.clsWarning, me["msgOil"~i], 0);
             me.updateOilGauge(i, me.oilp[i]);
         }
     },

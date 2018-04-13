@@ -28,8 +28,8 @@ var EICASStatCanvas = {
     init: func() {
         me._addApuL();
         me._addApuDoorL();
-        me.msgsys.addMessages("advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
-        me.msgsys.addMessages("status", EICASStatusMessages, 1);
+        me.clsAdvisory = me.msgsys.addMessages("advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
+        me.clsStatus = me.msgsys.addMessages("status", EICASStatusMessages, 1);
     },
 
     _addApuL: func() {

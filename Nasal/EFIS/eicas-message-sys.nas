@@ -94,6 +94,8 @@ var MessageSystem = {
         return obj;
     },
 
+    # 
+    # returns class id (int)
     addMessages: func(name, messages, pageable, color = nil) {
         var class = size(me.classes);
         me["new-msg"~class] = me.rootN.getNode("new-msg-"~name,1);
@@ -101,20 +103,36 @@ var MessageSystem = {
         append(me.classes, MessageClass.new(name, pageable).setColor(color));
         append(me.messages, messages);
         append(me.active, []);
-        var eqL = func(i) {
-            return func(n) {
-                        if (n.getValue() == messages[i]["value"])
-                            me.set(class, i, 1);
-                        else me.set(class, i, 0);
-                    }
-            
-        };
         var simpleL = func(i){
             return func(n) {
                         #if (n.getValue())
                             me.set(class, i, n.getValue());
                         #else me.set(class, i, 0);
                     }
+        };
+        var eqL = func(i) {
+            return func(n) {
+                        if (n.getValue() == messages[i]["eq"])
+                            me.set(class, i, 1);
+                        else me.set(class, i, 0);
+                    }
+            
+        };
+        var ltL = func(i) {
+            return func(n) {
+                        if (n.getValue() < messages[i]["lt"])
+                            me.set(class, i, 1);
+                        else me.set(class, i, 0);
+                    }
+            
+        };
+        var gtL = func(i) {
+            return func(n) {
+                        if (n.getValue() > messages[i]["gt"])
+                            me.set(class, i, 1);
+                        else me.set(class, i, 0);
+                    }
+            
         };
         forindex (var i; messages) {
             if (messages[i].prop) {
@@ -124,12 +142,13 @@ var MessageSystem = {
                     prop = prop.getAliasTarget();
                 }
                 var L = nil;
-                if (messages[i]["value"] != nil) L = eqL(i);
-                else L = simpleL(i);
-                setlistener(prop, L, 1, 0);
+                if    (messages[i]["eq"] != nil) setlistener(prop, eqL(i), 1, 0);
+                elsif (messages[i]["lt"] != nil) setlistener(prop, ltL(i), 1, 0);
+                elsif (messages[i]["gt"] != nil) setlistener(prop, gtL(i), 1, 0);
+                else  setlistener(prop, simpleL(i), 1, 0);
             }
         }
-        return me;
+        return class;
     },
 
     _updateList: func() {
