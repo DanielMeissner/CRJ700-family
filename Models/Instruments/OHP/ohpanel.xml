@@ -1176,8 +1176,7 @@
 				</greater-than-equals>
 				<or>
 					<property>controls/lighting/lt-test</property>
-					<not><property>systems/fuel/boost-pump[0]/selected</property></not>
-					<not><property>systems/fuel/boost-pump[0]/serviceable</property></not>
+					<property>systems/fuel/boost-pump[0]/inop</property>
 				</or>
 			</and>
 		</condition>
@@ -1321,8 +1320,7 @@
 				</greater-than-equals>
 				<or>
 					<property>controls/lighting/lt-test</property>
-					<not><property>systems/fuel/boost-pump[1]/selected</property></not>
-					<not><property>systems/fuel/boost-pump[1]/serviceable</property></not>
+                    <property>systems/fuel/boost-pump[1]/inop</property>
 				</or>
 			</and>
 		</condition>

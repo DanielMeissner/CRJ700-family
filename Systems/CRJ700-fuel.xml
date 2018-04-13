@@ -144,6 +144,16 @@
         <output>systems/fuel/boost-pump[1]/running</output>
     </logic>
     <logic>
+        <name>Left fuel pump inop</name>
+        <input>
+            <or>
+                <not><property>systems/fuel/boost-pump[0]/selected</property></not>
+                <not><property>systems/fuel/boost-pump[0]/serviceable</property></not>
+            </or>
+        </input>
+        <output>systems/fuel/boost-pump[0]/inop</output>
+    </logic>
+    <logic>
         <name>Left fuel circuit powered</name>
         <input>
             <or>
@@ -153,6 +163,16 @@
             </or>
         </input>
         <output>systems/fuel/circuit[0]/powered</output>
+    </logic>
+    <logic>
+        <name>Right fuel pump inop</name>
+        <input>
+            <or>
+                <not><property>systems/fuel/boost-pump[1]/selected</property></not>
+                <not><property>systems/fuel/boost-pump[1]/serviceable</property></not>
+            </or>
+        </input>
+        <output>systems/fuel/boost-pump[1]/inop</output>
     </logic>
     <logic>
         <name>Right fuel circuit powered</name>
