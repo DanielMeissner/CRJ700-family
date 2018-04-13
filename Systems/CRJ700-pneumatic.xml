@@ -161,7 +161,7 @@
     </logic>
     <logic>
         <name>Pressure right</name>
-        <debug type="bool">true</debug>
+        <!-- <debug type="bool">true</debug> -->
         <input>
             <or>
                 <and>
