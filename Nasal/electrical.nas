@@ -343,6 +343,9 @@ var DCPC = {
             dcservice: 0,
         };
         print("DC power center "~obj.parents[1].system_path);
+        obj.xtieN = obj.systemN.getNode("xtie", 1, "BOOL");
+        obj.esstieN = obj.systemN.getNode("esstie", 1, "BOOL");
+        obj.maintieN = obj.systemN.getNode("maintie", 1, "BOOL");
         return obj;
     },
 
@@ -362,28 +365,36 @@ var DCPC = {
             var apubatt = me.inputs[4].getValue();
             var mainbatt = me.inputs[5].getValue();
             var batt = (apubatt > mainbatt) ? apubatt : mainbatt;
-
+            
+            var xtie = !(et1 or et2) or !(t1 or t2);
+            var esstie = !(et1 or et2 or t1 or t2);
+            var maintie = !(t1 and t2);
+            me.xtieN.setValue(xtie);
+            me.esstieN.setValue(esstie);
+            me.maintieN.setValue(maintie);
             #print("DCPC "~t1~", "~t2~", "~et1~", "~et2~", "~batt);
-            var v = 0;
 
-            #Battery
-            me.outputs[4].setValue(batt);
+            var b = batt;
+            if (!xtie) {
+                b = (et2 > batt) ? et2 : batt;
+                dc2 = (t2 > t1) ? t2 : t1;
+            }
+            else {
+                b = (t2 > batt) ? t2 : batt;
+                dc2 = (et2 > t1) ? et2 : t1;
+            }
+            dc1 = (t1 > dc2) ? t1 : dc2;
 
-            #DC1
-            v = (t1 >= batt) ? t1 : batt;
-            me.outputs[0].setValue(v);
-
-            #DC2
-            v = (t2 >= batt) ? t2 : batt;
-            me.outputs[1].setValue(v);
+            me.outputs[0].setValue(dc1);
+            me.outputs[1].setValue(dc2);
 
             #DC_SERVICE
             if (me.dcservice) me.outputs[3].setValue(apubatt);
-            else me.outputs[3].setValue(v);
+            else me.outputs[3].setValue(dc2);
 
             #DC_ESS
-            v = (et1 >= batt) ? et1 : batt;
-            me.outputs[2].setValue(v);
+            me.outputs[2].setValue((esstie) ? batt : et1);
+            me.outputs[4].setValue(b);
         }
         return me;
     },
@@ -418,7 +429,7 @@ var ac_buses = [
 ];
 
 var dc_buses = [
-    DCBus.new(1, "DC1", ["dme1", "eicas-disp", "gps1",
+    DCBus.new(1, "DC1", ["dme1", "eicas-disp-1", "gps1",
         ["landing-lights[1]", "controls/lighting/landing-lights[1]"],
         "nwsteering", "passenger-door", "radio-altimeter1",
         ["rear-ac-light", "sim/model/lights/strobe/state"],
@@ -431,15 +442,17 @@ var dc_buses = [
         "rtu2", "vhf-com2", "vhf-nav2",
         ["wing-ac-lights", "sim/model/lights/strobe/state"],
         ]),
-    DCBus.new(3, "DC-ESS", ["efis", "instrument-flood-lights", "mfd1",
-        "pfd1", "reversers", "rtu1", "transponder1", "vhf-nav1", "wiper-right",
+    DCBus.new(3, "DC-ESS", ["efis", "instrument-flood-lights",
+        ["mfd1", "systems/AC/outputs/esstru1"],
+        ["pfd1", "systems/AC/outputs/esstru1"],
+        "reversers", "rtu1", "transponder1", "vhf-nav1", "wiper-right",
         ]),
     DCBus.new(4, "DC-Service", ["boarding-lights", "galley-lights",
         ["beacon", "sim/model/lights/beacon/state"],
         ["nav-lights", "controls/lighting/nav-lights"],
         "service-lights",
         ]),
-    DCBus.new(5, "Battery", ["adg-deploy", "afcs-l", "clock1", "eicas-disp", "fuel-sov",
+    DCBus.new(5, "Battery", ["adg-deploy", "afcs-l", "clock1", "eicas-disp-2", "fuel-sov",
         "fuel-pump-left",
         "gravity-xflow",
         ["landing-lights[0]", "controls/lighting/landing-lights[0]"],
@@ -493,6 +506,11 @@ dcpc.addInput(EnergyConv.new(dcpc, "esstru2", 28, ac_buses[0].outputs_path~"esst
 dcpc.addInput(EnergyConv.new(dcpc, "apu-battery", 24).addSwitch("/controls/electric/battery-switch"));
 dcpc.addInput(EnergyConv.new(dcpc, "main-battery", 24).addSwitch("/controls/electric/battery-switch"));
 
+var eicasdisp = DCBus.new(10,"eicasdisp", ["eicas-disp"]);
+eicasdisp.addInput(props.getNode("systems/DC/outputs/eicas-disp-1",1));
+eicasdisp.addInput(props.getNode("systems/DC/outputs/eicas-disp-2",1));
+eicasdisp.init();
+
 #
 # after acpc/dcpc init connect buses to the pc outlets
 #
@@ -522,6 +540,8 @@ mkviii.init();
 # dummy for compatibility, called from update loop
 # should not be needed if all listeners work correctly
 update_electrical = func {
+    #print("update_electrical");
     acpc.update();
+    dcpc.update();
 }
 print("Electrical system done.");

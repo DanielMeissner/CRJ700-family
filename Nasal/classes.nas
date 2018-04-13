@@ -220,6 +220,7 @@ var EnergyBus = {
             var p = props.globals.getNode(obj.system_path~"_name", 1);
             p.setValue(name);
         }
+        obj.systemN = props.getNode(obj.system_path,1);
         obj.serviceableN = props.globals.getNode(obj.system_path~"serviceable",1, "BOOL");
         obj.serviceableN.setBoolValue(1);
         obj.outputN = props.globals.getNode(obj.system_path~"value", 1, "FLOAT");
@@ -245,7 +246,7 @@ var EnergyBus = {
                 i.init();
             elsif (isa(i,props.Node)) {
                 print("Node listener");
-                setlistener(i, func {me.update;}, 1,0);
+                setlistener(i, func {me.update();}, 1,0);
             }
             else print("Unnown input type");
         }
