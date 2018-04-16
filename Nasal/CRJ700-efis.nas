@@ -4,7 +4,7 @@
 # Created: Feb. 2018
 #
 
-#-- begin development --
+#-- begin development --------------------------------------------------------
 print("-- EFIS --");
 var reloadFlag = "/instrumentation/efis/reload";
 props.getNode(reloadFlag,1).setIntValue(0);
@@ -36,30 +36,36 @@ var cleanup = func()
         removelisteners();
         efis.del();
 };
-#-- end development --
+#-- end development ----------------------------------------------------------
 
 var svg_path = "Models/Instruments/EFIS/";
 var nasal_path = "Nasal/EFIS/";
-io.include(nasal_path~"efis.nas");
-io.include(nasal_path~"pfd.nas");
-io.include(nasal_path~"eicas-messages-crj700.nas");
-io.include(nasal_path~"eicas-pri.nas");
-io.include(nasal_path~"eicas-stat.nas");
-io.include(nasal_path~"eicas-ecs.nas");
-io.include(nasal_path~"eicas-hydraulics.nas");
-io.include(nasal_path~"eicas-ac.nas");
-io.include(nasal_path~"eicas-dc.nas");
-io.include(nasal_path~"eicas-fuel.nas");
-io.include(nasal_path~"eicas-fctl.nas");
-io.include(nasal_path~"eicas-aice.nas");
-io.include(nasal_path~"eicas-doors.nas");
+var nasal_files = [
+    "efis.nas",
+    "pfd.nas",
+    "eicas-messages-crj700.nas",
+    "eicas-pri.nas",
+    "eicas-stat.nas",
+    "eicas-ecs.nas",
+    "eicas-hydraulics.nas",
+    "eicas-ac.nas",
+    "eicas-dc.nas",
+    "eicas-fuel.nas",
+    "eicas-fctl.nas",
+    "eicas-aice.nas",
+    "eicas-doors.nas",
+    ];
+foreach (var filename; nasal_files)
+{
+    io.include(nasal_path~filename);
+}
 
 # identifiers for display units
 var display_names = ["PFD1", "MFD1", "EICAS1", "EICAS2", "MFD2", "PFD2"];
 # names of 3D objects that will take the canvas texture
 var display_objects = ["EFIS1", "EFIS2", "EFIS3", "EFIS4", "EFIS5", "EFIS6"];
 # power source for each display unit
-var power_props = [ 
+var display_power_props = [ 
     "/systems/DC/outputs/pfd1",
     "/systems/DC/outputs/mfd1",
     "/systems/DC/outputs/eicas-disp",
@@ -71,7 +77,10 @@ var minimum_power = 22;
 
 EFIS.colors["green"] = [0.133,0.667,0.133];
 EFIS.colors["blue"] = [0.133,0.133,1];
-var efis = EFIS.new(display_names, display_objects, power_props, minimum_power);
+
+# create EFIS system and add power prop to en-/dis-able efis
+var efis = EFIS.new(display_names, display_objects, display_power_props, minimum_power);
+efis.addPowerProp("systems/DC/outputs/eicas-disp");
 
 # efis will create one display canvas and one source canvas per display unit automatically
 # more pages can be added e.g. for EICAS

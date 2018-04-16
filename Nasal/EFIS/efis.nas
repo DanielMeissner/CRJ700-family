@@ -58,7 +58,7 @@ var DisplayUnit =
         me.du_canvas = canvas.new(me.canvas_settings).setColorBackground(DisplayUnit.bgcolor);
         me.root = me.du_canvas.createGroup();
         
-        #-- for development: create test image
+    #-- for development: create test image
         var x = num(me.canvas_settings.view[0])/2 or 20;
         var y = num(me.canvas_settings.view[1])/2 or 20;
         me.root.createChild("text").setText(me.name ~ " -- no source").setColor(1,1,1,1).setAlignment("center-center").setTranslation(x, y);
@@ -79,7 +79,7 @@ var DisplayUnit =
         me.root.createChild("path", "square-btm-right").rect(x, y, L, L)
             .setStrokeLineWidth(2)
             .setColor(0,0,1,1);
-        #-- end test image --
+    #-- end test image --
         me.img = me.root.createChild("image", "DisplayUnit "~me.name);
         me.du_canvas.addPlacement({ parent: me.placement_parent, node: me.placement_node });
         return me;
@@ -160,6 +160,7 @@ var EFIS = {
             controls: {},
             source_records: [], 
             active_sources: [],
+            powerN: nil,
             
             cleanup: func() {
                 foreach (var sr; obj.source_records) {
@@ -191,6 +192,9 @@ var EFIS = {
         return obj;
     }, #new
 
+    addPowerProp: func(p) {
+        me.powerN = props.getNode(p,1);        
+    }
     #-- private methods ----------------------
     #add display source (canvas), returns source_id
     _addSourceCanvas: func(mycanvas)

@@ -429,7 +429,7 @@ var ac_buses = [
 ];
 
 var dc_buses = [
-    DCBus.new(1, "DC1", ["dme1", "eicas-disp-1", "gps1",
+    DCBus.new(1, "DC1", ["dme1", "eicas-disp-a", "gps1",
         ["landing-lights[1]", "controls/lighting/landing-lights[1]"],
         "nwsteering", "passenger-door", "radio-altimeter1",
         ["rear-ac-light", "sim/model/lights/strobe/state"],
@@ -452,7 +452,7 @@ var dc_buses = [
         ["nav-lights", "controls/lighting/nav-lights"],
         "service-lights",
         ]),
-    DCBus.new(5, "Battery", ["adg-deploy", "afcs-l", "clock1", "eicas-disp-2", "fuel-sov",
+    DCBus.new(5, "Battery", ["adg-deploy", "afcs-l", "clock1", "eicas-disp-b", "fuel-sov",
         "fuel-pump-left",
         "gravity-xflow",
         ["landing-lights[0]", "controls/lighting/landing-lights[0]"],
@@ -507,8 +507,8 @@ dcpc.addInput(EnergyConv.new(dcpc, "apu-battery", 24).addSwitch("/controls/elect
 dcpc.addInput(EnergyConv.new(dcpc, "main-battery", 24).addSwitch("/controls/electric/battery-switch"));
 
 var eicasdisp = DCBus.new(10,"eicasdisp", ["eicas-disp"]);
-eicasdisp.addInput(props.getNode("systems/DC/outputs/eicas-disp-1",1));
-eicasdisp.addInput(props.getNode("systems/DC/outputs/eicas-disp-2",1));
+eicasdisp.addInput(props.getNode("systems/DC/outputs/eicas-disp-a",1));
+eicasdisp.addInput(props.getNode("systems/DC/outputs/eicas-disp-b",1));
 eicasdisp.init();
 
 #

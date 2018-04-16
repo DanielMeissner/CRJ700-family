@@ -78,6 +78,14 @@ var MessageClass = {
     },
 };
 
+var Message = {
+    msg: "",
+    prop: "",
+    eq: "",
+    lt: "",
+    gt: "",
+};
+
 var MessageSystem = {
     new: func(page_length, prop_path) {
         var obj = {
@@ -88,13 +96,19 @@ var MessageSystem = {
             messages: [],       # vector of vector of messages
             active: [],         # lists of active message IDs per class
             msg_list: [],       # active message list (flat, sorted by class)
-            first_needs_update: 0,       # for later optimisation: first changed line in msg_list
-            update_flag: 1,
+            first_changed_line: 0,       # for later optimisation: first changed line in msg_list
+            update_available: 1,
         };
         return obj;
     },
 
-    # 
+    # addMessages creates a new msg class and add messages to it
+    # name:         identifier for msg class
+    # messages:     vector of {msg: "Message String", 
+        prop: "/some/prop/path",
+    #                   eq: 
+    #                   }
+    # pageable:     true = normal paging, false = msg class is sticky at top of list
     # returns class id (int)
     addMessages: func(name, messages, pageable, color = nil) {
         var class = size(me.classes);
@@ -158,7 +172,7 @@ var MessageSystem = {
                 append(me.msg_list, { text: me.messages[class][id].msg, color: me.classes[class].color});
             }
         }
-        me.update_flag = 1;
+        me.update_available = 1;
     },
 
     _remove: func(class, msg) {
@@ -186,8 +200,8 @@ var MessageSystem = {
         var isActive = me._isActive(class, msg);
         if ((isActive and visible) or (!isActive and !visible))
             return;
-        if (!me.update_flag)
-            me.first_needs_update = me.pager.page_length;
+        if (!me.update_available)
+            me.first_changed_line = me.pager.page_length;
 
         #add message at head of list
         if (visible) {
@@ -199,21 +213,21 @@ var MessageSystem = {
         var unchanged = 0;
         for (var i = 0; i < class; i += 1)
             unchanged += size(me.active[i]);
-        if (me.first_needs_update > unchanged) me.first_needs_update = unchanged;
-        print("set c:"~class~" m:"~msg~" v:"~visible~ " 1upd:"~me.first_needs_update);
+        if (me.first_changed_line > unchanged) me.first_changed_line = unchanged;
+        print("set c:"~class~" m:"~msg~" v:"~visible~ " 1upd:"~me.first_changed_line);
         me._updateList();
     },
 
     needsUpdate: func {
-        return me.update_flag;
+        return me.update_available;
     },
 
     getFirstUpdateIndex: func {
-        return me.first_needs_update;
+        return me.first_changed_line;
     },
 
     getActiveMessages: func {
-        me.update_flag = 0;
+        me.update_available = 0;
         return me.msg_list;
     },
 
