@@ -5,9 +5,9 @@
 #
 
 var EICASDoorsCanvas = {
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASDoorsCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASDoorsCanvas , EFISCanvas.new(name)],
             svg_keys: ["passenger", "fwdservice", "av-bay", "fwdcargo", "ctrcargo",
                     "aftcargo", "lfwdemer", "rfwdemer", "laftemer","raftemer"],
             prop_base: "sim/model/door-positions/",
@@ -15,7 +15,7 @@ var EICASDoorsCanvas = {
                 "aft-cargo", "emer-l1", "emer-r1", "emer-l2", "emer-r2"],
             prop_sufix: "/position-norm",
         };
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.9);
         return obj;

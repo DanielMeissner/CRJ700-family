@@ -127,12 +127,14 @@ var EFIS = {
         }
         EFIS._instances = [];
     },
-    _defaultcanvas_settings: {
+
+    defaultcanvas_settings: {
         "name": "EFIS_display",
         "size": [1024,1024],
         "view": [1000,1200],
         "mipmapping": 1
     },
+    
     window_size: [500,600],
     
     colors: { 
@@ -147,7 +149,7 @@ var EFIS = {
         amber: [1,0.682,0],
     },
     
-    new: func(display_names, object_names, power_props=nil, minimum_power=0) {
+    new: func(display_names, object_names) {
         if (typeof(display_names) != "vector") {
             print("EFIS.new: 'display_names' not a vector!");
             return;
@@ -163,45 +165,29 @@ var EFIS = {
             powerN: nil,
             
             cleanup: func() {
-                foreach (var sr; obj.source_records) {
-                    sr.canvas.del();
-                }
-                obj.source_records = [];
             },
         };
         if (object_names != nil and typeof(object_names) == "vector"
             and size(display_names) == size(object_names))
         {
             foreach (var i; display_names) {
+                #initalize to "no source"
                 append(obj.active_sources, -1);
             }
-            var settings = obj._defaultcanvas_settings;
+            var settings = obj.defaultcanvas_settings;
             setsize(obj.display_units, size(display_names));
             forindex (var id; display_names)
             {
                 obj.display_units[id] = DisplayUnit.new(obj.display_names[id],
-                    obj._defaultcanvas_settings, object_names[id]);
-                obj._setDisplaySource(id, obj.addSource(display_names[id]));
+                        obj.defaultcanvas_settings, object_names[id]);
+                #obj._setDisplaySource(id, obj.addSource(display_names[id]));
             }
         }
         append(EFIS._instances, obj);
-        if (power_props != nil)
-            forindex (var i; display_names) {
-                obj.display_units[i].setPowerSource(power_props[i], minimum_power);
-            }        
         return obj;
     }, #new
 
-    addPowerProp: func(p) {
-        me.powerN = props.getNode(p,1);        
-    }
     #-- private methods ----------------------
-    #add display source (canvas), returns source_id
-    _addSourceCanvas: func(mycanvas)
-    {
-        append(me.sources, mycanvas);
-        return size(me.sources) - 1;
-    },
 
     #switch display unit du_id to source source_id
     _setDisplaySource: func(du_id, source_id)
@@ -211,9 +197,8 @@ var EFIS = {
         if (prev_source >= 0) {
             if (me.source_records[prev_source] == nil)
                 print("_setDisplaySource error: prev: "~prev_source~" #"~size(me.source_records));
-            me.source_records[prev_source].visibleN.setValue(
-                me.source_records[prev_source].visibleN.getValue() - 1
-            );
+            var n = me.source_records[source_id].visibleN;
+            n.setValue(n.getValue() - 1);
         }
         var path = "";
         if (source_id >= 0) {
@@ -221,9 +206,8 @@ var EFIS = {
         }
         me.display_units[du_id].setSource(path);
         me.active_sources[du_id] = source_id;
-        me.source_records[source_id].visibleN.setValue(
-            me.source_records[source_id].visibleN.getValue() + 1
-        );
+        var n = me.source_records[source_id].visibleN;
+        n.setValue(n.getValue() + 1);
     },
     
     # mapping: 
@@ -252,24 +236,28 @@ var EFIS = {
     },
   
     #-- public methods -----------------------
-    addSource: func(name) {
-        var settings = me._defaultcanvas_settings;
-        settings["name"] = name;
-        var _canvas = canvas.new(settings);
-        var _root = _canvas.createGroup();
-        var srcID = me._addSourceCanvas(_canvas);
-        var visibleN = props.getNode("instrumentation/efis/update/visible"~srcID, 1);
-        visibleN.setIntValue(0);
-        append(me.source_records, {
-            id: srcID,
-            name: name,
-            canvas: _canvas,
-            root: _root, 
-            visibleN: visibleN,
-        });
-        return srcID;
+    setPowerProp: func(p) {
+        me.powerN = props.getNode(p,1);        
+    },
+    
+    setDUPowerProps: func(power_props, minimum_power=0) {
+        if (power_props != nil and typeof(power_props) == "vector") {
+            forindex (var i; display_names) {
+                me.display_units[i].setPowerSource(power_props[i], minimum_power);
+            }
+        }
+        else print("EFIS.setDUPowerProps(): Error, argument is not a vector.");
     },
 
+    addSource: func(efis_canvas) {
+        append(me.sources, efis_canvas);
+        var srcID = size(me.sources) - 1;
+        var visibleN = props.getNode("instrumentation/efis/update/visible"~srcID, 1);
+        visibleN.setIntValue(0);
+        efis_canvas.setUpdateN(visibleN);
+        append(me.source_records, {visibleN: visibleN});
+        return srcID;
+    },
 
     # ctrl: property path to integer prop
     # mappings: vector of display mappings
@@ -316,17 +304,21 @@ var EFIS = {
         });
     },
 
+    setDefaultMapping: func(mapping) {
+        if (mapping != nil and (typeof(mapping) == "vector" or typeof(mapping) == "hash")) {
+            me.default_mapping = mapping;
+            me._activateRouting(me.default_mapping);
+        }
+    },
+        
     getDU: func(i) {return me.display_units[i]},
     
-    getSources: func()
-    {
-        return me.source_records;
-    },
+    #getSources: func() { return me.source_records; },
     
     getDisplayName: func(id) {
         id = num(id);
         if (id != nil and id >=0 and id < size(me.display_names))
-            return me.display_names[num(id)];
+            return me.display_names[id];
         else return "Invalid display ID."
     },
 
@@ -362,26 +354,43 @@ var EFISCanvas = {
     },
     
     colors: EFIS.colors,
+    defaultcanvas_settings : EFIS.defaultcanvas_settings,
     
-    new: func(source_record, file=nil) {
+    new: func(name, svgfile=nil) {
         var obj = {
             parents: [EFISCanvas],
             _id: nil,
-            cleanup: func() {}, # for reload support while efis development
-            updateN: nil,       # to be used in update() to pause updates
-            updateCountP: "instrumentation/efis/update/count"~source_record.id,
+            # for reload support while efis development
+            cleanup: func() {
+                obj._canvas.del();
+            }, 
+            
+            _canvas: nil,
             _root: nil,
             svg_keys: [],
+            updateN: nil,       # to be used in update() to pause updates
         };
         obj._id = size(EFISCanvas._instances);
         append(EFISCanvas._instances, obj);
-        obj.updateN = source_record.visibleN;
-        props.getNode(obj.updateCountP, 1).setIntValue(0);
-        if (file != nil)
-            obj.loadsvg(source_record.root, file);
+        obj.updateCountN = props.getNode("instrumentation/efis/update/count-"~name, 1);
+        obj.updateCountN.setIntValue(0);
+        var settings = obj.defaultcanvas_settings;
+        settings["name"] = name;
+        obj._canvas = canvas.new(settings);
+        obj._root = obj._canvas.createGroup();        
+        if (svgfile != nil)
+            obj.loadsvg(svgfile);
         return obj;
     },
     
+    getPath: func() {
+        return me._canvas.getPath();
+    },
+    
+    setUpdateN: func(prop) {
+        me.updateN = props.getNode(prop, 1);
+    },
+
     _updateClip: func(key) {
         var clip_el = me._root.getElementById(key ~ "_clip");
         if (clip_el != nil) {
@@ -410,15 +419,14 @@ var EFISCanvas = {
         };
     },
     
-    loadsvg: func(canvas_group, file) {
+    loadsvg: func(file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";
         };
-        me._root = canvas_group;
-        canvas.parsesvg(canvas_group, file, {'font-mapper': font_mapper});
+        canvas.parsesvg(me._root, file, {'font-mapper': font_mapper});
         var svg_keys = me.svg_keys;
         foreach (var key; svg_keys) {
-            me[key] = canvas_group.getElementById(key);
+            me[key] = me._root.getElementById(key);
             me._updateClip(key);
         }
         return me;
@@ -427,11 +435,11 @@ var EFISCanvas = {
     addUpdateFunction: func(f, interval) {
         interval = num(interval);
         if (interval != nil and interval >= 0) {
-            #the updateCountP is ment for debug/performance monitoring
+            #the updateCountN is ment for debug/performance monitoring
             var timer = maketimer(interval, me, func {
                 if (me.updateN != nil and me.updateN.getValue()) 
                     call(f, [], me);
-                setprop(me.updateCountP, getprop(me.updateCountP)+1);
+                me.updateCountN.setValue(me.updateCountN.getValue() + 1);
             });
             append(EFISCanvas._timers, timer);
             timer.start();

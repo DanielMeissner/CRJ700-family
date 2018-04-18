@@ -6,9 +6,9 @@
 
 var EICASFuelCanvas = {
 
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASFuelCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASFuelCanvas , EFISCanvas.new(name)],
             svg_keys: [
                 "fuelTotal", "fuelUsed",
                 "fuelQty0", "fuelQty1", "fuelQty2",
@@ -33,7 +33,7 @@ var EICASFuelCanvas = {
             foreach (var n; [0,1,2,3,4,5,6,7])
                 append(obj.svg_keys, "line"~i~n);
         }
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.8);
         return obj;

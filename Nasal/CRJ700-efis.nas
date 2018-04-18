@@ -75,35 +75,25 @@ var display_power_props = [
 ];
 var minimum_power = 22;
 
+# add/override colors for our aircraft
 EFIS.colors["green"] = [0.133,0.667,0.133];
 EFIS.colors["blue"] = [0.133,0.133,1];
 
 # create EFIS system and add power prop to en-/dis-able efis
-var efis = EFIS.new(display_names, display_objects, display_power_props, minimum_power);
-efis.addPowerProp("systems/DC/outputs/eicas-disp");
+var efis = EFIS.new(display_names, display_objects);
+efis.setPowerProp("systems/DC/outputs/eicas-disp");
+efis.setDUPowerProps(display_power_props, minimum_power);
 
-# efis will create one display canvas and one source canvas per display unit automatically
-# more pages can be added e.g. for EICAS
-var EICASpages = ["ECS", "HYD", "AC", "DC", "FUEL", "F-CTL", "A-ICE", "Doors"];
-# get the two sources created by efis module automatically
-var eicas_sources = [2,3]; 
-# add more sources for the remaining pages
-foreach (var name; EICASpages) {
-    append(eicas_sources, efis.addSource(name));
-}
-var sources = efis.getSources();
+
 
 # control panel selector prop 
 var eicas_pageP = "instrumentation/eicas/page";
 var ecp_targetN = props.globals.getNode("instrumentation/eicas/ecp-target",1);
-ecp_targetN.setIntValue(3);
-#var dev_targetN = props.globals.getNode("/dev/efis-target",1);
-#dev_targetN.setIntValue(4);
-efis.addSourceSelector(eicas_pageP, ecp_targetN, eicas_sources);
+ecp_targetN.setIntValue(3); #DU 3
 
 # display selectors allow to re-route certain displays
 # e.g. each MFD can be set to display the adjacent PFD or EICAS
-# values 0,1,2 1=default
+# control values 0,1,2 1=default
 var src_selector_base = "/controls/efis/";
 var src_selectors = ["src-mfd-pilot", "src-mfd-copilot", "src-eicas"];
 var callbacks = [
@@ -124,29 +114,51 @@ var callbacks = [
         else ecp_targetN.setValue(3);
     },
 ];
-# mappings per src_selector
-var mappings = [ 
-    [ {PFD1: -1, MFD1: 0}, {PFD1: 0, MFD1: 1}, {PFD1: 0, MFD1: 3} ],
-    [ {PFD2: -1, MFD2: 5}, {PFD2: 5, MFD2: 4}, {PFD2: 5, MFD2: 3} ],
-    [ {EICAS1: 3, EICAS2: -1}, {EICAS1: 2, EICAS2: 3}, {EICAS1: -1, EICAS2: 2} ],
-];
+
 
 var EFISSetup = func() {
-    eicas1 = EICASPriCanvas.new(sources[eicas_sources[0]], svg_path~"eicas-pri.svg");
-    eicas2 = EICASStatCanvas.new(sources[eicas_sources[1]], svg_path~"eicas-stat.svg");
-    EICASMessageSystem1 = eicas1.msgsys;
-    EICASMessageSystem2 = eicas2.msgsys;
-    ecs = EICASECSCanvas.new(sources[eicas_sources[2]], svg_path~"eicas-ecs.svg");
-    hydr = EICASHydraulicsCanvas.new(sources[eicas_sources[3]], svg_path~"hydraulics.svg");
-    ac = EICASACCanvas.new(sources[eicas_sources[4]], svg_path~"eicas-ac.svg");
-    dc = EICASDCCanvas.new(sources[eicas_sources[5]], svg_path~"eicas-dc.svg");
-    fuel = EICASFuelCanvas.new(sources[eicas_sources[6]], svg_path~"eicas-fuel.svg");
-    fctl = EICASFctlCanvas.new(sources[eicas_sources[7]], svg_path~"eicas-fctl.svg");
-    aice = EICASAIceCanvas.new(sources[eicas_sources[8]], svg_path~"template.svg");
-    doors = EICASDoorsCanvas.new(sources[eicas_sources[9]], svg_path~"eicas-doors.svg");
+    #-- add primary flight display --
+    pfd1 = PFDCanvas.new("PFD1", svg_path~"PFD.svg",0);
+    pfd2 = PFDCanvas.new("PFD2", svg_path~"PFD.svg",1);
+    #-- add nav display on multi function display --
+    # FIXME: replace dummy by ND
+    mfd1 = EFISCanvas.new("MFD1");
+    mfd2 = EFISCanvas.new("MFD2");
 
-    pfd1 = PFDCanvas.new(sources[0], svg_path~"PFD.svg",0);
-    pfd2 = PFDCanvas.new(sources[5], svg_path~"PFD.svg",1);
+    var eicas_sources = []; 
+    append(eicas_sources, EICASPriCanvas.new("PRI", svg_path~"eicas-pri.svg"));
+    append(eicas_sources, EICASStatCanvas.new("STAT", svg_path~"eicas-stat.svg"));
+    append(eicas_sources, EICASECSCanvas.new("ECS", svg_path~"eicas-ecs.svg"));
+    append(eicas_sources, EICASHydraulicsCanvas.new("HYD", svg_path~"hydraulics.svg"));
+    append(eicas_sources, EICASACCanvas.new("AC", svg_path~"eicas-ac.svg"));
+    append(eicas_sources, EICASDCCanvas.new("DC", svg_path~"eicas-dc.svg"));
+    append(eicas_sources, EICASFuelCanvas.new("FUEL", svg_path~"eicas-fuel.svg"));
+    append(eicas_sources, EICASFctlCanvas.new("F-CTL", svg_path~"eicas-fctl.svg"));
+    append(eicas_sources, EICASAIceCanvas.new("A-ICE", svg_path~"template.svg"));
+    append(eicas_sources, EICASDoorsCanvas.new("Doors", svg_path~"eicas-doors.svg"));
+
+    var pfd1_sid = efis.addSource(pfd1);
+    var pfd2_sid = efis.addSource(pfd2);
+    var mfd1_sid = efis.addSource(mfd1);
+    var mfd2_sid = efis.addSource(mfd2);
+    var eicas_source_ids = []; 
+    foreach (var p; eicas_sources)
+        append(eicas_source_ids, efis.addSource(p));
+
+    var default_mapping = {
+        PFD1: pfd1_sid, MFD1: mfd1_sid, 
+        PFD2: pfd2_sid, MFD2: mfd2_sid,
+        EICAS1: 4, EICAS2: 5, 
+    };
+    efis.setDefaultMapping(default_mapping);
+
+    # mappings per src_selector
+    var mappings = [ 
+        [ {PFD1: -1, MFD1: pfd1_sid}, {PFD1: pfd1_sid, MFD1: mfd1_sid}, {PFD1: pfd1_sid, MFD1: eicas_source_ids[1] }],
+        [ {PFD2: -1, MFD2: pfd2_sid}, {PFD2: pfd2_sid, MFD2: mfd2_sid}, {PFD2: pfd2_sid, MFD2: eicas_source_ids[1]} ],
+        [ {EICAS1: eicas_source_ids[1], EICAS2: -1}, {EICAS1: eicas_source_ids[0], EICAS2: eicas_source_ids[1]}, {EICAS1: -1, EICAS2: eicas_source_ids[0]} ],
+    ];
+    efis.addSourceSelector(eicas_pageP, ecp_targetN, eicas_source_ids);
 
     #-- add display routing controls
     forindex (var i; src_selectors) {

@@ -6,15 +6,15 @@
 
 var EICASHydraulicsCanvas = {
 
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASHydraulicsCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASHydraulicsCanvas , EFISCanvas.new(name)],
             svg_keys: [
                                        
                 ],
            
         };
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.2,);
         return obj;

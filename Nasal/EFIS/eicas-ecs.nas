@@ -6,9 +6,9 @@
 
 var EICASECSCanvas = {
 
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASECSCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASECSCanvas , EFISCanvas.new(name)],
             svg_keys: [
                 "line0", "line1", "line2", 
                 "line30", "line31",
@@ -21,7 +21,7 @@ var EICASECSCanvas = {
             append(obj.svg_keys, "sov"~i);
             append(obj.svg_keys, "sov"~i~"line");
         }
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.2);
         return obj;

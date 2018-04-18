@@ -6,9 +6,9 @@
 
 var EICASDCCanvas = {
 
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASDCCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASDCCanvas , EFISCanvas.new(name)],
             svg_keys: [
                 "input4", "line51",
                 "gEmerBus", "dc2toserv",
@@ -30,7 +30,7 @@ var EICASDCCanvas = {
             append(obj.svg_keys, "bus"~i);
             append(obj.svg_keys, "line"~i);
         }
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.1);
         return obj;
@@ -66,7 +66,7 @@ var EICASDCCanvas = {
     
     _busL : func(i) {
         return func(n) {
-            if (n.getValue() >= 18) {
+            if (num(n.getValue()) >= 18) {
                 me["bus"~i].setColor(me.colors["green"]);
                 me["line"~i].setColorFill(me.colors["green"]);
                 if (i == 5) {

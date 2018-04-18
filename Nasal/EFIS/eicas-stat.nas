@@ -7,9 +7,9 @@
 var EICASStatCanvas = {
     MAX_MSG: 16,    #number of message lines
 
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = {
-            parents: [EICASStatCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASStatCanvas , EFISCanvas.new(name)],
             svg_keys: [
                 "elevTrim", "elevTrimValue", "ailTrim", "rudderTrim",
                 "gAPU", "rpm", "rpmPointer", "egt", "egtPointer",
@@ -18,7 +18,7 @@ var EICASStatCanvas = {
             msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys2"),
         };
         for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.100);
         obj.addUpdateFunction(obj.updateMessages, 0.500);

@@ -6,9 +6,9 @@
 
 var EICASFctlCanvas = {
 
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASFctlCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASFctlCanvas , EFISCanvas.new(name)],
             svg_keys: [
                     "ail0", "ail1", "ailTrim",
                     "slats0", "slats1",
@@ -23,7 +23,7 @@ var EICASFctlCanvas = {
                     "rudder", "rudderTrim", "rudderLimit0", "rudderLimit1",
                 ],
         };
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.07);
         return obj;

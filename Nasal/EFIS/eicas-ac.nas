@@ -7,9 +7,9 @@
 var EICASACCanvas = {
     AC_MIN_VOLTS: 108,
     
-    new: func(source_record, file) {
+    new: func(name, file) {
         var obj = { 
-            parents: [EICASACCanvas , EFISCanvas.new(source_record)],
+            parents: [EICASACCanvas , EFISCanvas.new(name)],
             svg_keys: ["gen0", "gen1", "gen2", "gen3", "gen4", #2:apu, 3: ext, 4: adg
                     "eng0", "eng1", "eng2", 
                     "idg1", "idg2", "idgdisc1", "idgdisc2",
@@ -28,7 +28,7 @@ var EICASACCanvas = {
             engRunning: [0,0,0],
             
         };
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.1);
         return obj;

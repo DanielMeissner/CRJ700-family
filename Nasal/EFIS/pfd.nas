@@ -6,9 +6,9 @@
 var PFDCanvas = {
     # index: {0,1,...} used to select instrumentation, assumes that all instruments
     # for a certain PDF instance share the same index number
-    new: func(source_record, file, index) {
+    new: func(name, file, index) {
         var obj = {
-            parents: [PFDCanvas , EFISCanvas.new(source_record)],
+            parents: [PFDCanvas , EFISCanvas.new(name)],
             index: index,
             svg_keys: [
                 "horizon","rollpointer","rollpointer2","asi.tape","vmo.tape",
@@ -33,7 +33,7 @@ var PFDCanvas = {
                     else return default;
                 }
         };
-        obj.loadsvg(source_record.root, file);
+        obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.033);
         obj.addUpdateFunction(obj.updateSlow, 0.1);
