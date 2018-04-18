@@ -63,7 +63,6 @@ var EICASStatCanvas = {
     },
     
     updateMessages: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) return;
         if (!me.msgsys.needsUpdate())
             return;
         var messages = me.msgsys.getActiveMessages();

@@ -437,9 +437,10 @@
                     <item>
                         <label>Reload EFIS</label>
                         <binding>
-                            <command>property-assign</command>
-                            <property>/instrumentation/efis/reload</property>
-                            <value>1</value>
+                            <command>nasal</command>
+                            <script>
+                                setprop(EFIS.reloadFlag,1);
+                            </script>
                         </binding>
                     </item>
                 </menu>

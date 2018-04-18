@@ -6,7 +6,7 @@
 
 #-- begin development --------------------------------------------------------
 print("-- EFIS --");
-var reloadFlag = "/instrumentation/efis/reload";
+var reloadFlag = "/efis/reload";
 props.getNode(reloadFlag,1).setIntValue(0);
 setprop ("/sim/startup/terminal-ansi-colors",0);
 
@@ -59,6 +59,8 @@ foreach (var filename; nasal_files)
 {
     io.include(nasal_path~filename);
 }
+#var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1")
+#var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys1")
 
 # identifiers for display units
 var display_names = ["PFD1", "MFD1", "EICAS1", "EICAS2", "MFD2", "PFD2"];
@@ -83,7 +85,6 @@ EFIS.colors["blue"] = [0.133,0.133,1];
 var efis = EFIS.new(display_names, display_objects);
 efis.setPowerProp("systems/DC/outputs/eicas-disp");
 efis.setDUPowerProps(display_power_props, minimum_power);
-
 
 
 # control panel selector prop 

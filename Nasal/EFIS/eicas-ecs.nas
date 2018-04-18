@@ -47,6 +47,12 @@ var EICASECSCanvas = {
         return func(n) {
             if (n.getValue()) {
                 me["sov"~i].setRotation(90*D2R);
+                if ((i < 3 and CRJ700.engines[i].running) or
+                    (i == 3) or
+                    (i == 4 and (getprop("systems/pneumatic/pressure-left") 
+                        or getprop("systems/pneumatic/pressure-right"))
+                    )
+                )
                 me["sov"~i~"line"].setColorFill(me.colors["green"]);
             }
             else {

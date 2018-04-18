@@ -3,7 +3,7 @@
 # author:       jsb
 # created:      12/2017
 #------------------------------------------
-
+var EFIS_root_node = props.getNode("/efis", 1);
 io.include(nasal_path~"eicas-message-sys.nas");
 
 # Class DisplayUnit (DU) - handels a named display 3D object in the cockpit
@@ -197,7 +197,7 @@ var EFIS = {
         if (prev_source >= 0) {
             if (me.source_records[prev_source] == nil)
                 print("_setDisplaySource error: prev: "~prev_source~" #"~size(me.source_records));
-            var n = me.source_records[source_id].visibleN;
+            var n = me.source_records[prev_source].visibleN;
             n.setValue(n.getValue() - 1);
         }
         var path = "";
@@ -252,7 +252,7 @@ var EFIS = {
     addSource: func(efis_canvas) {
         append(me.sources, efis_canvas);
         var srcID = size(me.sources) - 1;
-        var visibleN = props.getNode("instrumentation/efis/update/visible"~srcID, 1);
+        var visibleN = EFIS_root_node.getNode("update/visible"~srcID,1);
         visibleN.setIntValue(0);
         efis_canvas.setUpdateN(visibleN);
         append(me.source_records, {visibleN: visibleN});
@@ -372,7 +372,7 @@ var EFISCanvas = {
         };
         obj._id = size(EFISCanvas._instances);
         append(EFISCanvas._instances, obj);
-        obj.updateCountN = props.getNode("instrumentation/efis/update/count-"~name, 1);
+        obj.updateCountN = EFIS_root_node.getNode("update/count-"~name, 1);
         obj.updateCountN.setIntValue(0);
         var settings = obj.defaultcanvas_settings;
         settings["name"] = name;
@@ -387,8 +387,8 @@ var EFISCanvas = {
         return me._canvas.getPath();
     },
     
-    setUpdateN: func(prop) {
-        me.updateN = props.getNode(prop, 1);
+    setUpdateN: func(n) {
+        me.updateN = n;
     },
 
     _updateClip: func(key) {
@@ -436,9 +436,12 @@ var EFISCanvas = {
         interval = num(interval);
         if (interval != nil and interval >= 0) {
             #the updateCountN is ment for debug/performance monitoring
+            var err = [];
             var timer = maketimer(interval, me, func {
                 if (me.updateN != nil and me.updateN.getValue()) 
-                    call(f, [], me);
+                    call(f, [], me, err);
+                if (size(err)) 
+                    debug.printerror(err);
                 me.updateCountN.setValue(me.updateCountN.getValue() + 1);
             });
             append(EFISCanvas._timers, timer);

@@ -91,6 +91,7 @@ var MessageSystem = {
         var obj = {
             parents: [MessageSystem],
             rootN : props.getNode(prop_path,1),
+            page_length: page_length,
             pager: Pager.new(page_length, prop_path),
             classes: [],
             messages: [],       # vector of vector of messages
@@ -105,7 +106,7 @@ var MessageSystem = {
     # addMessages creates a new msg class and add messages to it
     # name:         identifier for msg class
     # messages:     vector of {msg: "Message String", 
-        prop: "/some/prop/path",
+    #                   prop: "/some/prop/path",
     #                   eq: 
     #                   }
     # pageable:     true = normal paging, false = msg class is sticky at top of list

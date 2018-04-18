@@ -150,10 +150,10 @@ if (getprop("/sim/flight-model") == "null")
 }
 else {
     # Engines and APU.
-    var apu = CRJ700.Engine.Apu();
     var engines = [
         CRJ700.Engine.Jet(0),
-        CRJ700.Engine.Jet(1)
+        CRJ700.Engine.Jet(1),
+        CRJ700.Engine.Apu(),
     ];
 
     # Prevent IDG voltage drop on engine idle while in flight 
@@ -206,14 +206,14 @@ var fast_loop = Loop(0, func {
         # Engines and APU.
         CRJ700.Engine.poll_fuel_tanks();
         #CRJ700.Engine.poll_bleed_air();
-        apu.update();
         engines[0].update();
         engines[1].update();
+        engines[2].update();
 
         update_electrical();
         update_hydraulic();
-        eicas_messages_page1.update();
-        eicas_messages_page2.update();
+        #eicas_messages_page1.update();
+        #eicas_messages_page2.update();
 
     }
     
