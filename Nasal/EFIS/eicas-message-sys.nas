@@ -16,8 +16,8 @@ var Pager = {
         return obj;
     },
 
-    setPageLength: func(l) {
-        me.page_length = int(l) or 1;
+    setPageLength: func(n) {
+        me.page_length = int(n) or 1;
         setprop(me.prop_path~"/page_length", me.page_length);
         return me;
     },
@@ -36,7 +36,7 @@ var Pager = {
         var start = me.page_length * me.current_page;
         if (me.length < start) {
             # default to first page if page is invalid
-            me.setPage(0);
+            me.setMessagePage(0);
             start = 0;
         }
         var end = start + me.page_length - 1;
@@ -103,6 +103,20 @@ var MessageSystem = {
         return obj;
     },
 
+    setRootNode: func(n) {
+        me.rootN = n;
+    },
+    
+    # set power prop and add listener to start/stop all registered update functions
+    setPowerProp: func(p) {
+        me.powerN = props.getNode(p,1);
+        setlistener(me.powerN, func(n) {
+            if (n.getValue()) {
+                me.init();
+            }
+        }, 1, 0);
+    },
+    
     # addMessages creates a new msg class and add messages to it
     # name:         identifier for msg class
     # messages:     vector of {msg: "Message String", 
@@ -121,31 +135,31 @@ var MessageSystem = {
         var simpleL = func(i){
             return func(n) {
                         #if (n.getValue())
-                            me.set(class, i, n.getValue());
-                        #else me.set(class, i, 0);
+                            me.setMessage(class, i, n.getValue());
+                        #else me.setMessage(class, i, 0);
                     }
         };
         var eqL = func(i) {
             return func(n) {
                         if (n.getValue() == messages[i]["eq"])
-                            me.set(class, i, 1);
-                        else me.set(class, i, 0);
+                            me.setMessage(class, i, 1);
+                        else me.setMessage(class, i, 0);
                     }
             
         };
         var ltL = func(i) {
             return func(n) {
                         if (n.getValue() < messages[i]["lt"])
-                            me.set(class, i, 1);
-                        else me.set(class, i, 0);
+                            me.setMessage(class, i, 1);
+                        else me.setMessage(class, i, 0);
                     }
             
         };
         var gtL = func(i) {
             return func(n) {
                         if (n.getValue() > messages[i]["gt"])
-                            me.set(class, i, 1);
-                        else me.set(class, i, 0);
+                            me.setMessage(class, i, 1);
+                        else me.setMessage(class, i, 0);
                     }
             
         };
@@ -173,7 +187,6 @@ var MessageSystem = {
                 append(me.msg_list, { text: me.messages[class][id].msg, color: me.classes[class].color});
             }
         }
-        me.update_available = 1;
     },
 
     _remove: func(class, msg) {
@@ -195,7 +208,7 @@ var MessageSystem = {
         return 0;
     },
 
-    set: func(class, msg, visible) {
+    setMessage: func(class, msg, visible) {
         if (class >= size(me.classes))
             return;
         var isActive = me._isActive(class, msg);
@@ -204,7 +217,7 @@ var MessageSystem = {
         if (!me.update_available)
             me.first_changed_line = me.pager.page_length;
 
-        #add message at head of list
+        #add message at head of list, 2DO: priority handling?!
         if (visible) {
             me.active[class] = [msg]~me.active[class];
             #-- set new-msg flag in prop tree, e.g. to trigger sounds
@@ -217,12 +230,28 @@ var MessageSystem = {
         if (me.first_changed_line > unchanged) me.first_changed_line = unchanged;
         print("set c:"~class~" m:"~msg~" v:"~visible~ " 1upd:"~me.first_changed_line);
         me._updateList();
+        me.update_available = 1;
     },
 
+    #-- check for active messages and set new-msg flags. 
+    #   can be used on power up to trigger new-msg events.
+    init: func {
+        forindex (var class; me.active) {
+            if (size(me.active[class])) {
+                me["new-msg"~class].setIntValue(1);
+            }
+        }
+        me.update_available = 1;
+    },
+    
     needsUpdate: func {
         return me.update_available;
     },
 
+    getPageSize: func { 
+        return me.page_length; 
+    },
+    
     getFirstUpdateIndex: func {
         return me.first_changed_line;
     },

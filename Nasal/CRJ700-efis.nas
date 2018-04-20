@@ -59,8 +59,6 @@ foreach (var filename; nasal_files)
 {
     io.include(nasal_path~filename);
 }
-#var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1")
-#var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys1")
 
 # identifiers for display units
 var display_names = ["PFD1", "MFD1", "EICAS1", "EICAS2", "MFD2", "PFD2"];
@@ -98,23 +96,34 @@ ecp_targetN.setIntValue(3); #DU 3
 var src_selector_base = "/controls/efis/";
 var src_selectors = ["src-mfd-pilot", "src-mfd-copilot", "src-eicas"];
 var callbacks = [
+    # pilot side selector
     func(val) { 
         if (val == 2) ecp_targetN.setValue(1);
         elsif (getprop(src_selector_base~src_selectors[2]) == 0)
             ecp_targetN.setValue(2); 
         else ecp_targetN.setValue(3);
     },
+    # copilot side
     func(val) { 
         if (val == 2) ecp_targetN.setValue(4); 
         elsif (getprop(src_selector_base~src_selectors[2]) == 0)
             ecp_targetN.setValue(2); 
         else ecp_targetN.setValue(3);
     },
+    # eicas selector on pedestal panel
     func(val) { 
         if (val == 0) ecp_targetN.setValue(2); 
         else ecp_targetN.setValue(3);
     },
 ];
+
+var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1");
+EICASMsgClsWarning = EICASMsgSys1.addMessages("warning", EICASWarningMessages, 0, efis.colors["red"]);
+EICASMsgClsCaution = EICASMsgSys1.addMessages("caution", EICASCautionMessages, 1, efis.colors["amber"]);
+
+var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys2");
+EICASMsgClsAdvisory = EICASMsgSys2.addMessages("advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
+EICASMsgClsStatus = EICASMsgSys2.addMessages("status", EICASStatusMessages, 1);
 
 
 var EFISSetup = func() {

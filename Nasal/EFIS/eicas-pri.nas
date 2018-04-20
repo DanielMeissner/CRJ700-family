@@ -24,9 +24,10 @@ var EICASPriCanvas = {
                 "slatsBar", "slatsBar_clip", "flapsBar", "flapsPos",
                 "gFuelValues", "fuelQty0", "fuelQty1", "fuelQty2", "fuelTotal",
             ],
-            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys1"),
+            #msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys1"),
         };
-        for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
+        for (var i = 0; i < EICASMsgSys1.getPageSize(); i += 1) 
+            append(obj.svg_keys, "message"~i);
         obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.050);
@@ -47,10 +48,8 @@ var EICASPriCanvas = {
         me._addFlapsL();
         me.hideGearT = maketimer(30, me, func() {me["gGear"].hide();});
         me.hideGearT.singleShot = 1;
-        me.clsWarning = me.msgsys.addMessages("warning", EICASWarningMessages, 0, efis.colors["red"]);
-        me.clsCaution = me.msgsys.addMessages("caution", EICASCautionMessages, 1, efis.colors["amber"]);
-        me.msgOil0 = me.msgsys.getMessageID(me.clsWarning, "L ENG OIL PRESS");
-        me.msgOil1 = me.msgsys.getMessageID(me.clsWarning, "R ENG OIL PRESS");
+        me.msgOil0 = EICASMsgSys1.getMessageID(EICASMsgClsWarning, "L ENG OIL PRESS");
+        me.msgOil1 = EICASMsgSys1.getMessageID(EICASMsgClsWarning, "R ENG OIL PRESS");
     },
 
     #-- listeners for rare events --
@@ -160,14 +159,14 @@ var EICASPriCanvas = {
     },
 
     updateMessages: func() {
-        if (!me.msgsys.needsUpdate())
+        if (!EICASMsgSys1.needsUpdate())
             return;
-        var messages = me.msgsys.getActiveMessages();
-        print("M1 "~size(messages)~" "~me.msgsys.getFirstUpdateIndex());        
-        for (var i = me.msgsys.getFirstUpdateIndex(); i < size(messages); i += 1) {
+        var messages = EICASMsgSys1.getActiveMessages();
+        print("M1 "~size(messages)~" "~EICASMsgSys1.getFirstUpdateIndex());        
+        for (var i = EICASMsgSys1.getFirstUpdateIndex(); i < size(messages); i += 1) {
             me.updateTextElement("message"~i, messages[i].text, messages[i].color);
         }
-        for (i; i < me.MAX_MSG; i += 1) {
+        for (i; i < EICASMsgSys1.getPageSize(); i += 1) {
             me.updateTextElement("message"~i, "");
         }
     },
@@ -204,8 +203,8 @@ var EICASPriCanvas = {
             me["oilTemp"~i].setText(sprintf("%3d", me.getEng(i, "oilt-norm")*163));
             me.oilp[i] = me.getEng(i, "oilp-norm")*780;
             me["oilPress"~i].setText(sprintf("%3d", me.oilp[i]));
-            if (me.oilp[i] < 24) me.msgsys.set(me.clsWarning, me["msgOil"~i], 1);
-            else me.msgsys.set(me.clsWarning, me["msgOil"~i], 0);
+            if (me.oilp[i] < 24) EICASMsgSys1.setMessage(EICASMsgClsWarning, me["msgOil"~i], 1);
+            else EICASMsgSys1.setMessage(EICASMsgClsWarning, me["msgOil"~i], 0);
             me.updateOilGauge(i, me.oilp[i]);
         }
     },

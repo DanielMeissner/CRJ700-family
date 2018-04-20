@@ -236,8 +236,15 @@ var EFIS = {
     },
   
     #-- public methods -----------------------
+    # set power prop and add listener to start/stop all registered update functions
     setPowerProp: func(p) {
-        me.powerN = props.getNode(p,1);        
+        me.powerN = props.getNode(p,1);
+        setlistener(me.powerN, func(n) {
+            foreach (var src; me.sources) {
+                if (n.getValue()) src.startUpdates();
+                else src.stopUpdates();
+            }
+        }, 1, 0);
     },
     
     setDUPowerProps: func(power_props, minimum_power=0) {
@@ -340,17 +347,12 @@ var EFIS = {
 # based on the work of Joshua Davidson (it0uchpods)
 var EFISCanvas = {
     _instances: [],
-    _timers: [],
     del: func() {
         foreach (var instance; EFISCanvas._instances) {
             if (instance.cleanup != nil and typeof(instance.cleanup) == "func")
                 instance.cleanup();
         }
         EFISCanvas._instances = [];
-        foreach (var timer; EFISCanvas._timers) {
-            timer.stop();
-        }
-        EFISCanvas._timers = [];
     },
     
     colors: EFIS.colors,
@@ -363,12 +365,17 @@ var EFISCanvas = {
             # for reload support while efis development
             cleanup: func() {
                 obj._canvas.del();
+                foreach (var timer; obj._timers) {
+                    timer.stop();
+                }
+                obj._timers = [];
             }, 
             
             _canvas: nil,
             _root: nil,
             svg_keys: [],
             updateN: nil,       # to be used in update() to pause updates
+            _timers: [],
         };
         obj._id = size(EFISCanvas._instances);
         append(EFISCanvas._instances, obj);
@@ -444,15 +451,19 @@ var EFISCanvas = {
                     debug.printerror(err);
                 me.updateCountN.setValue(me.updateCountN.getValue() + 1);
             });
-            append(EFISCanvas._timers, timer);
-            timer.start();
+            append(me._timers, timer);
+            #timer.start();
         }
     },
 
-    ## overload the following methods in derived class!     
-    update: func() {
-        if (me.updateN == nil or !me.updateN.getValue()) 
-            return;
+    startUpdates: func() {
+        foreach (var t; me._timers)
+            t.start();
+    },
+    
+    stopUpdates: func() {
+        foreach (var t; me._timers)
+            t.stop();
     },
     
     updateTextElement: func(svgkey, text, color = nil) {

@@ -15,9 +15,9 @@ var EICASStatCanvas = {
                 "gAPU", "rpm", "rpmPointer", "egt", "egtPointer",
                 "doorMsg", "apuoff",
             ],
-            msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys2"),
+            #msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys2"),
         };
-        for (var i = 0; i < me.MAX_MSG; i += 1) append(obj.svg_keys, "message"~i);
+        for (var i = 0; i < EICASMsgSys2.getPageSize(); i += 1) append(obj.svg_keys, "message"~i);
         obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.100);
@@ -28,8 +28,6 @@ var EICASStatCanvas = {
     init: func() {
         me._addApuL();
         me._addApuDoorL();
-        me.clsAdvisory = me.msgsys.addMessages("advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
-        me.clsStatus = me.msgsys.addMessages("status", EICASStatusMessages, 1);
     },
 
     _addApuL: func() {
@@ -63,13 +61,13 @@ var EICASStatCanvas = {
     },
     
     updateMessages: func() {
-        if (!me.msgsys.needsUpdate())
+        if (!EICASMsgSys2.needsUpdate())
             return;
-        var messages = me.msgsys.getActiveMessages();
-        for (var i = me.msgsys.getFirstUpdateIndex(); i < size(messages); i += 1) {
+        var messages = EICASMsgSys2.getActiveMessages();
+        for (var i = EICASMsgSys2.getFirstUpdateIndex(); i < size(messages); i += 1) {
             me.updateTextElement("message"~i, messages[i].text, messages[i].color);
         }
-        for (i; i < me.MAX_MSG; i += 1) {
+        for (i; i < EICASMsgSys2.getPageSize(); i += 1) {
             me.updateTextElement("message"~i, "");
         }
     },
