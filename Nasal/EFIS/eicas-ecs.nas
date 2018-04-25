@@ -44,15 +44,23 @@ var EICASECSCanvas = {
     },
     
     _sovL: func(i) {
-        return func(n) {
+        if (i < 3) return func(n) {
             if (n.getValue()) {
                 me["sov"~i].setRotation(90*D2R);
-                if ((i < 3 and CRJ700.engines[i].running) or
-                    (i == 3) or
-                    (i == 4 and (getprop("systems/pneumatic/pressure-left") 
-                        or getprop("systems/pneumatic/pressure-right"))
-                    )
-                )
+                if (CRJ700.engines[i].running)
+                    me["sov"~i~"line"].setColorFill(me.colors["green"]);
+            }
+            else {
+                me["sov"~i].setRotation(0);
+                me["sov"~i~"line"].set("fill", "none");
+            }
+        };
+        if (i >= 3) return func(n) {
+            if (n.getValue()) {
+                me["sov"~i].setRotation(90*D2R);
+                if ((i == 3) or
+                    (i == 4 and (getprop("systems/pneumatic/pressure-left") or getprop("systems/pneumatic/pressure-right")))
+                   )
                 me["sov"~i~"line"].setColorFill(me.colors["green"]);
             }
             else {
@@ -63,29 +71,41 @@ var EICASECSCanvas = {
     },
     
     _lineL: func(i) {
-        return func(n) {
+        #engines/apu
+        if (i < 3) return func(n) {
             if (n.getValue()) {
-                if (i < 3)
-                    me["line"~i].setColorFill(me.colors["green"]);
-                elsif (i == 3) {
+                me["line"~i].setColorFill(me.colors["green"]);
+                if (getprop("systems/pneumatic/sov"~i))
+                    me["sov"~i~"line"].setColorFill(me.colors["green"]);
+            }
+            else {
+                me["line"~i].set("fill", "none");
+                me["sov"~i~"line"].set("fill", "none");
+            }
+        };
+        else return func(n) {
+            if (n.getValue()) {
+                if (i == 3) {
                     me["line30"].setColorFill(me.colors["green"]);
                     me["line31"].setColorFill(me.colors["green"]);
                 }
                 else {
                     foreach (var ii; [0,1,2,3]) 
                         me["line"~(10*i+ii)].setColorFill(me.colors["green"]);
+                    if (getprop("systems/pneumatic/sov4"))
+                        me["sov4line"].setColorFill(me.colors["green"]);
                     if (i == 4) me["psiL"].setText("54");
                     if (i == 5) me["psiR"].setText("54");
                 }
             }
             else {
-                if (i < 3)
-                    me["line"~i].set("fill", "none");
-                elsif (i == 3) {
+                if (i == 3) {
                     me["line30"].set("fill", "none");
                     me["line31"].set("fill", "none");
                 }
                 else {
+                    #isolation valve
+                    me["sov4line"].set("fill", "none"); 
                     foreach (var ii; [0,1,2,3])
                         me["line"~(10*i+ii)].set("fill", "none");
                     if (i == 4) me["psiL"].setText("0");
