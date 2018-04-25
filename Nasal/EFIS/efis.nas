@@ -344,7 +344,7 @@ var EFIS = {
 
 #-- EFISCanvas --
 # loads a SVG file and creates clipping from <name>_clip elements
-# based on the work of Joshua Davidson (it0uchpods)
+# idea based on the work of Joshua Davidson (it0uchpods)
 var EFISCanvas = {
     _instances: [],
     del: func() {
@@ -370,12 +370,11 @@ var EFISCanvas = {
                 }
                 obj._timers = [];
             }, 
-            
+            _timers: [],
             _canvas: nil,
             _root: nil,
             svg_keys: [],
             updateN: nil,       # to be used in update() to pause updates
-            _timers: [],
         };
         obj._id = size(EFISCanvas._instances);
         append(EFISCanvas._instances, obj);
@@ -390,8 +389,16 @@ var EFISCanvas = {
         return obj;
     },
     
-    getPath: func() {
+    getPath: func {
         return me._canvas.getPath();
+    },
+    
+    getCanvas: func {
+        return me._canvas;
+    },
+    
+    getRoot: func {
+        return me._root;
     },
     
     setUpdateN: func(n) {
@@ -445,11 +452,11 @@ var EFISCanvas = {
             #the updateCountN is ment for debug/performance monitoring
             var err = [];
             var timer = maketimer(interval, me, func {
-                if (me.updateN != nil and me.updateN.getValue()) 
+                if (me.updateN != nil and me.updateN.getValue()) {
                     call(f, [], me, err);
-                if (size(err)) 
-                    debug.printerror(err);
-                me.updateCountN.setValue(me.updateCountN.getValue() + 1);
+                    if (size(err)) debug.printerror(err);
+                    me.updateCountN.setValue(me.updateCountN.getValue() + 1);
+                }
             });
             append(me._timers, timer);
             #timer.start();
