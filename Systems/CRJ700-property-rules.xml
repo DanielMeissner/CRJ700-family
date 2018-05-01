@@ -4,6 +4,305 @@
     What is what depends on how the files are included in CRJ700-main.xml
 -->
 <PropertyList>
+    <!-- APU -->
+    <logic>
+        <name>APU starting</name>
+        <input>
+            <and>
+                <property>controls/APU/off-on</property>
+                <greater-than>
+                    <property>engines/engine[2]/rpm</property>
+                    <value>0</value>
+                </greater-than>
+                <less-than>
+                    <property>engines/engine[2]/rpm</property>
+                    <value>46</value>
+                </less-than>
+            </and>
+        </input>
+        <output>engines/engine[2]/starting</output>
+    </logic>
+    <logic>
+        <input>
+            <and>
+                <property>controls/APU/off-on</property>
+                <property>engines/engine[2]/running-nasal</property>
+            </and>
+        </input>
+        <output>engines/engine[2]/available</output>
+    </logic>
+    
+    <!-- logic for several EICAS messages -->
+    <logic>
+        <name>EICAS caution APU gen off</name>
+        <input>
+            <property>engines/engine[2]/available</property>
+            <not>
+                <property>controls/electric/engine[2]/generator</property>
+            </not>
+        </input>
+        <output>instrumentation/eicas/caution/apu-gen-off</output>
+    </logic>
+
+    <!-- logic for EICAS config warnings -->
+    <logic>
+        <name>T/O warnings enable</name>
+        <input>
+            <property>gear/on-ground</property>
+            <greater-than>
+                <property>engines/engine[0]/n1</property>
+                <value>70</value>
+            </greater-than>
+            <greater-than>
+                <property>engines/engine[1]/n1</property>
+                <value>70</value>
+            </greater-than>
+        </input>
+        <output>instrumentation/eicas/to-warnings-ena</output>
+    </logic>
+    <logic>
+        <name>EICAS cfg ap</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <property>controls/autoflight/autopilot/engage</property>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-ap</output>
+    </logic>
+    <logic>
+        <name>EICAS cfg brakes</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <property>controls/gear/brake-parking</property>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-brakes</output>
+    </logic>
+    <logic>
+        <name>EICAS cfg flaps</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <or>
+                <less-than>
+                    <property>surface-positions/flap-pos-norm</property>
+                    <value>0.177</value>
+                </less-than>
+                <greater-than>
+                    <property>surface-positions/flap-pos-norm</property>
+                    <value>0.444</value>
+                </greater-than>
+            </or>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-flaps</output>
+    </logic>
+    <logic>
+        <name>EICAS cfg spoilers</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <or>
+                <property>surface-positions/spoiler-ob-ground-pos-norm</property>
+                <property>surface-positions/spoiler-ib-ground-pos-norm</property>
+                <property>surface-positions/left-ob-mfs-pos-norm</property>
+                <property>surface-positions/left-ib-mfs-pos-norm</property>
+                <property>surface-positions/right-ib-mfs-pos-norm</property>
+                <property>surface-positions/right-ob-mfs-pos-norm</property>
+            </or>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-spoilers</output>
+    </logic>
+    <!-- config trim -->
+    <logic>
+        <name>EICAS cfg aileron</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <greater-than>
+                <expression>
+                    <abs>
+                        <property>controls/flight/aileron-trim</property>
+                    </abs>
+                </expression>
+                <value>0.04</value>
+            </greater-than>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-aileron</output>
+    </logic>
+    <logic>
+        <name>EICAS cfg stab</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <less-than>
+                <property>instrumentation/eicas/hstab-trim</property>
+                <value>4</value>
+            </less-than>
+            <greater-than>
+                <property>instrumentation/eicas/hstab-trim</property>
+                <value>11</value>
+            </greater-than>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-stab</output>
+    </logic>
+    <logic>
+        <name>EICAS cfg rudder</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <greater-than>
+                <expression>
+                    <abs>
+                        <property>controls/flight/rudder-trim</property>
+                    </abs>
+                </expression>
+                <value>0.0303</value>
+            </greater-than>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-rudder</output>
+    </logic>
+    <logic>
+        <name>EICAS config trim</name>
+        <input>
+            <or>
+                <property>instrumentation/eicas/warning/cfg-aileron</property>
+                <property>instrumentation/eicas/warning/cfg-stab</property>
+                <property>instrumentation/eicas/warning/cfg-rudder</property>
+            </or>
+        </input>
+        <output>instrumentation/eicas/warning/cfg-trim</output>
+    </logic>
+    <logic>
+        <name>EICAS advisory T/O ok</name>
+        <input>
+            <property>instrumentation/eicas/to-warnings-ena</property>
+            <not>
+                <or>
+                    <property>instrumentation/eicas/warning/cfg-ap</property>
+                    <property>instrumentation/eicas/warning/cfg-brakes</property>
+                    <property>instrumentation/eicas/warning/cfg-flaps</property>
+                    <property>instrumentation/eicas/warning/cfg-spoilers</property>
+                    <property>instrumentation/eicas/warning/cfg-trim</property>
+                </or>
+            </not>
+        </input>
+        <output>instrumentation/eicas/advisory/to-cfg-ok</output>
+    </logic>
+    <!-- EICAS message inhibits -->
+    <logic>
+        <name>initial T/O phase enable</name>
+        <input>
+            <property>gear/on-ground</property>
+            <greater-than>
+                <property>engines/engine[0]/n1</property>
+                <value>79</value>
+            </greater-than>
+            <greater-than>
+                <property>engines/engine[1]/n1</property>
+                <value>79</value>
+            </greater-than>
+            <less-than>
+                <property>instrumentation/airspeed-indicator/indicated-speed-kt</property>
+                <value>100</value>
+            </less-than>
+        </input>
+        <output>instrumentation/eicas/inhibits/initial-takeoff-set</output>
+    </logic>
+    <logic>
+        <name>initial T/O phase remove</name>
+        <input>
+            <or>
+                <property>instrumentation/eicas/inhibits/final-takeoff-set</property>
+                <and>
+                    <less-than>
+                        <property>engines/engine[0]/n1</property>
+                        <value>67.6</value>
+                    </less-than>
+                    <less-than>
+                        <property>engines/engine[1]/n1</property>
+                        <value>67.6</value>
+                    </less-than>
+                </and>
+            </or>
+        </input>
+        <output>instrumentation/eicas/inhibits/initial-takeoff-reset</output>
+    </logic>
+    <flipflop>
+        <type>RS</type> <!-- or SR -->
+        <S>
+            <property>instrumentation/eicas/inhibits/initial-takeoff-set</property>
+        </S>
+        <R>
+            <property>instrumentation/eicas/inhibits/initial-takeoff-reset</property>
+        </R>
+        <output>instrumentation/eicas/inhibits/initial-takeoff</output>
+    </flipflop>
+    <logic>
+        <name>final T/O phase enable</name>
+        <input>
+            <greater-than>
+                <property>engines/engine[0]/n1</property>
+                <value>79</value>
+            </greater-than>
+            <greater-than>
+                <property>engines/engine[1]/n1</property>
+                <value>79</value>
+            </greater-than>
+            <greater-than>
+                <property>instrumentation/airspeed-indicator/indicated-speed-kt</property>
+                <value>100</value>
+            </greater-than>
+        </input>
+        <output>instrumentation/eicas/inhibits/final-takeoff-set</output>
+    </logic>
+    <logic>
+        <name>final T/O phase remove</name>
+        <input>
+            <or>
+                <and>
+                    <less-than>
+                        <property>engines/engine[0]/n1</property>
+                        <value>67.6</value>
+                    </less-than>
+                    <less-than>
+                        <property>engines/engine[1]/n1</property>
+                        <value>67.6</value>
+                    </less-than>
+                </and>
+                <greater-than>
+                    <property>instrumentation/radar-altimeter/radar-altitude-ft</property>
+                    <value>400</value>
+                </greater-than>
+            </or>
+        </input>
+        <output>instrumentation/eicas/inhibits/final-takeoff-reset</output>
+    </logic>
+    <flipflop>
+        <type>RS</type> <!-- or SR -->
+        <S>
+            <property>instrumentation/eicas/inhibits/final-takeoff-set</property>
+        </S>
+        <R>
+            <property>instrumentation/eicas/inhibits/final-takeoff-reset</property>
+        </R>
+        <output>instrumentation/eicas/inhibits/final-takeoff</output>
+    </flipflop>
+
+    <logic>
+        <name>EICAS inhibits landing phase</name>
+        <input>
+            <less-than>
+                <property>instrumentation/radar-altimeter/radar-altitude-ft</property>
+                <value>400</value>
+            </less-than>
+            <equals>
+                <property>gear/gear[0]/position-norm</property>
+                <value>1</value>
+            </equals>
+            <equals>
+                <property>gear/gear[1]/position-norm</property>
+                <value>1</value>
+            </equals>
+            <equals>
+                <property>gear/gear[2]/position-norm</property>
+                <value>1</value>
+            </equals>
+        </input>
+        <output>instrumentation/eicas/inhibits/landing-set</output>
+    </logic>
     <filter>
     <!-- for users with throttle quadrant ;) -->
         <name>mixt2speedbrake</name>

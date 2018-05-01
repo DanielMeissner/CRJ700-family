@@ -11,8 +11,8 @@
         <brg-src2 />
         <display-mode />
         <mfd-tcas />
-        <mfd-wx />
-        <mfd-page />
+        <mfd-rtb />
+        <mfd-display-mode />
         <radar-range />
         <use-QNH />
         <lightmap-texture-path />
@@ -79,16 +79,17 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-cycle</command>
-                <property alias="/params/mfd-page" />
+                <property alias="/params/mfd-display-mode" />
                 <!--value>1</value>
                 <value>2</value>
                 <value>3</value>
                 <value>4</value>
                 <value>5</value>
                 <value>6</value-->
-                <value>1</value>
-                <value>2</value>
-                <value>3</value>
+                <value>APP</value>
+                <value>MAP</value>
+                <value>PLAN</value>
+                <value>VOR</value>
             </binding>
         </action>
         <action>
@@ -97,16 +98,17 @@
             <repeatable type="bool">false</repeatable>
             <binding>
                 <command>property-cycle</command>
-                <property alias="/params/mfd-page" />
+                <property alias="/params/mfd-display-mode" />
                 <!--value>6</value>
                 <value>5</value>
                 <value>4</value>
                 <value>3</value>
                 <value>2</value>
                 <value>1</value-->
-                <value>3</value>
-                <value>2</value>
-                <value>1</value>
+                <value>VOR</value>
+                <value>PLAN</value>
+                <value>MAP</value>
+                <value>APP</value>
             </binding>
         </action>
     </animation>
@@ -188,8 +190,12 @@
             <button>0</button>
             <repeatable type="bool">false</repeatable>
             <binding>
-                <command>property-toggle</command>
-                <property alias="/params/mfd-wx" />
+                <command>property-cycle</command>
+                <property alias="/params/mfd-rtb" />
+                <value>0</value>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
             </binding>
         </action>
     </animation>

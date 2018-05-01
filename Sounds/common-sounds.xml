@@ -317,10 +317,7 @@ positions or are almost the same position for C700/900/1000.
             <mode>looped</mode>
             <condition>
                 <property>sim/current-view/internal</property>
-                <or>
-                    <property>systems/pneumatic/pressure-left</property>
-                    <property>systems/pneumatic/pressure-right</property>
-                </or>
+                <property>systems/pneumatic/pressure-left</property>
             </condition>
             <volume>
                 <factor>0.35</factor>
@@ -333,7 +330,7 @@ positions or are almost the same position for C700/900/1000.
             <condition>
                 <greater-than>
                     <property alias="/params/airspeed-kt" />
-                    <value>20</value>
+                    <value>18</value>
                 </greater-than>
             </condition>
             <pitch>
@@ -346,7 +343,7 @@ positions or are almost the same position for C700/900/1000.
             <volume>
                 <property alias="/params/airspeed-kt" />
                 <type>sqrt</type>
-                <offset>-0.2</offset>
+                <offset>-0.22</offset>
                 <factor>0.05</factor>
             </volume>
             <reference-dist>150</reference-dist>
@@ -635,5 +632,61 @@ positions or are almost the same position for C700/900/1000.
             <reference-dist>2</reference-dist>
             <max-dist>15</max-dist>
         </gear>
+        <!-- config warnings -->
+        <configwarning>
+            <name>Config ap</name>
+            <path>Sounds/cfg-ap.wav</path>
+            <mode>once</mode>
+            <condition>
+                <property>instrumentation/eicas/warning/cfg-ap</property>
+            </condition>
+            <volume>
+                <factor>1</factor>
+            </volume>
+        </configwarning>
+        <configwarning>
+            <name>Config brakes</name>
+            <path>Sounds/cfg-brakes.wav</path>
+            <mode>once</mode>
+            <condition>
+                <property>instrumentation/eicas/warning/cfg-brakes</property>
+            </condition>
+            <volume>
+                <factor>1</factor>
+            </volume>
+        </configwarning>
+        <configwarning>
+            <name>Config flaps</name>
+            <path>Sounds/cfg-flaps.wav</path>
+            <mode>once</mode>
+            <condition>
+                <property>instrumentation/eicas/warning/cfg-flaps</property>
+            </condition>
+            <volume>
+                <factor>1</factor>
+            </volume>
+        </configwarning>
+        <configwarning>
+            <name>Config spoilers</name>
+            <path>Sounds/cfg-spoilers.wav</path>
+            <mode>once</mode>
+            <condition>
+                <property>instrumentation/eicas/warning/cfg-spoilers</property>
+            </condition>
+            <volume>
+                <factor>1</factor>
+            </volume>
+        </configwarning>
+        <configwarning>
+            <name>Config trim</name>
+            <path>Sounds/cfg-trim.wav</path>
+            <mode>once</mode>
+            <condition>
+                <property>instrumentation/eicas/warning/cfg-trim</property>
+            </condition>
+            <volume>
+                <factor>1</factor>
+            </volume>
+        </configwarning>
     <!-- </fx> -->
 </PropertyList>

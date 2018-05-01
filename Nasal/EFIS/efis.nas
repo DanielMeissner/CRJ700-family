@@ -157,14 +157,15 @@ var EFIS = {
         var obj = {
             parents: [EFIS],
             display_units: [],
-            sources: [],        #[] of canvas
+            sources: [],        # vector of EFISCanvas instances
             display_names: display_names,
             controls: {},
-            source_records: [], 
+            source_records: [], # stores infos about each source
             active_sources: [],
             powerN: nil,
             
             cleanup: func() {
+                # for now: noop 
             },
         };
         if (object_names != nil and typeof(object_names) == "vector"
@@ -180,7 +181,6 @@ var EFIS = {
             {
                 obj.display_units[id] = DisplayUnit.new(obj.display_names[id],
                         obj.defaultcanvas_settings, object_names[id]);
-                #obj._setDisplaySource(id, obj.addSource(display_names[id]));
             }
         }
         append(EFIS._instances, obj);
@@ -237,8 +237,9 @@ var EFIS = {
   
     #-- public methods -----------------------
     # set power prop and add listener to start/stop all registered update functions
-    setPowerProp: func(p) {
-        me.powerN = props.getNode(p,1);
+    # e.g. power up will start updates, loss of power will stop updates
+    setPowerProp: func(path) {
+        me.powerN = props.getNode(path,1);
         setlistener(me.powerN, func(n) {
             foreach (var src; me.sources) {
                 if (n.getValue()) src.startUpdates();
@@ -256,6 +257,8 @@ var EFIS = {
         else print("EFIS.setDUPowerProps(): Error, argument is not a vector.");
     },
 
+    # add a EFISCanvas instance as display source
+    # EFIS controls updating of source by tracking if (how often) source is used 
     addSource: func(efis_canvas) {
         append(me.sources, efis_canvas);
         var srcID = size(me.sources) - 1;
@@ -348,6 +351,7 @@ var EFIS = {
 var EFISCanvas = {
     _instances: [],
     del: func() {
+        print("-- Removing EFISCanvas instances --");
         foreach (var instance; EFISCanvas._instances) {
             if (instance.cleanup != nil and typeof(instance.cleanup) == "func")
                 instance.cleanup();
@@ -362,8 +366,10 @@ var EFISCanvas = {
         var obj = {
             parents: [EFISCanvas],
             _id: nil,
+            name: name,
             # for reload support while efis development
             cleanup: func() {
+                print("  - "~obj.name);
                 obj._canvas.del();
                 foreach (var timer; obj._timers) {
                     timer.stop();
@@ -421,16 +427,63 @@ var EFISCanvas = {
         }
     },
     
-    #generic listener to show/hide an element
-    _showHideL: func(svgkey, value=nil) {
-        if (value == nil) return func(n) {
-            if (n.getValue()) me[svgkey].show();
-            else me[svgkey].hide();
-        };
-        else return func(n) {
-            if (n.getValue() == value) me[svgkey].show();
-            else me[svgkey].hide();
-        };
+    # returns generic listener to show/hide element(s)
+    # svgkeys: can be a string refering to a single element
+    #          or vector of strings refering to svg elements 
+    #         (hint: putting elements in a svg group (if possible) might be easier)
+    # value: optional value to triger show(); otherwise node.value will be implicitly treated as bool 
+    _showHideL: func(svgkeys, value=nil) {
+        if (value == nil) {
+            if (typeof(svgkeys) == "vector") 
+                return func(n) {
+                    if (n.getValue()) 
+                        foreach (var key; svgkeys) me[key].show();
+                    else 
+                        foreach (var key; svgkeys) me[key].hide();
+                }
+            else 
+                return func(n) {
+                    if (n.getValue()) me[svgkeys].show();
+                    else me[svgkeys].hide();
+                }
+        }
+        else {
+            if (typeof(svgkeys) == "vector") 
+                return func(n) {
+                    if (n.getValue() == value) 
+                        foreach (var key; svgkeys) me[key].show();
+                    else 
+                        foreach (var key; svgkeys) me[key].hide();
+                };
+            else
+                return func(n) {
+                    if (n.getValue() == value) me[svgkeys].show();
+                    else me[svgkeys].hide();
+                };
+        }
+    },
+    
+    # returns generic listener to change element color
+    # svgkeys: can be a string refering to a single element
+    #          or vector of strings refering to svg elements 
+    #         (hint: putting elements in a svg group (if possible) might be easier)
+    # colors can be either a vector e.g. [r,g,b] or "name" from me.colors
+    _setColorL: func(svgkeys, color_true, color_false) {
+        var col_0 = (typeof(color_false) == "vector") ? color_false : me.colors[color_false];
+        var col_1 = (typeof(color_true) == "vector") ? color_true : me.colors[color_true];
+        if (typeof(svgkeys) == "vector") 
+            return func(n) {
+                if (n.getValue()) 
+                    foreach (var key; svgkeys) me[key].setColor(col_1);
+                else 
+                    foreach (var key; svgkeys) me[key].setColor(col_0);
+            };
+        else {
+            return func(n) {
+                if (n.getValue()) me[svgkeys].setColor(col_1);
+                else me[svgkeys].setColor(col_0);
+            };
+        }
     },
     
     loadsvg: func(file) {
@@ -463,6 +516,7 @@ var EFISCanvas = {
         }
     },
 
+    # start all registered update functions; 
     startUpdates: func() {
         foreach (var t; me._timers)
             t.start();
@@ -477,7 +531,9 @@ var EFISCanvas = {
         if (me[svgkey] == nil or me[svgkey].setText == nil)
             return;
         me[svgkey].setText(text);
-        if (color != nil and me[svgkey].setColor != nil)
-            me[svgkey].setColor(color);
+        if (color != nil and me[svgkey].setColor != nil) {
+            if (typeof(color) == "vector") me[svgkey].setColor(color);
+            else me[svgkey].setColor(me.colors[color]);
+        }
     },
 };

@@ -58,7 +58,7 @@ var EICASFuelCanvas = {
             me["lopress"~i].setColor(me.colors["amber"]);
             me["line"~i~"1"].setColorFill(me.colors["green"]);
         }
-        setlistener("controls/fuel/xflow-manual", me._showHideL("manualXflow"), 1, 0);
+        setlistener("controls/fuel/xflow-manual", me._showHideL(["manualXflow"]), 1, 0);
         setlistener("controls/fuel/gravity-xflow", me._gxflowL(), 1, 0);
         setlistener("systems/fuel/xflow-pump/running", me._xferpumpL(), 1, 0);
         

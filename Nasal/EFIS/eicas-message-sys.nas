@@ -55,6 +55,7 @@ var MessageClass = {
             parents: [MessageClass],
             name: name,
             pageable: pageable,
+            disabled: 0,
             color: [1,1,1],
         };
         if (prio)
@@ -76,14 +77,22 @@ var MessageClass = {
         me.prio = int(prio);
         return me;
     },
+    
+    enable: func { me.disabled = 0; },
+    disable: func(bool = 1) { me.disabled = bool; },
+    disabled: func { return me.disabled; },
 };
 
 var Message = {
     msg: "",
     prop: "",
-    eq: "",
-    lt: "",
-    gt: "",
+    aural: "",
+    conditions: {
+        eq: "equals",
+        ne: "not equals",
+        lt: "less than",
+        gt: "greater than",
+    },
 };
 
 var MessageSystem = {
@@ -98,7 +107,7 @@ var MessageSystem = {
             active: [],         # lists of active message IDs per class
             msg_list: [],       # active message list (flat, sorted by class)
             first_changed_line: 0,       # for later optimisation: first changed line in msg_list
-            update_available: 1,
+            has_update: 1,
         };
         return obj;
     },
@@ -117,74 +126,88 @@ var MessageSystem = {
         }, 1, 0);
     },
     
-    # addMessages creates a new msg class and add messages to it
-    # name:         identifier for msg class
-    # messages:     vector of {msg: "Message String", 
-    #                   prop: "/some/prop/path",
-    #                   eq: 
-    #                   }
+    # classname:  identifier for msg class
     # pageable:     true = normal paging, false = msg class is sticky at top of list
     # returns class id (int)
-    addMessages: func(name, messages, pageable, color = nil) {
+    addMessageClass: func(classname, pageable, color = nil) {
         var class = size(me.classes);
-        me["new-msg"~class] = me.rootN.getNode("new-msg-"~name,1);
+        me["new-msg"~class] = me.rootN.getNode("new-msg-"~classname,1);
         me["new-msg"~class].setIntValue(0);
-        append(me.classes, MessageClass.new(name, pageable).setColor(color));
-        append(me.messages, messages);
+        append(me.classes, MessageClass.new(classname, pageable).setColor(color));
         append(me.active, []);
+        return class;
+    },
+    
+    # addMessages creates a new msg class and add messages to it
+    # class:     class id returned by addMessageClass();
+    # messages:  vector of message objects (hashes)
+    addMessages: func(class, messages) {
+        append(me.messages, messages);
+        
         var simpleL = func(i){
             return func(n) {
-                        #if (n.getValue())
-                            me.setMessage(class, i, n.getValue());
-                        #else me.setMessage(class, i, 0);
-                    }
+                var val = n.getValue() or 0;
+                me.setMessage(class, i, val);
+            }
         };
         var eqL = func(i) {
             return func(n) {
-                        if (n.getValue() == messages[i]["eq"])
-                            me.setMessage(class, i, 1);
-                        else me.setMessage(class, i, 0);
-                    }
-            
+                var val = n.getValue() or 0;
+                if (val == messages[i].conditions["eq"])
+                    me.setMessage(class, i, 1);
+                else me.setMessage(class, i, 0);
+            }
+        };
+        var neL = func(i) {
+            return func(n) {
+                var val = n.getValue() or 0;
+                if (val != messages[i].conditions["ne"])
+                    me.setMessage(class, i, 1);
+                else me.setMessage(class, i, 0);
+            }
         };
         var ltL = func(i) {
             return func(n) {
-                        if (n.getValue() < messages[i]["lt"])
-                            me.setMessage(class, i, 1);
-                        else me.setMessage(class, i, 0);
-                    }
-            
+                var val = n.getValue() or 0;
+                if (val  < messages[i].conditions["lt"])
+                    me.setMessage(class, i, 1);
+                else me.setMessage(class, i, 0);
+            }
         };
         var gtL = func(i) {
             return func(n) {
-                        if (n.getValue() > messages[i]["gt"])
-                            me.setMessage(class, i, 1);
-                        else me.setMessage(class, i, 0);
-                    }
-            
+                var val = n.getValue() or 0;
+                if (val > messages[i].conditions["gt"])
+                    me.setMessage(class, i, 1);
+                else me.setMessage(class, i, 0);
+            }
         };
         forindex (var i; messages) {
             if (messages[i].prop) {
                 #print("addMessage "~i~" t:"~messages[i].msg~" p:"~messages[i].prop);
                 var prop = props.getNode(messages[i].prop,1);
+                # listeners won't work on aliases so find real node
                 while (prop.getAttribute("alias")) {
                     prop = prop.getAliasTarget();
                 }
-                var L = nil;
-                if    (messages[i]["eq"] != nil) setlistener(prop, eqL(i), 1, 0);
-                elsif (messages[i]["lt"] != nil) setlistener(prop, ltL(i), 1, 0);
-                elsif (messages[i]["gt"] != nil) setlistener(prop, gtL(i), 1, 0);
-                else  setlistener(prop, simpleL(i), 1, 0);
+                if (messages[i]["conditions"] != nil) {
+                    var c = messages[i]["conditions"];
+                    if (c["eq"] != nil) setlistener(prop, eqL(i), 1, 0);
+                    if (c["ne"] != nil) setlistener(prop, eqL(i), 1, 0);
+                    if (c["lt"] != nil) setlistener(prop, ltL(i), 1, 0);
+                    if (c["gt"] != nil) setlistener(prop, gtL(i), 1, 0);
+                }
+                else setlistener(prop, simpleL(i), 1, 0);
             }
         }
-        return class;
     },
 
     _updateList: func() {
         me.msg_list = [];
         forindex (var class; me.active) {
             foreach (var id; me.active[class]) {
-                append(me.msg_list, { text: me.messages[class][id].msg, color: me.classes[class].color});
+                if (!me.classes[class].disabled and !me.messages[class][id]["disabled"])
+                    append(me.msg_list, { text: me.messages[class][id].msg, color: me.classes[class].color});
             }
         }
     },
@@ -208,29 +231,33 @@ var MessageSystem = {
         return 0;
     },
 
-    setMessage: func(class, msg, visible) {
+    setMessage: func(class, msg_id, visible) {
         if (class >= size(me.classes))
             return;
-        var isActive = me._isActive(class, msg);
+        var isActive = me._isActive(class, msg_id);
         if ((isActive and visible) or (!isActive and !visible))
             return;
-        if (!me.update_available)
+        if (!me.has_update)
             me.first_changed_line = me.pager.page_length;
 
         #add message at head of list, 2DO: priority handling?!
         if (visible) {
-            me.active[class] = [msg]~me.active[class];
+            me.active[class] = [msg_id]~me.active[class];
             #-- set new-msg flag in prop tree, e.g. to trigger sounds
             me["new-msg"~class].setIntValue(1);
+            if (me.messages[class][msg_id]["aural"] != nil) {
+                print("aural "~me.messages[class][msg_id]["aural"]);
+            }
         }
-        else me.active[class] = me._remove(class, msg);
+        else me.active[class] = me._remove(class, msg_id);
+        
         var unchanged = 0;
         for (var i = 0; i < class; i += 1)
             unchanged += size(me.active[i]);
         if (me.first_changed_line > unchanged) me.first_changed_line = unchanged;
-        print("set c:"~class~" m:"~msg~" v:"~visible~ " 1upd:"~me.first_changed_line);
+        #print("set c:"~class~" m:"~msg_id~" v:"~visible~ " 1upd:"~me.first_changed_line);
         me._updateList();
-        me.update_available = 1;
+        me.has_update = 1;
     },
 
     #-- check for active messages and set new-msg flags. 
@@ -241,11 +268,11 @@ var MessageSystem = {
                 me["new-msg"~class].setIntValue(1);
             }
         }
-        me.update_available = 1;
+        me.has_update = 1;
     },
     
-    needsUpdate: func {
-        return me.update_available;
+    hasUpdate: func {
+        return me.has_update;
     },
 
     getPageSize: func { 
@@ -257,16 +284,32 @@ var MessageSystem = {
     },
 
     getActiveMessages: func {
-        me.update_available = 0;
+        me.has_update = 0;
         return me.msg_list;
     },
 
     #find message text, return id
     getMessageID: func(class, msgtext) {
-        forindex (var i; me.messages[class]) {
-            if (me.messages[class][i].msg == msgtext) 
-                return i;
+        forindex (var id; me.messages[class]) {
+            if (me.messages[class][id].msg == msgtext) 
+                return id;
         }
         return -1;
+    },
+    
+    # inhibit message id (or all messages in class if no id is given)
+    disableMessage: func(class, id = nil) {
+        if (id != nil) 
+            me.messages[class][id]["disabled"] = 1;
+        else forindex (var i; me.messages[class])
+            me.messages[class][i]["disabled"] = 1;
+    },
+
+    # re-enable message id (or all messages in class if no id is given)
+    enableMessage: func(class, id = nil) {
+        if (id != nil)
+            me.messages[class][id]["disabled"] = 0;
+        else forindex (var i; me.messages[class])
+            me.messages[class][i]["disabled"] = 0;
     },
 };

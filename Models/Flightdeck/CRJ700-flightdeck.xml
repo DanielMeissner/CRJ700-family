@@ -79,12 +79,6 @@
                 <ScreenID>MFD2</ScreenID>
                 <powerN>systems/DC/outputs/mfd1</powerN>
                 <dimN>controls/lighting[0]/display-norm</dimN>
-                <page>instrumentation/mfd[0]/page</page>
-                <tcas>instrumentation/mfd[0]/tcas</tcas>
-                <wx>instrumentation/mfd[0]/wx</wx>
-                <indicated-heading-deg>instrumentation/heading-indicator[0]/indicated-heading-deg</indicated-heading-deg>
-                <true-airspeed-kt>instrumentation/airspeed-indicator[0]/true-speed-kt</true-airspeed-kt>
-                <radar-range>instrumentation/efis/inputs/range</radar-range>
                 <lightmap-texture-path>Models/Effects/Lightmaps/mfd-left-lightmap.png</lightmap-texture-path>
                 <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
             </params>
@@ -138,10 +132,10 @@
                 <brg-src1>controls/efis/sidepanel[0]/brg-src1</brg-src1>
                 <brg-src2>controls/efis/sidepanel[0]/brg-src2</brg-src2>
                 <display-mode>controls/efis/src-mfd-pilot</display-mode>
-                <mfd-tcas>instrumentation/mfd[0]/tcas</mfd-tcas>
-                <mfd-wx>instrumentation/mfd[0]/wx</mfd-wx>
-                <mfd-page>instrumentation/efis/mfd[0]/mode-num</mfd-page>
-                <radar-range>instrumentation/efis/inputs/range</radar-range>
+                <mfd-tcas>instrumentation/efis/mfd[0]/inputs/tcas</mfd-tcas>
+                <mfd-rtb>instrumentation/efis/mfd[0]/rtb</mfd-rtb>
+                <mfd-display-mode>instrumentation/efis/mfd[0]/mfd/display-mode</mfd-display-mode>
+                <radar-range>instrumentation/efis/mfd[0]/inputs/range-nm</radar-range>
                 <use-QNH>controls/efis/sidepanel[0]/use-QNH</use-QNH>
                 <lightmap-texture-path>Models/Effects/Lightmaps/sidepanel1-left-lightmap.png</lightmap-texture-path>
                 <lightmap-factor>sim/model/lights/panel0-lightmap</lightmap-factor>
@@ -321,12 +315,6 @@
                 <ScreenID>MFD2</ScreenID>
                 <powerN>systems/DC/outputs/mfd2</powerN>
                 <dimN>controls/lighting[1]/display-norm</dimN>
-                <page>instrumentation/mfd[1]/page</page>
-                <tcas>instrumentation/mfd[1]/tcas</tcas>
-                <wx>instrumentation/mfd[1]/wx</wx>
-                <indicated-heading-deg>instrumentation/heading-indicator[1]/indicated-heading-deg</indicated-heading-deg>
-                <true-airspeed-kt>instrumentation/airspeed-indicator[2]/true-speed-kt</true-airspeed-kt>
-                <radar-range>instrumentation/radar[1]/range</radar-range>
                 <lightmap-texture-path>Models/Effects/Lightmaps/mfd-right-lightmap.png</lightmap-texture-path>
                 <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>
             </params>
@@ -380,10 +368,10 @@
                 <brg-src1>controls/efis/sidepanel[1]/brg-src1</brg-src1>
                 <brg-src2>controls/efis/sidepanel[1]/brg-src2</brg-src2>
                 <display-mode>controls/efis/src-mfd-copilot</display-mode>
-                <mfd-tcas>instrumentation/mfd[1]/tcas</mfd-tcas>
-                <mfd-wx>instrumentation/mfd[1]/wx</mfd-wx>
+                <mfd-tcas>instrumentation/efis/mfd[1]/inputs/tcas</mfd-tcas>
+                <mfd-rtb>instrumentation/efis/mfd[1]/rtb</mfd-rtb>
                 <mfd-page>instrumentation/efis/mfd[1]/mode-num</mfd-page>
-                <radar-range>instrumentation/radar[1]/range</radar-range>
+                <radar-range>instrumentation/efis/mfd[1]/inputs/range-nm</radar-range>
                 <use-QNH>controls/efis/sidepanel[1]/use-QNH</use-QNH>
                 <lightmap-texture-path>Models/Effects/Lightmaps/sidepanel1-right-lightmap.png</lightmap-texture-path>
                 <lightmap-factor>sim/model/lights/panel1-lightmap</lightmap-factor>

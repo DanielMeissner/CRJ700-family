@@ -54,9 +54,9 @@ var EICASDCCanvas = {
             me[key].setColorFill(me.colors["green"]);
         foreach (var key; ["gEmerBus", "input4", "xtie","esstie","maintie"])
             me[key].hide();
-        setlistener("systems/DC/system/esstie", me._showHideL("esstie"), 1,0);
-        setlistener("systems/DC/system/maintie", me._showHideL("maintie"), 1,0);
-        setlistener("systems/DC/system/xtie", me._showHideL("xtie"), 1,0);
+        setlistener("systems/DC/system/esstie", me._showHideL(["esstie"]), 1,0);
+        setlistener("systems/DC/system/maintie", me._showHideL(["maintie"]), 1,0);
+        setlistener("systems/DC/system/xtie", me._showHideL(["xtie"]), 1,0);
         me["tBattOff0"].setColor(me.colors["amber"]);
         me["tBattOff1"].setColor(me.colors["amber"]);
         foreach (var i; [1,2,3,4,5]) {

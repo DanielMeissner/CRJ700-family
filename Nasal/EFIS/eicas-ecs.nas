@@ -39,8 +39,8 @@ var EICASECSCanvas = {
         setlistener("systems/pneumatic/sov3", me._lineL(3), 1,0);
         setlistener("systems/pneumatic/pressure-left", me._lineL(4), 1, 0);
         setlistener("systems/pneumatic/pressure-right", me._lineL(5), 1, 0);
-        setlistener("controls/ECS/pack-l-man", me._showHideL("manualL"), 1, 0);
-        setlistener("controls/ECS/pack-r-man", me._showHideL("manualR"), 1, 0);
+        setlistener("controls/ECS/pack-l-man", me._showHideL(["manualL"]), 1, 0);
+        setlistener("controls/ECS/pack-r-man", me._showHideL(["manualR"]), 1, 0);
     },
     
     _sovL: func(i) {

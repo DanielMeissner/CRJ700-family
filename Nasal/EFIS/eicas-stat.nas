@@ -28,6 +28,7 @@ var EICASStatCanvas = {
     init: func() {
         me._addApuL();
         me._addApuDoorL();
+        me.update();
     },
 
     _addApuL: func() {
@@ -61,7 +62,7 @@ var EICASStatCanvas = {
     },
     
     updateMessages: func() {
-        if (!EICASMsgSys2.needsUpdate())
+        if (!EICASMsgSys2.hasUpdate())
             return;
         var messages = EICASMsgSys2.getActiveMessages();
         for (var i = EICASMsgSys2.getFirstUpdateIndex(); i < size(messages); i += 1) {

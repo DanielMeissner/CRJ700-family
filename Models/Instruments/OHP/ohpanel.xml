@@ -1543,9 +1543,9 @@
 				<command>property-cycle</command>
 				<property>controls/pneumatic/cross-bleed</property>
 				<wrap>0</wrap>
-				<value>1</value>
+				<value>-1</value>
 				<value>0</value>
-				<value>2</value>
+				<value>1</value>
 			</binding>
 		</action>
 		<action>
@@ -1556,9 +1556,9 @@
 				<command>property-cycle</command>
 				<property>controls/pneumatic/cross-bleed</property>
 				<wrap>0</wrap>
-				<value>2</value>
-				<value>0</value>
 				<value>1</value>
+				<value>0</value>
+				<value>-1</value>
 			</binding>
 		</action>
 	</animation>
@@ -1566,11 +1566,7 @@
 		<type>rotate</type>
 		<object-name>CrossBleedKnob</object-name>
 		<property>controls/pneumatic/cross-bleed</property>
-		<interpolation>
-			<entry><ind>1</ind><dep alias="../../../../switch-rotate-neg-deg" /></entry>
-			<entry><ind>0</ind><dep>0</dep></entry>
-			<entry><ind>2</ind><dep alias="../../../../switch-rotate-deg" /></entry>
-		</interpolation>
+        <factor>35</factor>
 		<axis>
 			<x>-1</x>
 			<y>0</y>
@@ -1819,17 +1815,7 @@
 				</greater-than-equals>
 				<or>
 					<property>controls/lighting/lt-test</property>
-					<and>
-						<property>controls/APU/off-on</property>
-						<greater-than>
-							<property>engines/engine[2]/rpm</property>
-							<value>0</value>
-						</greater-than>
-						<less-than>
-							<property>engines/engine[2]/rpm</property>
-							<value>46</value>
-						</less-than>
-					</and>
+                    <property>engines/engine[2]/starting</property>
 				</or>
 			</and>
 		</condition>
@@ -1851,10 +1837,7 @@
 				</greater-than-equals>
 				<or>
 					<property>controls/lighting/lt-test</property>
-					<and>
-						<property>controls/APU/off-on</property>
-						<property>engines/engine[2]/running-nasal</property>
-					</and>
+                    <property>engines/engine[2]/available</property>
 				</or>
 			</and>
 		</condition>

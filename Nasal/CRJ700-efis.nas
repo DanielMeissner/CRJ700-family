@@ -117,34 +117,100 @@ var callbacks = [
     },
 ];
 
+#-- EICAS Message Systems -----------------------------------------------------
+var PAGING = 1;
+var NO_PAGING = 0;
+#-- on primary page --
 var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1");
-EICASMsgClsWarning = EICASMsgSys1.addMessages("warning", EICASWarningMessages, 0, efis.colors["red"]);
-EICASMsgClsCaution = EICASMsgSys1.addMessages("caution", EICASCautionMessages, 1, efis.colors["amber"]);
-
+EICASMsgClsWarning = EICASMsgSys1.addMessageClass("warning", NO_PAGING, efis.colors["red"]);
+EICASMsgClsCaution = EICASMsgSys1.addMessageClass("caution", PAGING, efis.colors["amber"]);
+EICASMsgSys1.addMessages(EICASMsgClsWarning, EICASWarningMessages);
+EICASMsgSys1.addMessages(EICASMsgClsCaution, EICASCautionMessages);
+#-- on status page --
 var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys2");
-EICASMsgClsAdvisory = EICASMsgSys2.addMessages("advisory", EICASAdvisoryMessages, 0, efis.colors["green"]);
-EICASMsgClsStatus = EICASMsgSys2.addMessages("status", EICASStatusMessages, 1);
+EICASMsgClsAdvisory = EICASMsgSys2.addMessageClass("advisory", NO_PAGING, efis.colors["green"]);
+EICASMsgClsStatus = EICASMsgSys2.addMessageClass("status", PAGING);
+EICASMsgSys2.addMessages(EICASMsgClsAdvisory, EICASAdvisoryMessages);
+EICASMsgSys2.addMessages(EICASMsgClsStatus, EICASStatusMessages);
 
+setlistener("instrumentation/eicas/inhibits/landing-set", func(n) {
+    var val = n.getValue() or 0;
+    setprop("instrumentation/eicas/inhibits/landing", val);
+}, 1,0);
+
+setlistener("gear/on-ground", func(n) {
+    settimer(func {
+        if (n.getValue()) {
+            setprop("instrumentation/eicas/inhibits/landing",0);
+        } else {
+            setprop("instrumentation/eicas/inhibits/final-takeoff",0);
+        }
+    }, 30);
+}, 1, 0);
+#-- end EICAS Message Systems -------------------------------------------------
+
+var nd_options = nil;
+var default_switches = {
+    'toggle_range':        {path: '/inputs/range-nm', value:40, type:'INT'},
+    'toggle_weather':      {path: '/inputs/wxr', value:0, type:'BOOL'},
+    'toggle_airports':     {path: '/inputs/arpt', value:0, type:'BOOL'},
+    'toggle_stations':     {path: '/inputs/sta', value:0, type:'BOOL'},
+    'toggle_waypoints':    {path: '/inputs/wpt', value:0, type:'BOOL'},
+    'toggle_position':     {path: '/inputs/pos', value:0, type:'BOOL'},
+    'toggle_data':         {path: '/inputs/data',value:0, type:'BOOL'},
+    'toggle_terrain':      {path: '/inputs/terr',value:0, type:'BOOL'},
+    'toggle_traffic':      {path: '/inputs/tfc',value:0, type:'BOOL'},
+    'toggle_centered':     {path: '/inputs/nd-centered',value:0, type:'BOOL'},
+    'toggle_lh_vor_adf':   {path: '/inputs/lh-vor-adf',value:0, type:'INT'},
+    'toggle_rh_vor_adf':   {path: '/inputs/rh-vor-adf',value:0, type:'INT'},
+    'toggle_display_mode': {path: '/mfd/display-mode', value:'MAP', type:'STRING'}, # valid values are: APP, MAP, PLAN or VOR
+    'toggle_display_type': {path: '/mfd/display-type', value:'CRT', type:'STRING'}, # valid values are: CRT or LCD
+    'toggle_true_north':   {path: '/mfd/true-north', value:0, type:'BOOL'},
+    'toggle_rangearc':     {path: '/mfd/rangearc', value:0, type:'BOOL'},
+    'toggle_track_heading':{path: '/trk-selected', value:0, type:'BOOL'},
+    'toggle_weather_live': {path: '/mfd/wxr-live-enabled', value: 0, type: 'BOOL'},
+    'toggle_chrono':       {path: '/inputs/CHRONO', value: 0, type: 'INT'},
+    'toggle_xtrk_error':   {path: '/mfd/xtrk-error', value: 0, type: 'BOOL'},
+    'toggle_trk_line':     {path: '/mfd/trk-line', value: 0, type: 'BOOL'},
+    'toggle_hdg_bug_only': {path: '/mfd/hdg-bug-only', value: 0, type: 'BOOL'},
+};
 
 var EFISSetup = func() {
     #-- add primary flight display --
     pfd1 = PFDCanvas.new("PFD1", svg_path~"PFD.svg",0);
     pfd2 = PFDCanvas.new("PFD2", svg_path~"PFD.svg",1);
+    
     #-- add nav display on multi function display --
-    # FIXME: replace dummy by ND
+    # FIXME: dummy for now, need to check ND framework code
     mfd1 = EFISCanvas.new("MFD1");
     mfd2 = EFISCanvas.new("MFD2");
-
+    #-- try to include ND
+    var mfd1P = "instrumentation/efis/mfd[0]";
+    nd1 = canvas.NavDisplay.new(mfd1P, default_switches, "Boeing");
+    nd1.newMFD(mfd1.getRoot(), nil , nd_options, 1/20);
+    
+    setlistener(mfd1P~"/rtb", func(n) {
+        var i = n.getValue();
+        var t = 0;
+        var w = 0;
+        if (i == 1) t = 1;
+        elsif (i == 2) w = 1;
+        elsif (i == 3) { t = w = 1; }        
+        setprop(mfd1P~"/inputs/terr", t);
+        setprop(mfd1P~"/inputs/wxr", w);
+    },1,0);
+    #------------------------------------------
+    
     var eicas_sources = []; 
     append(eicas_sources, EICASPriCanvas.new("PRI", svg_path~"eicas-pri.svg"));
     append(eicas_sources, EICASStatCanvas.new("STAT", svg_path~"eicas-stat.svg"));
     append(eicas_sources, EICASECSCanvas.new("ECS", svg_path~"eicas-ecs.svg"));
-    append(eicas_sources, EICASHydraulicsCanvas.new("HYD", svg_path~"hydraulics.svg"));
+    append(eicas_sources, EICASHydraulicsCanvas.new("HYD", svg_path~"eicas-hydraulic.svg"));
     append(eicas_sources, EICASACCanvas.new("AC", svg_path~"eicas-ac.svg"));
     append(eicas_sources, EICASDCCanvas.new("DC", svg_path~"eicas-dc.svg"));
     append(eicas_sources, EICASFuelCanvas.new("FUEL", svg_path~"eicas-fuel.svg"));
     append(eicas_sources, EICASFctlCanvas.new("F-CTL", svg_path~"eicas-fctl.svg"));
-    append(eicas_sources, EICASAIceCanvas.new("A-ICE", svg_path~"template.svg"));
+    append(eicas_sources, EICASAIceCanvas.new("A-ICE", svg_path~"eicas-aice.svg"));
     append(eicas_sources, EICASDoorsCanvas.new("Doors", svg_path~"eicas-doors.svg"));
 
     var pfd1_sid = efis.addSource(pfd1);

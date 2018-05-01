@@ -384,9 +384,9 @@ if (getprop("/sim/config/developer") ) {
 #-- support for runtime reload of nasal files --
 var namespace = "EFIS"; 
 var reloadEFIS = func() {
-    print("Removing EFIS...");
+    print("== Removing EFIS... ==");
     if (globals[namespace] == nil) print("No global namespace '"~namespace~"'");
-    elsif (globals[namespace]["efis"] == nil) print("efis instance not found");
+    #elsif (globals[namespace]["efis"] == nil) print("efis instance not found");
     else {
         var err=[];
         call(globals[namespace].cleanup, [], err);
@@ -395,7 +395,7 @@ var reloadEFIS = func() {
         }
     }
     globals[namespace] = {};
-    print("Reloading EFIS...");
+    print("++ Reloading EFIS... ++");
     var aircraftDir = getprop("/sim/aircraft-dir");
     io.load_nasal(aircraftDir ~ "/Nasal/CRJ700-efis.nas", namespace);
 }

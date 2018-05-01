@@ -60,8 +60,8 @@ var EICASACCanvas = {
             me["axfail"~i].setColor(me.colors["amber"]);
             me["axfail"~i].hide();
             me["axoff"~i].hide();
-            setlistener("controls/electric/auto-xfer"~i, me._showHideL("axoff"~i, 0), 1);
-            setlistener("systems/AC/system["~i~"]/serviceable", me._showHideL("axfail"~i, 0), 1);
+            setlistener("controls/electric/auto-xfer"~i, me._showHideL(["axoff"~i], 0), 1);
+            setlistener("systems/AC/system["~i~"]/serviceable", me._showHideL(["axfail"~i], 0), 1);
         }
     },
     

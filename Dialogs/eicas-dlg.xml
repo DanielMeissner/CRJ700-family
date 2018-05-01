@@ -3,8 +3,8 @@
 <PropertyList>
     <name>eicas</name>
     <layout>vbox</layout>
-    <x>10</x>
-    <y>-50</y>
+    <x>-50</x>
+    <y>50</y>
     <group>
         <layout>hbox</layout>
 

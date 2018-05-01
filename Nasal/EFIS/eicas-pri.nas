@@ -50,6 +50,7 @@ var EICASPriCanvas = {
         me.hideGearT.singleShot = 1;
         me.msgOil0 = EICASMsgSys1.getMessageID(EICASMsgClsWarning, "L ENG OIL PRESS");
         me.msgOil1 = EICASMsgSys1.getMessageID(EICASMsgClsWarning, "R ENG OIL PRESS");
+        me.update();
     },
 
     #-- listeners for rare events --
@@ -159,7 +160,7 @@ var EICASPriCanvas = {
     },
 
     updateMessages: func() {
-        if (!EICASMsgSys1.needsUpdate())
+        if (!EICASMsgSys1.hasUpdate())
             return;
         var messages = EICASMsgSys1.getActiveMessages();
         print("M1 "~size(messages)~" "~EICASMsgSys1.getFirstUpdateIndex());        
