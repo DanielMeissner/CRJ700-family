@@ -3,22 +3,25 @@
 # EICAS messages as found in a manual. Messages for systems not simulated in 
 # FG are left as comments for now.
 #
-
-var EICASAural = [
-    "firebell",
-    "cfg_trim",
-    "apu",
-    "anti_ice_duct",
-    "brakes",
-    "cfg_ap",
-    "cfg_brakes",
-    "cfg_flaps",
-    "cfg_spoiler",
-    "door",
-    "nose_door",
-    "smoke",
-    "wing_overheat",
-];
+var sound_dir = "Sounds/auralalerts";
+var EICASAural = {
+    anti_ice_duct: { path: sound_dir, file: "anti-ice-duct.wav" , volume: vol},
+    apu: { path: sound_dir, file: "apu.wav" , volume: vol},
+    brakes: { path: sound_dir, file: "brakes.wav" , volume: vol},
+    cabinpressure: { path: sound_dir, file: "cabin-pressure.wav" , volume: vol},
+    cfg_ap: { path: sound_dir, file: "cfg-ap.wav" , volume: vol},
+    cfg_brakes: { path: sound_dir, file: "cfg-brakes.wav" , volume: vol},
+    cfg_flaps: { path: sound_dir, file: "cfg-flaps.wav" , volume: vol},
+    cfg_spoiler: { path: sound_dir, file: "cfg-spoilers.wav" , volume: vol},
+    cfg_trim: { path: sound_dir, file: "cfg-trim.wav" , volume: vol},
+    door: { path: sound_dir, file: "doors.wav" , volume: vol},
+    engineoil: { path: sound_dir, file: "engine-oil.wav" , volume: vol},
+    firebell: { path: sound_dir, file: "" , volume: vol},
+    geardisagree: { path: sound_dir, file: "gear-disagree.wav" , volume: vol},
+    nose_door: { path: sound_dir, file: "nose-door.wav" , volume: vol},
+    smoke: { path: sound_dir, file: "smoke.wav" , volume: vol},
+    wing_overheat: { path: sound_dir, file: "wing-overheat.wav" , volume: vol},
+};
 
 var EICASWarningMessages = [
     {msg: "AFCS MSG FAIL", prop: ""},
