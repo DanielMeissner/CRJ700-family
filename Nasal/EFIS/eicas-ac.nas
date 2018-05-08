@@ -46,8 +46,8 @@ var EICASACCanvas = {
         setlistener("controls/electric/idg1-disc", me._idgdiscL(1), 1);
         setlistener("controls/electric/idg2-disc", me._idgdiscL(2), 1);
         foreach (var i; [1,2,3,4,5]) {
-            foreach (var name; ["value", "freq"]) #"load" not implemented
-                setlistener("systems/AC/system/gen"~i~"-"~name, me._readOutL(name,i), 1);
+            setlistener("systems/AC/system/gen"~i~"-value", me._readOutVoltsL(i), 1);
+            setlistener("systems/AC/system/gen"~i~"-freq", me._readOutHzL(i), 1);
         }
         var fdm = getprop("/sim/flight-model");
         foreach (var i; [0,1,2]) {
@@ -63,6 +63,7 @@ var EICASACCanvas = {
             setlistener("controls/electric/auto-xfer"~i, me._showHideL(["axoff"~i], 0), 1);
             setlistener("systems/AC/system["~i~"]/serviceable", me._showHideL(["axfail"~i], 0), 1);
         }
+        setlistener("controls/electric/ADG", me._showHideL("gADG"), 1, 0);
     },
     
     _idgdiscL: func(i) { 
@@ -76,10 +77,17 @@ var EICASACCanvas = {
         };
     },
     
-    _readOutL: func(name, i) {
+    _readOutVoltsL: func(i) {
         return func(n) {
             var v = n.getValue();
-            me[name~i].setText(sprintf("%3d", v));
+            me.updateTextElement("value"~i, sprintf("%3d", v), (v > 108 and v < 130) ? "green" : "white");
+        };
+    },
+    
+    _readOutHzL: func(i) {
+        return func(n) {
+            var v = n.getValue();
+            me.updateTextElement("freq"~i, sprintf("%3d", v), (v > 360 and v < 440) ? "green" : "white");
         };
     },
     
@@ -105,9 +113,20 @@ var EICASACCanvas = {
     },
 
     update: func() {
-        if (getprop("systems/AC/system/gen4-value") > me.AC_MIN_VOLTS and getprop("controls/electric/ac-service-selected-ext"))
-            me["servicecfg"].show();
-        else me["servicecfg"].hide();
+        foreach (var i; [1,2,3,4,5]) {
+            var volts = getprop("systems/AC/outputs/bus"~i) or 0;
+            if (volts > 108 and volts < 130) me["bus"~i].setColor(me.colors["green"]);
+            else me["bus"~i].setColor(me.colors["amber"]);
+        }
+        if (getprop("systems/AC/system/gen4-value") > me.AC_MIN_VOLTS) {
+            me["gExternal"].show();
+            if (getprop("controls/electric/ac-service-selected-ext"))
+                me["servicecfg"].show();
+        }
+        else {
+            me["gExternal"].hide();
+            me["servicecfg"].hide();
+        }
         if (getprop("systems/AC/outputs/bus4") < me.AC_MIN_VOLTS)
             me["shed"].show();
         else me["shed"].hide();

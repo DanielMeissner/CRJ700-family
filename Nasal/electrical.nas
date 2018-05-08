@@ -143,7 +143,8 @@ var ADG = {
 
     #will deploy on first "switch on"
     _switch_listener: func(v){
-        me.switch = v.getValue();
+        me.switch = v.getValue() or 0;
+        print("ADG switch "~me.switch~" "~me.serviceableN.getBoolValue());
         if (me.serviceableN.getBoolValue() and me.switch)
             interpolate(me.positionN, 1, 2);
         me._update_output();
@@ -481,6 +482,7 @@ var generators = [
 foreach (var g; generators) {
     acpc.addInput(g);
 }
+
 
 var flapsA = ACBus.new(10,"flaps-a", ["flaps-a"]);
 flapsA.addInput(EnergyConv.new(flapsA, "flaps-a1", 115, "/systems/AC/outputs/flaps-a-1", 0, 115));

@@ -164,7 +164,7 @@ var EICASFuelCanvas = {
                 me["mainEjector"~i].setColor(me.colors["green"]);
                 if (getprop("engines/engine["~i~"]/sov")) {
                     foreach (var n; [3,4,5]) {
-                        print("line"~i~n);
+                        #print("line"~i~n);
                         me["line"~i~n].setColorFill(me.colors["green"]);
                     }
                 }

@@ -26,13 +26,13 @@ var EICASStatCanvas = {
     },
 
     init: func() {
-        me._addApuL();
-        me._addApuDoorL();
+        setlistener("controls/APU/electronic-control-unit", me._apuL(), 1);
+        setlistener("engines/engine[2]/door-msg", me._apuDoorL(), 1);
         me.update();
     },
 
-    _addApuL: func() {
-        setlistener("controls/APU/electronic-control-unit", func(n) {
+    _apuL: func() {
+        return func(n) {
             if (n.getValue()) {
                 me["gAPU"].show();
                 me["apuoff"].hide();
@@ -41,16 +41,16 @@ var EICASStatCanvas = {
                 me["gAPU"].hide();
                 me["apuoff"].show();
             }
-        }, 1);
+        };
     },
 
-    _addApuDoorL: func() {
-        setlistener("engines/engine[2]/door-msg", func(n) {
+    _apuDoorL: func() {
+        return func(n) {
             var value = n.getValue();
             me["doorMsg"].setText(value);
             if (value == "----") me["doorMsg"].setColor(me.colors["amber"]);
             else me["doorMsg"].setColor(me.colors["white"]);
-        }, 1);
+        };
     },
 
     getEng: func(idx, prop) {
@@ -84,7 +84,7 @@ var EICASStatCanvas = {
 
         me["rudderTrim"].setRotation(-getprop("controls/flight/rudder-trim"));
         me["ailTrim"].setRotation(getprop("controls/flight/aileron-trim"));
-        var trim = getprop("/instrumentation/eicas/hstab-trim");
+        var trim = int(getprop("/instrumentation/eicas/hstab-trim")) or 0;
         me["elevTrim"].setTranslation(0, 9.4785*trim);
         me["elevTrimValue"].setText(sprintf("%1.1f", trim));
     },

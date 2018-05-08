@@ -3,7 +3,9 @@
 # EICAS messages as found in a manual. Messages for systems not simulated in 
 # FG are left as comments for now.
 #
-var sound_dir = "Sounds/auralalerts";
+var sound_dir = getprop("sim/aircraft-dir")~"/Sounds/auralalerts/";
+var vol = 1.0;
+
 var EICASAural = {
     anti_ice_duct: { path: sound_dir, file: "anti-ice-duct.wav" , volume: vol},
     apu: { path: sound_dir, file: "apu.wav" , volume: vol},
@@ -38,7 +40,7 @@ var EICASWarningMessages = [
     {msg: "CONFIG SPLRS", prop: "instrumentation/eicas/warning/cfg-spoilers", aural: "cfg_spoiler"},
     {msg: "CONFIG STAB", prop: "instrumentation/eicas/warning/cfg-stab", aural: "cfg_trim"},
 #    {msg: "DIFF PRESS", prop: ""},
-    {msg: "EMER PWR ONLY", prop: ""},
+    {msg: "EMER PWR ONLY", prop: "controls/electric/ADG"},
 #    {msg: "ENGINE OVERSPD", prop: ""},
     {msg: "GEAR DISAGREE", prop: "", aural: "gear_disagree"},
     {msg: "L BLEED DUCT", prop: ""},

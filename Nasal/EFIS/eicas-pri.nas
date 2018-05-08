@@ -38,14 +38,14 @@ var EICASPriCanvas = {
 
     init: func() {
         var amber = me.colors["amber"];
-        me["fanArcAmber0"].setColor(amber);
-        me["fanArcAmber1"].setColor(amber);
+        foreach (var i; [0,1]) {
+            me["fanArcAmber"~i].setColor(amber);
+            me._addThrustModeL(i);
+            me._addReverseL(i);
+        }
         me["gFanVib"].hide();
-        me._addThrustModeL(0);
-        me._addThrustModeL(1);
-        me._addReverseL(0);
-        me._addReverseL(1);
         me._addFlapsL();
+        me._addEnginesL();
         me.hideGearT = maketimer(30, me, func() {me["gGear"].hide();});
         me.hideGearT.singleShot = 1;
         me.msgOil0 = EICASMsgSys1.getMessageID(EICASMsgClsWarning, "L ENG OIL PRESS");
@@ -90,6 +90,15 @@ var EICASPriCanvas = {
             me["flapsPos"].setText(sprintf("%2d", math.round(45*value)));
         }, 1, 0);
     },
+
+    _addEnginesL: func() {
+        var L = func(n) { 
+            if (n.getValue()) EICASMsgSys1.aural("door"); 
+        };
+        setlistener("engines/engine[0]/running-nasal", L, 0, 0);
+        setlistener("engines/engine[1]/running-nasal", L, 0, 0);
+    },
+    
 
     getEng: func(idx, prop) {
         return (getprop("engines/engine["~idx~"]/"~prop) or 0);

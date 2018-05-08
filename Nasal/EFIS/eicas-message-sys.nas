@@ -104,10 +104,13 @@ var MessageSystem = {
             pager: Pager.new(page_length, prop_path),
             classes: [],
             messages: [],       # vector of vector of messages
-            active: [],         # lists of active message IDs per class
-            msg_list: [],       # active message list (flat, sorted by class)
-            first_changed_line: 0,       # for later optimisation: first changed line in msg_list
+            sounds: nil,
+            active_messages: [],    # lists of active message IDs per class
+            active_aurals: {},      # list of active aural warnings ((un-)set if corresponding message is (in-)active)
+            msg_list: [],           # active message list (flat, sorted by class)
+            first_changed_line: 0,  # for later optimisation: first changed line in msg_list
             has_update: 1,
+            powerN: nil,
         };
         return obj;
     },
@@ -134,7 +137,7 @@ var MessageSystem = {
         me["new-msg"~class] = me.rootN.getNode("new-msg-"~classname,1);
         me["new-msg"~class].setIntValue(0);
         append(me.classes, MessageClass.new(classname, pageable).setColor(color));
-        append(me.active, []);
+        append(me.active_messages, []);
         return class;
     },
     
@@ -201,11 +204,21 @@ var MessageSystem = {
             }
         }
     },
+    
+    addAuralAlerts: func(alert_hash) {
+        if (typeof(alert_hash) != "hash") {
+            print("MessageSystem.addAuralAlerts: parameter must be a hash!");
+            return;
+        }
+        me.sounds = alert_hash;
+        foreach (var k; keys(alert_hash))
+            me.active_aurals[k] = 0;
+    },
 
     _updateList: func() {
         me.msg_list = [];
-        forindex (var class; me.active) {
-            foreach (var id; me.active[class]) {
+        forindex (var class; me.active_messages) {
+            foreach (var id; me.active_messages[class]) {
                 if (!me.classes[class].disabled and !me.messages[class][id]["disabled"])
                     append(me.msg_list, { text: me.messages[class][id].msg, color: me.classes[class].color});
             }
@@ -214,16 +227,16 @@ var MessageSystem = {
 
     _remove: func(class, msg) {
         var tmp = [];
-        for (var i = 0; i < size(me.active[class]); i += 1) {
-            if (me.active[class][i] != msg) {
-                append(tmp, me.active[class][i]);
+        for (var i = 0; i < size(me.active_messages[class]); i += 1) {
+            if (me.active_messages[class][i] != msg) {
+                append(tmp, me.active_messages[class][i]);
             }
         }
         return tmp;
     },
 
     _isActive: func(class, msg) {
-        foreach (var m; me.active[class]) {
+        foreach (var m; me.active_messages[class]) {
             if (m == msg) {
                 return 1;
             }
@@ -231,44 +244,62 @@ var MessageSystem = {
         return 0;
     },
 
-    setMessage: func(class, msg_id, visible) {
+    #
+    setMessage: func(class, msg_id, visible=1) {
         if (class >= size(me.classes))
             return;
         var isActive = me._isActive(class, msg_id);
-        if ((isActive and visible) or (!isActive and !visible))
+        if ((isActive and visible) or (!isActive and !visible)) {
             return;
+        }
         if (!me.has_update)
             me.first_changed_line = me.pager.page_length;
 
         #add message at head of list, 2DO: priority handling?!
+        var aural = me.messages[class][msg_id]["aural"];
         if (visible) {
-            me.active[class] = [msg_id]~me.active[class];
+            me.active_messages[class] = [msg_id]~me.active_messages[class];
             #-- set new-msg flag in prop tree, e.g. to trigger sounds
             me["new-msg"~class].setIntValue(1);
-            if (me.messages[class][msg_id]["aural"] != nil) {
-                print("aural "~me.messages[class][msg_id]["aural"]);
+            if (aural != nil) {
+                me.active_aurals[aural] = 1;
+                me.aural(aural);
             }
         }
-        else me.active[class] = me._remove(class, msg_id);
+        else {
+            me.active_messages[class] = me._remove(class, msg_id);
+            if (aural != nil) me.active_aurals[aural] = 0;
+        }
         
         var unchanged = 0;
         for (var i = 0; i < class; i += 1)
-            unchanged += size(me.active[i]);
+            unchanged += size(me.active_messages[i]);
         if (me.first_changed_line > unchanged) me.first_changed_line = unchanged;
         #print("set c:"~class~" m:"~msg_id~" v:"~visible~ " 1upd:"~me.first_changed_line);
         me._updateList();
         me.has_update = 1;
     },
 
+    aural: func(aural) {
+        if (me.sounds != nil and aural != nil ) {
+            #print("EICAS Message aural: "~aural);
+            if (me.active_aurals[aural])
+                fgcommand("play-audio-sample", props.Node.new(me.sounds[aural]));
+        }
+    },
+    
     #-- check for active messages and set new-msg flags. 
     #   can be used on power up to trigger new-msg events.
     init: func {
-        forindex (var class; me.active) {
-            if (size(me.active[class])) {
+        forindex (var class; me.active_messages) {
+            if (size(me.active_messages[class])) {
                 me["new-msg"~class].setIntValue(1);
             }
         }
         me.has_update = 1;
+        #hack for aural alerts
+        print("EICAS Message System sound hack: /sim/sound/chatter/enabled will be set to 1 now.");
+        setprop("/sim/sound/chatter/enabled", 1);
     },
     
     hasUpdate: func {

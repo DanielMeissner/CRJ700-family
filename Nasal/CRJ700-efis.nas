@@ -122,12 +122,15 @@ var PAGING = 1;
 var NO_PAGING = 0;
 #-- on primary page --
 var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1");
+EICASMsgSys1.setPowerProp("systems/DC/outputs/eicas-disp");
+EICASMsgSys1.addAuralAlerts(EICASAural);
 EICASMsgClsWarning = EICASMsgSys1.addMessageClass("warning", NO_PAGING, efis.colors["red"]);
 EICASMsgClsCaution = EICASMsgSys1.addMessageClass("caution", PAGING, efis.colors["amber"]);
 EICASMsgSys1.addMessages(EICASMsgClsWarning, EICASWarningMessages);
 EICASMsgSys1.addMessages(EICASMsgClsCaution, EICASCautionMessages);
 #-- on status page --
 var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys2");
+EICASMsgSys2.setPowerProp("systems/DC/outputs/eicas-disp");
 EICASMsgClsAdvisory = EICASMsgSys2.addMessageClass("advisory", NO_PAGING, efis.colors["green"]);
 EICASMsgClsStatus = EICASMsgSys2.addMessageClass("status", PAGING);
 EICASMsgSys2.addMessages(EICASMsgClsAdvisory, EICASAdvisoryMessages);
@@ -258,6 +261,7 @@ var EFISSetup = func() {
             setprop("instrumentation/eicas/master-caution",1);
         }
     },1);
+    efis.boot();
 };
 
 var initL = setlistener("sim/signals/fdm-initialized", func(p)

@@ -135,7 +135,7 @@ var instastart = func
     setprop("controls/hydraulic/system[1]/pump-b", 2);
     setprop("controls/hydraulic/system[2]/pump-b", 2);
     setprop("controls/hydraulic/system[2]/pump-a", 1);
-    setprop("/systems/AC/system/adg-position-norm", 0);
+    setprop("/systems/AC/system/gen5-position-norm", 0);
 
     setprop("/controls/gear/brake-parking", 0);
     setprop("/controls/lighting/strobe", 1);
