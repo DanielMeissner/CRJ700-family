@@ -29,6 +29,7 @@ var DisplayUnit =
     new: func(name, canvas_settings, screen_obj, parent_obj = nil) {
         var obj = {
             parents: [DisplayUnit],
+            _id: size(DisplayUnit._instances),
             cleanup: func() {
                 if (obj.window != nil) {
                     obj.window.del();
@@ -109,6 +110,8 @@ var DisplayUnit =
         me.window = canvas.Window.new(window_size, "dialog");
         me.window.set('title', "EFIS " ~ me.name)
             .setCanvas(me.du_canvas);
+        me.window.move(me._id*100, me._id*10);
+            
         me.window.del = func() { call(canvas.Window.del, [], me); }
         return me.window
     },    
@@ -135,7 +138,7 @@ var EFIS = {
         "mipmapping": 1
     },
     
-    window_size: [500,600],
+    window_size: [450,540],
     
     colors: { 
         transparent: [1,0,0,0],
@@ -234,18 +237,33 @@ var EFIS = {
             }
         }
     },
-  
+
+    _powerOnOff: func(power) {
+            if (power) {
+                print("EFIS power on");
+                foreach (var src; me.sources) 
+                    src.startUpdates();
+            }
+            else {
+                print("EFIS power off.");
+                foreach (var src; me.sources) 
+                    src.stopUpdates();
+            }
+    },
+
     #-- public methods -----------------------
     # set power prop and add listener to start/stop all registered update functions
     # e.g. power up will start updates, loss of power will stop updates
     setPowerProp: func(path) {
         me.powerN = props.getNode(path,1);
         setlistener(me.powerN, func(n) {
-            foreach (var src; me.sources) {
-                if (n.getValue()) src.startUpdates();
-                else src.stopUpdates();
-            }
+            var power = n.getValue();
+            me._powerOnOff(power);
         }, 1, 0);
+    },
+
+    boot: func() {
+        me._powerOnOff(me.powerN.getValue());
     },
     
     setDUPowerProps: func(power_props, minimum_power=0) {
