@@ -118,21 +118,20 @@ var callbacks = [
 ];
 
 #-- EICAS Message Systems -----------------------------------------------------
-var PAGING = 1;
-var NO_PAGING = 0;
+
 #-- on primary page --
 var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1");
 EICASMsgSys1.setPowerProp("systems/DC/outputs/eicas-disp");
 EICASMsgSys1.addAuralAlerts(EICASAural);
-EICASMsgClsWarning = EICASMsgSys1.addMessageClass("warning", NO_PAGING, efis.colors["red"]);
-EICASMsgClsCaution = EICASMsgSys1.addMessageClass("caution", PAGING, efis.colors["amber"]);
+EICASMsgClsWarning = EICASMsgSys1.addMessageClass("warning", MessageSystem.NO_PAGING, efis.colors["red"]);
+EICASMsgClsCaution = EICASMsgSys1.addMessageClass("caution", MessageSystem.PAGING, efis.colors["amber"]);
 EICASMsgSys1.addMessages(EICASMsgClsWarning, EICASWarningMessages);
 EICASMsgSys1.addMessages(EICASMsgClsCaution, EICASCautionMessages);
 #-- on status page --
 var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys2");
 EICASMsgSys2.setPowerProp("systems/DC/outputs/eicas-disp");
-EICASMsgClsAdvisory = EICASMsgSys2.addMessageClass("advisory", NO_PAGING, efis.colors["green"]);
-EICASMsgClsStatus = EICASMsgSys2.addMessageClass("status", PAGING);
+EICASMsgClsAdvisory = EICASMsgSys2.addMessageClass("advisory", MessageSystem.NO_PAGING, efis.colors["green"]);
+EICASMsgClsStatus = EICASMsgSys2.addMessageClass("status", MessageSystem.PAGING);
 EICASMsgSys2.addMessages(EICASMsgClsAdvisory, EICASAdvisoryMessages);
 EICASMsgSys2.addMessages(EICASMsgClsStatus, EICASStatusMessages);
 
@@ -206,7 +205,18 @@ var EFISSetup = func() {
     
     var eicas_sources = []; 
     append(eicas_sources, EICASPriCanvas.new("PRI", svg_path~"eicas-pri.svg"));
+    EICASMsgSys1.setCanvasGroup(eicas_sources[0].getRoot());
+    EICASMsgSys1.createCanvasTextLines(580, 65, 36, 34);
+    var pi1 = EICASMsgSys1.createPageIndicator(950,65+36*16, 32);
+    pi1.setDrawMode(pi1.TEXT + pi1.BOUNDINGBOX)
+        .setAlignment("right-top")
+        .setPadding(4)
+        .setColorFill(0.9,0.9,0.9);
     append(eicas_sources, EICASStatCanvas.new("STAT", svg_path~"eicas-stat.svg"));
+    EICASMsgSys2.setCanvasGroup(eicas_sources[1].getRoot());
+    EICASMsgSys2.createCanvasTextLines(60, 65, 36, 34);
+#    eicas_sources[1].addUpdateFunction(EICASMsgSys2.updateCanvas, 1.500);
+
     append(eicas_sources, EICASECSCanvas.new("ECS", svg_path~"eicas-ecs.svg"));
     append(eicas_sources, EICASHydraulicsCanvas.new("HYD", svg_path~"eicas-hydraulic.svg"));
     append(eicas_sources, EICASACCanvas.new("AC", svg_path~"eicas-ac.svg"));
@@ -216,6 +226,8 @@ var EFISSetup = func() {
     append(eicas_sources, EICASAIceCanvas.new("A-ICE", svg_path~"eicas-aice.svg"));
     append(eicas_sources, EICASDoorsCanvas.new("Doors", svg_path~"eicas-doors.svg"));
 
+    
+    
     var pfd1_sid = efis.addSource(pfd1);
     var pfd2_sid = efis.addSource(pfd2);
     var mfd1_sid = efis.addSource(mfd1);

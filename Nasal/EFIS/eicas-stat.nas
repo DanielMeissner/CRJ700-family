@@ -17,7 +17,8 @@ var EICASStatCanvas = {
             ],
             #msgsys: MessageSystem.new(me.MAX_MSG, "instrumentation/eicas/msgsys2"),
         };
-        for (var i = 0; i < EICASMsgSys2.getPageSize(); i += 1) append(obj.svg_keys, "message"~i);
+        # MessageSystem creates text objects on canvas now
+        #for (var i = 0; i < EICASMsgSys2.getPageSize(); i += 1) append(obj.svg_keys, "message"~i);
         obj.loadsvg(file);
         obj.init();
         obj.addUpdateFunction(obj.update, 0.100);
@@ -62,15 +63,16 @@ var EICASStatCanvas = {
     },
     
     updateMessages: func() {
-        if (!EICASMsgSys2.hasUpdate())
-            return;
-        var messages = EICASMsgSys2.getActiveMessages();
-        for (var i = EICASMsgSys2.getFirstUpdateIndex(); i < size(messages); i += 1) {
-            me.updateTextElement("message"~i, messages[i].text, messages[i].color);
-        }
-        for (i; i < EICASMsgSys2.getPageSize(); i += 1) {
-            me.updateTextElement("message"~i, "");
-        }
+        EICASMsgSys2.updateCanvas();
+        # if (!EICASMsgSys2.hasUpdate())
+            # return;
+        # var messages = EICASMsgSys2.getActiveMessages();
+        # for (var i = EICASMsgSys2.getFirstUpdateIndex(); i < size(messages); i += 1) {
+            # me.updateTextElement("message"~i, messages[i].text, messages[i].color);
+        # }
+        # for (i; i < EICASMsgSys2.getPageSize(); i += 1) {
+            # me.updateTextElement("message"~i, "");
+        # }
     },
     
     #-- listeners for rare events --

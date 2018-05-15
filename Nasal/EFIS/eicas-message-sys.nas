@@ -10,7 +10,7 @@ var Pager = {
             page_length: 1,
             last_result: 0,
             prop_path: prop_path,
-            length: 0,
+            line_count: 0,
         };
         obj.setPageLength(page_length);
         return obj;
@@ -23,26 +23,38 @@ var Pager = {
     },
 
     setPage: func(p) {
-        me.current_page = int(p) or 0;
+        me.current_page = int(p) or 1;
         setprop(me.prop_path~"/page", me.current_page);
         return me;
+    },
+    
+    getPageCount: func() { 
+        return me.page_count; 
+    },
+    
+    getPage: func() {
+        return me.current_page;
     },
 
     #lines: vector
     page: func(lines) {
-        me.length = size(lines);
-        me.current_page = getprop(me.prop_path~"/page");
-        setprop(me.prop_path~"/pages", int(me.length / me.page_length) + 1);
-        var start = me.page_length * me.current_page;
-        if (me.length < start) {
+        me.line_count = size(lines);
+        me.current_page = getprop(me.prop_path~"/page") or 1;
+        me.page_count = int(me.line_count / me.page_length) + 1;
+        setprop(me.prop_path~"/pages", me.page_count);
+        var start = me.page_length * (me.current_page-1);
+        if (me.line_count < start) {
             # default to first page if page is invalid
-            me.setMessagePage(0);
+            me.setPage(1);
             start = 0;
         }
         var end = start + me.page_length - 1;
-        if (end >= me.length)
-            end = me.length-1;
-        return lines[start:end];
+        if (end >= me.line_count)
+            end = me.line_count-1;
+        print("page l:"~me.line_count~" start "~start~" end "~end);
+        if (start <= end)
+            return lines[start:end];
+        else return[];
     },
 };
 
@@ -96,6 +108,9 @@ var Message = {
 };
 
 var MessageSystem = {
+    PAGING: 1,
+    NO_PAGING: 0,
+    
     new: func(page_length, prop_path) {
         var obj = {
             parents: [MessageSystem],
@@ -111,6 +126,9 @@ var MessageSystem = {
             first_changed_line: 0,  # for later optimisation: first changed line in msg_list
             has_update: 1,
             powerN: nil,
+            canvas_group: nil,
+            page_indicator: nil,
+            page_indicator_format: "Page %2d/%2d",
         };
         return obj;
     },
@@ -342,5 +360,60 @@ var MessageSystem = {
             me.messages[class][id]["disabled"] = 0;
         else forindex (var i; me.messages[class])
             me.messages[class][i]["disabled"] = 0;
+    },
+    
+    setCanvasGroup: func(group) {
+        me.canvas_group = group;
+    },
+    
+    createCanvasTextLines: func(left, top, lineheight, fontsize) {
+        me.lines = me.canvas_group.createChildren("text", me.page_length);
+        forindex (var i; me.lines) {
+            var l = me.lines[i];
+            l.setAlignment("left-top").setTranslation(left, top + i*lineheight);
+            l.setFont("LiberationFonts/LiberationSans-Regular.ttf");
+            l.setFontSize(fontsize);
+            l.enableUpdate();
+            l.updateText("");
+        }
+    },
+    
+    createPageIndicator: func(left, top, fontsize, formatstring = nil) {
+        me.page_indicator = me.canvas_group.createChild("text");
+        me.page_indicator.setAlignment("left-top").setTranslation(left, top);
+        me.page_indicator.setFont("LiberationFonts/LiberationSans-Regular.ttf");
+        me.page_indicator.setFontSize(fontsize);
+        me.page_indicator.enableUpdate();
+        me.page_indicator.updateText("");
+        if (formatstring != nil)
+            me.page_indicator_format = formatstring;
+        return me.page_indicator;
+    },
+    
+    updateCanvas: func() {
+        if (!me.has_update)
+            return;
+        me.has_update = 0;
+        var messages = me.pager.page(me.msg_list);
+        for (var i = me.first_changed_line; i < size(messages); i += 1) {
+            me.lines[i].updateText(messages[i].text);
+            if (messages[i].color != nil)
+                me.lines[i].setColor(messages[i].color);
+        }
+        for (i; i < me.page_length; i += 1) {
+            me.lines[i].updateText("");
+        }
+        if (me.page_indicator != nil) {
+            if (me.pager.getPageCount() > 1) {
+                me.page_indicator.show();
+                me.updatePageIndicator(me.pager.getPage(), me.pager.getPageCount());
+            }
+            else me.page_indicator.hide();
+        }
+    },
+
+    updatePageIndicator: func(current, total) {
+        print(current~"/"~total);
+        me.page_indicator.updateText(sprintf(me.page_indicator_format, current, total));
     },
 };

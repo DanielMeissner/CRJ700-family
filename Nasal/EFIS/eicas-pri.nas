@@ -169,16 +169,17 @@ var EICASPriCanvas = {
     },
 
     updateMessages: func() {
-        if (!EICASMsgSys1.hasUpdate())
-            return;
-        var messages = EICASMsgSys1.getActiveMessages();
-        print("M1 "~size(messages)~" "~EICASMsgSys1.getFirstUpdateIndex());        
-        for (var i = EICASMsgSys1.getFirstUpdateIndex(); i < size(messages); i += 1) {
-            me.updateTextElement("message"~i, messages[i].text, messages[i].color);
-        }
-        for (i; i < EICASMsgSys1.getPageSize(); i += 1) {
-            me.updateTextElement("message"~i, "");
-        }
+        EICASMsgSys1.updateCanvas();
+        # if (!EICASMsgSys1.hasUpdate())
+            # return;
+        # var messages = EICASMsgSys1.getActiveMessages();
+        # print("M1 "~size(messages)~" "~EICASMsgSys1.getFirstUpdateIndex());        
+        # for (var i = EICASMsgSys1.getFirstUpdateIndex(); i < size(messages); i += 1) {
+            # me.updateTextElement("message"~i, messages[i].text, messages[i].color);
+        # }
+        # for (i; i < EICASMsgSys1.getPageSize(); i += 1) {
+            # me.updateTextElement("message"~i, "");
+        # }
     },
 
     updateSlow: func() {
