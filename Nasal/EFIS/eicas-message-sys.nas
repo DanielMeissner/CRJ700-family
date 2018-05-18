@@ -1,5 +1,6 @@
 #
 # EICAS message system
+# inital version by jsb 5/2018
 #
 
 # simple pager to get a sub vector of messages
@@ -8,23 +9,38 @@ var Pager = {
         var obj = {
             parents: [Pager],
             page_length: 1,
+            lengthN: props.getNode(prop_path~"/page_length",1),
+            current_page: 1,
+            pageN: props.getNode(prop_path~"/page",1),
             last_result: 0,
             prop_path: prop_path,
             line_count: 0,
+            changed: 0,
         };
         obj.setPageLength(page_length);
+        obj.setPage(1);
+        setlistener(obj.pageN.getPath(), func(n) {
+            obj.current_page = n.getValue();
+            obj.changed = 1;
+        });
         return obj;
     },
 
+    isChanged: func() {
+        var c = me.changed;
+        me.changed = 0;
+        return c;
+    },
+    
     setPageLength: func(n) {
         me.page_length = int(n) or 1;
-        setprop(me.prop_path~"/page_length", me.page_length);
+        me.lengthN.setIntValue(me.page_length);
         return me;
     },
 
     setPage: func(p) {
         me.current_page = int(p) or 1;
-        setprop(me.prop_path~"/page", me.current_page);
+        me.pageN.setIntValue(me.current_page);
         return me;
     },
     
@@ -32,11 +48,12 @@ var Pager = {
         return me.page_count; 
     },
     
-    getPage: func() {
+    getCurrentPage: func() {
         return me.current_page;
     },
 
-    #lines: vector
+    # lines: vector of all messages
+    # returns lines of current page
     page: func(lines) {
         me.line_count = size(lines);
         me.current_page = getprop(me.prop_path~"/page") or 1;
@@ -124,7 +141,7 @@ var MessageSystem = {
             active_aurals: {},      # list of active aural warnings ((un-)set if corresponding message is (in-)active)
             msg_list: [],           # active message list (flat, sorted by class)
             first_changed_line: 0,  # for later optimisation: first changed line in msg_list
-            has_update: 1,
+            changed: 1,
             powerN: nil,
             canvas_group: nil,
             page_indicator: nil,
@@ -262,7 +279,7 @@ var MessageSystem = {
         return 0;
     },
 
-    #
+    # (de-)activate message 
     setMessage: func(class, msg_id, visible=1) {
         if (class >= size(me.classes))
             return;
@@ -270,7 +287,7 @@ var MessageSystem = {
         if ((isActive and visible) or (!isActive and !visible)) {
             return;
         }
-        if (!me.has_update)
+        if (!me.changed)
             me.first_changed_line = me.pager.page_length;
 
         #add message at head of list, 2DO: priority handling?!
@@ -295,7 +312,7 @@ var MessageSystem = {
         if (me.first_changed_line > unchanged) me.first_changed_line = unchanged;
         #print("set c:"~class~" m:"~msg_id~" v:"~visible~ " 1upd:"~me.first_changed_line);
         me._updateList();
-        me.has_update = 1;
+        me.changed = 1;
     },
 
     aural: func(aural) {
@@ -314,14 +331,14 @@ var MessageSystem = {
                 me["new-msg"~class].setIntValue(1);
             }
         }
-        me.has_update = 1;
+        me.changed = 1;
         #hack for aural alerts
         print("EICAS Message System sound hack: /sim/sound/chatter/enabled will be set to 1 now.");
         setprop("/sim/sound/chatter/enabled", 1);
     },
     
     hasUpdate: func {
-        return me.has_update;
+        return me.changed;
     },
 
     getPageSize: func { 
@@ -333,7 +350,7 @@ var MessageSystem = {
     },
 
     getActiveMessages: func {
-        me.has_update = 0;
+        me.changed = 0;
         return me.msg_list;
     },
 
@@ -362,10 +379,16 @@ var MessageSystem = {
             me.messages[class][i]["disabled"] = 0;
     },
     
+    #
+    #-- following methods are for message output on a canvas --
+    #
+    
+    # pass an existing canvas group to create text elements on
     setCanvasGroup: func(group) {
         me.canvas_group = group;
     },
     
+    # create text elements for message lines in canvas group; call setCanvasGroup() first!
     createCanvasTextLines: func(left, top, lineheight, fontsize) {
         me.lines = me.canvas_group.createChildren("text", me.page_length);
         forindex (var i; me.lines) {
@@ -378,6 +401,7 @@ var MessageSystem = {
         }
     },
     
+    # create text element for "page i of N"; call setCanvasGroup() first!
     createPageIndicator: func(left, top, fontsize, formatstring = nil) {
         me.page_indicator = me.canvas_group.createChild("text");
         me.page_indicator.setAlignment("left-top").setTranslation(left, top);
@@ -390,10 +414,11 @@ var MessageSystem = {
         return me.page_indicator;
     },
     
+    # call this regularly to update text lines on canvas
     updateCanvas: func() {
-        if (!me.has_update)
+        if (!(me.pager.isChanged() or !me.changed))
             return;
-        me.has_update = 0;
+        me.changed = 0;
         var messages = me.pager.page(me.msg_list);
         for (var i = me.first_changed_line; i < size(messages); i += 1) {
             me.lines[i].updateText(messages[i].text);
@@ -406,7 +431,7 @@ var MessageSystem = {
         if (me.page_indicator != nil) {
             if (me.pager.getPageCount() > 1) {
                 me.page_indicator.show();
-                me.updatePageIndicator(me.pager.getPage(), me.pager.getPageCount());
+                me.updatePageIndicator(me.pager.getCurrentPage(), me.pager.getPageCount());
             }
             else me.page_indicator.hide();
         }
