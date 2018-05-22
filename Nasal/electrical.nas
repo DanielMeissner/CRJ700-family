@@ -144,7 +144,7 @@ var ADG = {
     #will deploy on first "switch on"
     _switch_listener: func(v){
         me.switch = v.getValue() or 0;
-        print("ADG switch "~me.switch~" "~me.serviceableN.getBoolValue());
+        #print("ADG switch "~me.switch~" "~me.serviceableN.getBoolValue());
         if (me.serviceableN.getBoolValue() and me.switch)
             interpolate(me.positionN, 1, 2);
         me._update_output();
@@ -258,7 +258,7 @@ var ACPC = {
             acext_selected: 0,
             in_flight: 0,
         };
-        print("AC power center "~obj.parents[1].system_path);
+        #print("AC power center "~obj.parents[1].system_path);
         return obj;
     },
 
@@ -343,7 +343,7 @@ var DCPC = {
             buses: [],
             dcservice: 0,
         };
-        print("DC power center "~obj.parents[1].system_path);
+        #print("DC power center "~obj.parents[1].system_path);
         obj.xtieN = obj.systemN.getNode("xtie", 1, "BOOL");
         obj.esstieN = obj.systemN.getNode("esstie", 1, "BOOL");
         obj.maintieN = obj.systemN.getNode("maintie", 1, "BOOL");
@@ -430,7 +430,7 @@ var ac_buses = [
 ];
 
 var dc_buses = [
-    DCBus.new(1, "DC1", ["dme1", "eicas-disp-a", "gps1",
+    DCBus.new(1, "DC1", ["dme1", "cdu", "eicas-disp-a", "gps1",
         ["landing-lights[1]", "controls/lighting/landing-lights[1]"],
         "nwsteering", "passenger-door", "radio-altimeter1",
         ["rear-ac-light", "sim/model/lights/strobe/state"],

@@ -9,6 +9,7 @@
         <lightmap-texture-path>Aircraft/Generic/generic-lightmap.png</lightmap-texture-path>
         <panel-lights />
         <display-norm />
+        <powerN />
     </params>
     <small-text-size type="float">0.006</small-text-size>
     <large-text-size type="float">0.008</large-text-size>
@@ -821,14 +822,11 @@
         <object-name>Line R13</object-name>
         <object-name>Line input</object-name>
         <condition>
-            <!-- Instrument elements only visible inside -->
-            <and>
-                <property>sim/current-view/internal</property>
-                <greater-than-equals>
-                    <property alias="/params/powerN" />
-                    <value>15</value>
-                </greater-than-equals>
-            </and>
+            <property>sim/current-view/internal</property>
+            <greater-than-equals>
+                <property alias="/params/powerN" />
+                <value>15</value>
+            </greater-than-equals>
         </condition>
     </animation>
 

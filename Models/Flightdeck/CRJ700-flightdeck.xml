@@ -192,7 +192,8 @@
                 <lightmap-texture-path>Models/Effects/Lightmaps/cdu-left-lightmap.png</lightmap-texture-path>
                 <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
                 <panel-lights>controls/lighting[2]/panel-norm</panel-lights>
-                <powerN>systems/DC/outputs/bus1</powerN>
+                <display-norm>controls/lighting[2]/display-norm</display-norm>
+                <powerN>systems/DC/outputs/cdu</powerN>
             </params>
         </overlay>
         <offsets>
@@ -207,7 +208,9 @@
         <overlay>
             <params>
                 <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
+                <panel-lights>controls/lighting[2]/panel-norm</panel-lights>
                 <display-norm>controls/lighting[2]/display-norm</display-norm>
+                <powerN>systems/DC/outputs/rtu1</powerN>
             </params>
         </overlay>
         <offsets>
@@ -413,7 +416,8 @@
                 <lightmap-texture-path>Models/Effects/Lightmaps/cdu-right-lightmap.png</lightmap-texture-path>
                 <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
                 <panel-lights>controls/lighting[2]/panel-norm</panel-lights>
-                <powerN>systems/DC/outputs/bus2</powerN>
+                <display-norm>controls/lighting[2]/display-norm</display-norm>
+                <powerN>systems/DC/outputs/cdu</powerN>
             </params>
         </overlay>
         <offsets>
@@ -429,6 +433,8 @@
             <params>
                 <lightmap-factor>sim/model/lights/panel2-lightmap</lightmap-factor>
                 <display-norm>controls/lighting[2]/display-norm</display-norm>
+                <panel-lights>controls/lighting[2]/panel-norm</panel-lights>
+                <powerN>systems/DC/outputs/rtu2</powerN>
             </params>
         </overlay>
         <offsets>

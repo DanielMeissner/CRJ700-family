@@ -4,11 +4,6 @@
 <!-- Left radio panel -->
 
 <PropertyList>
-    <params>
-        <lightmap-factor />
-        <display-norm />
-    </params>
-
     <foo include="radiopanel-main.xml" omit-node="y" />
 
     <text>
@@ -632,7 +627,7 @@
             <and>
                 <property>sim/current-view/internal</property>
                 <greater-than-equals>
-                    <property>systems/DC/outputs/rtu1</property>
+                    <property alias="/params/powerN" />
                     <value>22</value>
                 </greater-than-equals>
             </and>
