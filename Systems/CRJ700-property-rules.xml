@@ -57,6 +57,8 @@
                 <property>engines/engine[1]/n1</property>
                 <value>70</value>
             </greater-than>
+            <not><property>controls/engines/engine[0]/reverser</property></not>
+            <not><property>controls/engines/engine[1]/reverser</property></not>
         </input>
         <output>instrumentation/eicas/to-warnings-ena</output>
     </logic>
