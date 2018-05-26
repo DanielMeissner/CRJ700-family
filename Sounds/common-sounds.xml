@@ -126,7 +126,10 @@ positions or are almost the same position for C700/900/1000.
             <mode>once</mode>
             <path>Sounds/triple-chime.wav</path>
             <condition>
-                <property>instrumentation/eicas/msgsys1/new-msg-warning</property>
+                <greater-than>
+                    <property>instrumentation/eicas/msgsys1/new-msg-warning</property>
+                    <value>0</value>
+                </greater-than>
             </condition>
         </alarm>
         <alarm>
@@ -134,7 +137,10 @@ positions or are almost the same position for C700/900/1000.
             <mode>once</mode>
             <path>Sounds/single-chime.wav</path>
             <condition>
-                <property>instrumentation/eicas/msgsys1/new-msg-caution</property>
+                <greater-than>
+                    <property>instrumentation/eicas/msgsys1/new-msg-caution</property>
+                    <value>0</value>
+                </greater-than>
             </condition>
         </alarm>
         <alarm>

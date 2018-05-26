@@ -109,6 +109,7 @@ var DisplayUnit =
     asWindow: func(window_size) {
         me.window = canvas.Window.new(window_size, "dialog");
         me.window.set('title', "EFIS " ~ me.name)
+            .set("resize", 1)
             .setCanvas(me.du_canvas);
         me.window.move(me._id*100, me._id*10);
             
@@ -138,7 +139,7 @@ var EFIS = {
         "mipmapping": 1
     },
     
-    window_size: [450,540],
+    window_size: [400,480],
     
     colors: { 
         transparent: [1,0,0,0],

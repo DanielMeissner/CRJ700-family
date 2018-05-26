@@ -68,7 +68,7 @@ var Pager = {
         var end = start + me.page_length - 1;
         if (end >= me.line_count)
             end = me.line_count-1;
-        print("page l:"~me.line_count~" start "~start~" end "~end);
+        #print("page l:"~me.line_count~" start "~start~" end "~end);
         if (start <= end)
             return lines[start:end];
         else return[];
@@ -116,7 +116,7 @@ var Message = {
     msg: "",
     prop: "",
     aural: "",
-    conditions: {
+    condition: {
         eq: "equals",
         ne: "not equals",
         lt: "less than",
@@ -180,6 +180,9 @@ var MessageSystem = {
     # class:     class id returned by addMessageClass();
     # messages:  vector of message objects (hashes)
     addMessages: func(class, messages) {
+        forindex (var i; messages) {
+            messages[i]["_class"] = class;            
+        }
         append(me.messages, messages);
         
         var simpleL = func(i){
@@ -191,7 +194,7 @@ var MessageSystem = {
         var eqL = func(i) {
             return func(n) {
                 var val = n.getValue() or 0;
-                if (val == messages[i].conditions["eq"])
+                if (val == messages[i].condition["eq"])
                     me.setMessage(class, i, 1);
                 else me.setMessage(class, i, 0);
             }
@@ -199,7 +202,7 @@ var MessageSystem = {
         var neL = func(i) {
             return func(n) {
                 var val = n.getValue() or 0;
-                if (val != messages[i].conditions["ne"])
+                if (val != messages[i].condition["ne"])
                     me.setMessage(class, i, 1);
                 else me.setMessage(class, i, 0);
             }
@@ -207,7 +210,7 @@ var MessageSystem = {
         var ltL = func(i) {
             return func(n) {
                 var val = n.getValue() or 0;
-                if (val  < messages[i].conditions["lt"])
+                if (val  < messages[i].condition["lt"])
                     me.setMessage(class, i, 1);
                 else me.setMessage(class, i, 0);
             }
@@ -215,7 +218,7 @@ var MessageSystem = {
         var gtL = func(i) {
             return func(n) {
                 var val = n.getValue() or 0;
-                if (val > messages[i].conditions["gt"])
+                if (val > messages[i].condition["gt"])
                     me.setMessage(class, i, 1);
                 else me.setMessage(class, i, 0);
             }
@@ -228,8 +231,8 @@ var MessageSystem = {
                 while (prop.getAttribute("alias")) {
                     prop = prop.getAliasTarget();
                 }
-                if (messages[i]["conditions"] != nil) {
-                    var c = messages[i]["conditions"];
+                if (messages[i]["condition"] != nil) {
+                    var c = messages[i]["condition"];
                     if (c["eq"] != nil) setlistener(prop, eqL(i), 1, 0);
                     if (c["ne"] != nil) setlistener(prop, eqL(i), 1, 0);
                     if (c["lt"] != nil) setlistener(prop, ltL(i), 1, 0);
@@ -294,7 +297,8 @@ var MessageSystem = {
         var aural = me.messages[class][msg_id]["aural"];
         if (visible) {
             me.active_messages[class] = [msg_id]~me.active_messages[class];
-            #-- set new-msg flag in prop tree, e.g. to trigger sounds
+            # set new-msg flag in prop tree, e.g. to trigger sounds; 
+            # may be reset from outside this class so we can trigger again here
             me["new-msg"~class].setIntValue(1);
             if (aural != nil) {
                 me.active_aurals[aural] = 1;
@@ -304,6 +308,9 @@ var MessageSystem = {
         else {
             me.active_messages[class] = me._remove(class, msg_id);
             if (aural != nil) me.active_aurals[aural] = 0;
+            # clear new-msg flag if last message is gone
+            if (size(me.active_messages[class]) == 0)
+                me["new-msg"~class].setIntValue(-1);
         }
         
         var unchanged = 0;
@@ -416,7 +423,7 @@ var MessageSystem = {
     
     # call this regularly to update text lines on canvas
     updateCanvas: func() {
-        if (!(me.pager.isChanged() or !me.changed))
+        if (!(me.pager.isChanged() or me.changed))
             return;
         me.changed = 0;
         var messages = me.pager.page(me.msg_list);
@@ -438,7 +445,7 @@ var MessageSystem = {
     },
 
     updatePageIndicator: func(current, total) {
-        print(current~"/"~total);
+        #print(current~"/"~total);
         me.page_indicator.updateText(sprintf(me.page_indicator_format, current, total));
     },
 };

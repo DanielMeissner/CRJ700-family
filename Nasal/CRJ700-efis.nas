@@ -5,7 +5,7 @@
 #
 
 #-- begin development --------------------------------------------------------
-print("-- EFIS --");
+print("-- CRJ700 EFIS --");
 var reloadFlag = "/efis/reload";
 props.getNode(reloadFlag,1).setIntValue(0);
 setprop ("/sim/startup/terminal-ansi-colors",0);
@@ -65,14 +65,16 @@ var display_names = ["PFD1", "MFD1", "EICAS1", "EICAS2", "MFD2", "PFD2"];
 # names of 3D objects that will take the canvas texture
 var display_objects = ["EFIS1", "EFIS2", "EFIS3", "EFIS4", "EFIS5", "EFIS6"];
 # power source for each display unit
+var EICAS_powerP = "/systems/DC/outputs/eicas-disp";
 var display_power_props = [ 
     "/systems/DC/outputs/pfd1",
     "/systems/DC/outputs/mfd1",
-    "/systems/DC/outputs/eicas-disp",
-    "/systems/DC/outputs/eicas-disp",
+    EICAS_powerP,
+    EICAS_powerP,
     "/systems/DC/outputs/mfd2",
     "/systems/DC/outputs/pfd2"
 ];
+#reference value for display power (22 volts for CRJ700)
 var minimum_power = 22;
 
 # add/override colors for our aircraft
@@ -81,14 +83,14 @@ EFIS.colors["blue"] = [0.133,0.133,1];
 
 # create EFIS system and add power prop to en-/dis-able efis
 var efis = EFIS.new(display_names, display_objects);
-efis.setPowerProp("systems/DC/outputs/eicas-disp");
+efis.setPowerProp(EICAS_powerP);
 efis.setDUPowerProps(display_power_props, minimum_power);
 
-
-# control panel selector prop 
-var eicas_pageP = "instrumentation/eicas/page";
-var ecp_targetN = props.globals.getNode("instrumentation/eicas/ecp-target",1);
-ecp_targetN.setIntValue(3); #DU 3
+var EICAS_baseP = "instrumentation/eicas/";
+# EICAS Control Panel (ECP) selector prop 
+var eicas_pageP = EICAS_baseP~"page";
+var ecp_targetN = props.globals.getNode(EICAS_baseP~"ecp-target",1);
+ecp_targetN.setIntValue(3); # page selector buttons normaly change source of DU 3
 
 # display selectors allow to re-route certain displays
 # e.g. each MFD can be set to display the adjacent PFD or EICAS
@@ -103,7 +105,7 @@ var callbacks = [
             ecp_targetN.setValue(2); 
         else ecp_targetN.setValue(3);
     },
-    # copilot side
+    # copilot side selector
     func(val) { 
         if (val == 2) ecp_targetN.setValue(4); 
         elsif (getprop(src_selector_base~src_selectors[2]) == 0)
@@ -118,39 +120,47 @@ var callbacks = [
 ];
 
 #-- EICAS Message Systems -----------------------------------------------------
+# CRJ700 EICAS has four message classes, warning and caution messages are 
+# displayed on EICAS primary page, advisory and status messages are displayed
+# on status page. Messages may be inhibited during takeoff and landing.
+# Some warnings have a distinct aural alert.
 
+var EICAS_MAX_MESSAGES = 16;
 #-- on primary page --
-var EICASMsgSys1 = MessageSystem.new(16, "instrumentation/eicas/msgsys1");
-EICASMsgSys1.setPowerProp("systems/DC/outputs/eicas-disp");
+var EICASMsgSys1 = MessageSystem.new(EICAS_MAX_MESSAGES, EICAS_baseP~"msgsys1");
+EICASMsgSys1.setPowerProp(EICAS_powerP);
 EICASMsgSys1.addAuralAlerts(EICASAural);
 EICASMsgClsWarning = EICASMsgSys1.addMessageClass("warning", MessageSystem.NO_PAGING, efis.colors["red"]);
 EICASMsgClsCaution = EICASMsgSys1.addMessageClass("caution", MessageSystem.PAGING, efis.colors["amber"]);
 EICASMsgSys1.addMessages(EICASMsgClsWarning, EICASWarningMessages);
 EICASMsgSys1.addMessages(EICASMsgClsCaution, EICASCautionMessages);
 #-- on status page --
-var EICASMsgSys2 = MessageSystem.new(16, "instrumentation/eicas/msgsys2");
-EICASMsgSys2.setPowerProp("systems/DC/outputs/eicas-disp");
+var EICASMsgSys2 = MessageSystem.new(EICAS_MAX_MESSAGES, EICAS_baseP~"msgsys2");
+EICASMsgSys2.setPowerProp(EICAS_powerP);
 EICASMsgClsAdvisory = EICASMsgSys2.addMessageClass("advisory", MessageSystem.NO_PAGING, efis.colors["green"]);
 EICASMsgClsStatus = EICASMsgSys2.addMessageClass("status", MessageSystem.PAGING);
 EICASMsgSys2.addMessages(EICASMsgClsAdvisory, EICASAdvisoryMessages);
 EICASMsgSys2.addMessages(EICASMsgClsStatus, EICASStatusMessages);
 
-setlistener("instrumentation/eicas/inhibits/landing-set", func(n) {
+#-- message inhibits
+setlistener(EICAS_baseP~"inhibits/landing-set", func(n) {
     var val = n.getValue() or 0;
-    setprop("instrumentation/eicas/inhibits/landing", val);
+    setprop(EICAS_baseP~"inhibits/landing", val);
 }, 1,0);
 
+# air-ground / ground-air transition handling
 setlistener("gear/on-ground", func(n) {
     settimer(func {
         if (n.getValue()) {
-            setprop("instrumentation/eicas/inhibits/landing",0);
+            setprop(EICAS_baseP~"inhibits/landing",0);
         } else {
-            setprop("instrumentation/eicas/inhibits/final-takeoff",0);
+            setprop(EICAS_baseP~"inhibits/final-takeoff",0);
         }
     }, 30);
 }, 1, 0);
 #-- end EICAS Message Systems -------------------------------------------------
 
+# for now use the existing ND code util CRJ700 specific ND is created
 var nd_options = nil;
 var default_switches = {
     'toggle_range':        {path: '/inputs/range-nm', value:40, type:'INT'},
@@ -177,12 +187,13 @@ var default_switches = {
     'toggle_hdg_bug_only': {path: '/mfd/hdg-bug-only', value: 0, type: 'BOOL'},
 };
 
+#-- this is called after FDM init and puts things together
 var EFISSetup = func() {
-    #-- add primary flight display --
+    #-- create primary flight display --
     pfd1 = PFDCanvas.new("PFD1", svg_path~"PFD.svg",0);
     pfd2 = PFDCanvas.new("PFD2", svg_path~"PFD.svg",1);
     
-    #-- add nav display on multi function display --
+    #-- create nav display on multi function display --
     # FIXME: dummy for now, need to check ND framework code
     mfd1 = EFISCanvas.new("MFD1");
     mfd2 = EFISCanvas.new("MFD2");
@@ -203,6 +214,7 @@ var EFISSetup = func() {
     },1,0);
     #------------------------------------------
     
+    #-- create EICAS pages --
     var eicas_sources = []; 
     append(eicas_sources, EICASPriCanvas.new("PRI", svg_path~"eicas-pri.svg"));
     EICASMsgSys1.setCanvasGroup(eicas_sources[0].getRoot());
@@ -211,11 +223,14 @@ var EFISSetup = func() {
     pi1.setDrawMode(pi1.TEXT + pi1.BOUNDINGBOX)
         .setAlignment("right-top")
         .setPadding(4)
-        .setColorFill(0.9,0.9,0.9);
+        .setColor(efis.colors["amber"])
+        .setColorFill(efis.colors["amber"]);
     append(eicas_sources, EICASStatCanvas.new("STAT", svg_path~"eicas-stat.svg"));
     EICASMsgSys2.setCanvasGroup(eicas_sources[1].getRoot());
     EICASMsgSys2.createCanvasTextLines(60, 65, 36, 34);
-#    eicas_sources[1].addUpdateFunction(EICASMsgSys2.updateCanvas, 1.500);
+    ## next line does not work (probably namespace problem); 
+    ## added the updateCanvas to EICASPriCanvas and EICASStatCanvas
+    #    eicas_sources[1].addUpdateFunction(EICASMsgSys2.updateCanvas, 1.500);
 
     append(eicas_sources, EICASECSCanvas.new("ECS", svg_path~"eicas-ecs.svg"));
     append(eicas_sources, EICASHydraulicsCanvas.new("HYD", svg_path~"eicas-hydraulic.svg"));
@@ -225,17 +240,17 @@ var EFISSetup = func() {
     append(eicas_sources, EICASFctlCanvas.new("F-CTL", svg_path~"eicas-fctl.svg"));
     append(eicas_sources, EICASAIceCanvas.new("A-ICE", svg_path~"eicas-aice.svg"));
     append(eicas_sources, EICASDoorsCanvas.new("Doors", svg_path~"eicas-doors.svg"));
-
     
-    
+    #-- add sources to EFIS --
     var pfd1_sid = efis.addSource(pfd1);
     var pfd2_sid = efis.addSource(pfd2);
     var mfd1_sid = efis.addSource(mfd1);
     var mfd2_sid = efis.addSource(mfd2);
     var eicas_source_ids = []; 
-    foreach (var p; eicas_sources)
+    foreach (var p; eicas_sources) {
         append(eicas_source_ids, efis.addSource(p));
-
+    }
+    
     var default_mapping = {
         PFD1: pfd1_sid, MFD1: mfd1_sid, 
         PFD2: pfd2_sid, MFD2: mfd2_sid,
@@ -262,16 +277,22 @@ var EFISSetup = func() {
     #-- EICAS master warning/caution --
     # reset new-msg flags to trigger sounds again
     setlistener("instrumentation/eicas/msgsys1/new-msg-warning", func(n) {
-        if (n.getValue()) {
+        var val = n.getValue();
+        if (val > 0) {
             settimer(func { n.setIntValue(0); }, 1.7);
             setprop("instrumentation/eicas/master-warning",1);
         }
+        elsif (val < 0)
+            setprop("instrumentation/eicas/master-warning",0);
     },1);
     setlistener("instrumentation/eicas/msgsys1/new-msg-caution", func(n) {
-        if (n.getValue()) {
+        var val = n.getValue();
+        if (val > 0) {
             settimer(func { n.setIntValue(0); }, 0.6);
             setprop("instrumentation/eicas/master-caution",1);
         }
+        elsif(val < 0)
+            setprop("instrumentation/eicas/master-caution",0);
     },1);
     efis.boot();
 };
