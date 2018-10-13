@@ -56,9 +56,10 @@
 -->
 
  <metrics>
+     <!-- Source: Aeromatic -->
    <wingarea  unit="FT2">   765.00 </wingarea>
    <wingspan  unit="FT" >    81.58 </wingspan>
-   <wing_incidence unit="DEG"> 2.00 </wing_incidence>
+   <wing_incidence unit="DEG"> 0.00 </wing_incidence>
    <chord     unit="FT" >    13.04 </chord>
    <htailarea unit="FT2">   173.30 </htailarea>
    <htailarm  unit="FT" >    52.50 </htailarm>
@@ -82,12 +83,13 @@
  </metrics>
 
  <mass_balance>
+     <!-- Source: Aeromatic -->
      <ixx unit="SLUG*FT2">  164114.95</ixx>    <!--222510 kgm^2 -->
      <iyy unit="SLUG*FT2">  1328314 </iyy>      <!--1800952 -->
      <izz unit="SLUG*FT2">  1441914.8 </izz>      <!--1954974-->
    <emptywt unit="LBS" >  48160.00 </emptywt>
    <location name="CG" unit="IN">
-     <x>   786.00 </x>
+     <x>   756.00 </x>   <!-- 786.99 -->
      <y>     0.00 </y>
      <z>   -35.40 </z>
    </location>
@@ -103,7 +105,7 @@
  </mass_balance>
 
  <propulsion>
-
+     <!-- Source: Aeromatic -->
    <engine file="CF34-8C">
     <location unit="IN">
       <x>  1356.00 </x>
@@ -194,13 +196,14 @@
 
   <contact type="BOGEY" name="NOSE">
     <location unit="M">
+        <!-- Source Gear Locations: CRJ900 three-view measurement -->
       <x>   2.0203 </x>
       <y>     0.00 </y>
       <z>  -3.8 </z>
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
-    <rolling_friction> 0.02 </rolling_friction>
+    <rolling_friction> 0.06 </rolling_friction>    <!-- Source: Trial value. Aeromatic Original: 0.02 -->
     <spring_coeff  unit="LBS/FT">     25350.00 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC"> 12675.00 </damping_coeff>
     <max_steer unit="DEG"> 5.00 </max_steer>
@@ -216,7 +219,7 @@
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
-    <rolling_friction> 0.02 </rolling_friction>
+    <rolling_friction> 0.06 </rolling_friction>
     <spring_coeff  unit="LBS/FT">     84500.00 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC"> 42250.00 </damping_coeff>
     <max_steer unit="DEG">0</max_steer>
@@ -232,7 +235,7 @@
     </location>
     <static_friction>  0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
-    <rolling_friction> 0.02 </rolling_friction>
+    <rolling_friction> 0.06 </rolling_friction>
     <spring_coeff  unit="LBS/FT">     84500.00 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC"> 42250.00 </damping_coeff>
     <max_steer unit="DEG">0</max_steer>
@@ -283,7 +286,7 @@
   <axis name="LIFT">
 
     <!-- Lift above 0.85 and below -0.85 is generalised -->
-    <function name="aero/force/Lift_alpha">
+    <!--<function name="aero/force/Lift_alpha">
       <description>Lift due to alpha</description>
       <product>
           <property>aero/qbar-psf</property>
@@ -304,11 +307,34 @@
                1.05  0.9661
                1.22  0.7171
                1.57  0.0000
+      
             </tableData>
           </table>
       </product>
-    </function>
-
+    </function>-->
+      <function name="aero/force/Lift_alpha">
+          <description>Lift due to alpha</description>
+          <product>
+              <property>aero/qbar-psf</property>
+              <property>metrics/Sw-sqft</property>
+              <table>
+                  <independentVar lookup="row">aero/alpha-rad</independentVar>
+                  <tableData>
+                      -1.22 0
+                      -1.05 -0.5
+                      -0.88 -0.7
+                      -0.65 -0.5
+                      -0.29 -1.3
+                       0.00  0.16
+                       0.24  1.3792
+                       0.60  0.5
+                       0.88  0.75
+                       1.05  0.6
+                       1.22  0.0
+                  </tableData>
+              </table>
+          </product>
+      </function>
     <function name="aero/force/Lift_pitch_rate">
         <description>Lift due to pitch rate</description>
         <product>
@@ -337,7 +363,7 @@
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>fcs/elevator-pos-rad</property>
-           <value> 0.6076 </value>
+           <value> 0.5076 </value>          <!-- source: experiment. original 0.6076 -->
        </product>
     </function>
 
@@ -347,7 +373,7 @@
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>fcs/flap-pos-deg</property>
-           <value> 0.01 </value>
+           <value> 0.011 </value>                  <!-- Source: expermiment -->
        </product>
     </function>
 
@@ -362,6 +388,20 @@
        </product>
     </function>
 
+    <!-- Lift due to Mach -->
+    <!--<function name="aero/force/Lift_mach">
+        <description>Lift factor due to mach</description>
+        <product>
+            <property>aero/force/Lift_alpha</property>
+            <table>
+                <independentVar lookup="row">velocities/mach</independentVar>
+                <tableData>
+                    0.00    1.00
+                    0.60    1.58
+                </tableData>
+            </table>
+        </product>
+    </function>  -->
   </axis>
 
   <axis name="DRAG">
@@ -375,6 +415,7 @@
           <property>aero/qbar-psf</property>
           <property>metrics/Sw-sqft</property>
           <value> 0.0237 </value>
+          <value> 1.1 </value>  <!-- experiment -->
        </product>
     </function>
 
@@ -393,6 +434,7 @@
               1.57    1.4084
             </tableData>
           </table>
+          <value>1.1</value> <!--experiment-->
        </product>
     </function>
 
@@ -467,7 +509,7 @@
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>fcs/flap-pos-deg</property>
-           <value> 0.0017 </value>
+           <value> 0.0012 </value>                      <!-- Source: expermiment -->
          </product>
     </function>
 
@@ -585,7 +627,7 @@
            <property>metrics/cbarw-ft</property>
            <property>aero/ci2vel</property>
            <property>velocities/q-aero-rad_sec</property>
-           <value> -37 </value>
+           <value> -37 </value>                                 <!-- Source: expermiment -->
        </product>
     </function>
 
@@ -633,7 +675,8 @@
            <property>metrics/bw-ft</property>
            <property>aero/bi2vel</property>
            <property>velocities/p-aero-rad_sec</property>
-           <value> -0.3680 </value>
+           <value> -0.450 </value>                              <!-- Source: Experiment -->
+           <!--<value> -0.3680 </value>-->
        </product>
     </function>
 

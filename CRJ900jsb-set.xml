@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <PropertyList include="CRJ700-main.xml">
-  <sim include="crj700-views.xml">
+  <sim include="crj900-views.xml">
     <description>CRJ900 (JSBSim)</description>
     <author>Daniel M., Henning S.</author>
     <status>alpha</status>
@@ -11,7 +11,7 @@
     <aero>CRJ900jsb</aero>
     
     <model>
-      <path>Models/CRJ700.xml</path>
+      <path>Models/CRJ900.xml</path>
       <variant type="int">10</variant>
       <door>
         <position-x-m type="float">-11.519</position-x-m>
