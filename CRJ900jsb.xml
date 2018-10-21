@@ -274,6 +274,7 @@
  <system file="Aircraft control.xml"/>
  <system file="Landing Gear.xml"/>
  <system file="Flaps.xml"/>
+ <system file="Slats.xml"/>
  <system file="Spoilers.xml"/>
  <system file="Speedbrake.xml"/>
 
@@ -286,7 +287,7 @@
   <axis name="LIFT">
 
     <!-- Lift above 0.85 and below -0.85 is generalised -->
-    <!--<function name="aero/force/Lift_alpha">
+    <function name="aero/force/Lift_alpha">
       <description>Lift due to alpha</description>
       <product>
           <property>aero/qbar-psf</property>
@@ -307,12 +308,11 @@
                1.05  0.9661
                1.22  0.7171
                1.57  0.0000
-      
             </tableData>
           </table>
       </product>
-    </function>-->
-      <function name="aero/force/Lift_alpha">
+    </function>
+      <!--<function name="aero/force/Lift_alpha">
           <description>Lift due to alpha</description>
           <product>
               <property>aero/qbar-psf</property>
@@ -333,8 +333,9 @@
                        1.22  0.0
                   </tableData>
               </table>
+              <value>1.15</value>
           </product>
-      </function>
+      </function>-->
     <function name="aero/force/Lift_pitch_rate">
         <description>Lift due to pitch rate</description>
         <product>
@@ -377,7 +378,23 @@
        </product>
     </function>
 
-
+    <function name="aero/force/Lift_slat">
+        <description>Delta Lift due to slats</description>
+        <product>
+            <property>aero/qbar-psf</property>
+            <property>metrics/Sw-sqft</property>
+            <table>
+                <independentVar lookup="row">fcs/slat-pos-norm</independentVar>
+                <tableData>
+                    0.000  0.0000
+                    0.666  0.1734
+                    0.814  0.2509
+                    1.000  0.3113
+                </tableData>
+            </table>
+        </product>
+    </function>
+    
     <function name="aero/force/Lift_spoilers">
        <description>Delta Lift due to spoilers</description>
        <product>

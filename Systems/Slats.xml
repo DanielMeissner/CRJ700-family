@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<system name="Slats">
+	<channel name="Slats">
+		<kinematic name="Slats Control">
+			<input>/controls/flight/slats-cmd</input>
+			<traverse>
+				<setting>
+					<position>  0 </position>
+					<time>      0 </time>
+				</setting>
+				<setting>
+					<position>  15 </position>
+					<time>      8 </time>
+				</setting>
+			</traverse>
+			<output>fcs/slat-pos-deg</output>
+		</kinematic>
+		<aerosurface_scale name="Slat Normalization">
+			<input>fcs/slat-pos-deg</input>
+			<domain>
+				<min>  0 </min>
+				<max> 15 </max>
+			</domain>
+			<range>
+				<min> 0 </min>
+				<max> 1 </max>
+			</range>
+			<output>fcs/slat-pos-norm</output>
+		</aerosurface_scale>
+	</channel>
+</system>
+
+

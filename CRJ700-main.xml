@@ -1316,5 +1316,13 @@
 			<file>Aircraft/Generic/DualControl/pilot-dual-control.nas</file>
 		</dual_control>
 	</nasal>
-	
+
+    <fdm>
+        <jsbsim>
+            <fcs>
+                <slat-pos-norm alias="../../../../surface-positions/slat-pos-norm" />
+            </fcs>
+        </jsbsim>
+    </fdm>
+    
 </PropertyList>
