@@ -108,12 +108,12 @@
      <!-- Source: Aeromatic -->
    <engine file="CF34-8C">
     <location unit="IN">
-      <x>  1356.00 </x>
-      <y>   -20.00 </y>
-      <z>     0.00 </z>
+      <x>  1063.00 </x>
+      <y>   -88.50 </y>
+      <z>     51.00 </z>
     </location>
     <orient unit="DEG">
-      <pitch>     0.00 </pitch>
+      <pitch>     2.50 </pitch>
        <roll>     0.00 </roll>
         <yaw>     0.00 </yaw>
     </orient>
@@ -122,12 +122,12 @@
     <thruster file="direct">
      <sense> 1 </sense>
      <location unit="IN">
-       <x>  1356.00 </x>
-       <y>   -20.00 </y>
-       <z>     0.00 </z>
+       <x>  1063.00 </x>
+       <y>   -88.50 </y>
+       <z>     51.00 </z>
      </location>
      <orient unit="DEG">
-       <pitch>     0.00 </pitch>
+       <pitch>     2.50 </pitch>
         <roll>     0.00 </roll>
          <yaw>     0.00 </yaw>
      </orient>
@@ -136,12 +136,12 @@
 
    <engine file="CF34-8C">
     <location unit="IN">
-      <x>  1356.00 </x>
-      <y>    20.00 </y>
-      <z>     0.00 </z>
+      <x>  1063.00 </x>
+      <y>    88.50 </y>
+      <z>     51.00 </z>
     </location>
     <orient unit="DEG">
-      <pitch>     0.00 </pitch>
+      <pitch>     2.50 </pitch>
        <roll>     0.00 </roll>
         <yaw>     0.00 </yaw>
     </orient>
@@ -150,12 +150,12 @@
     <thruster file="direct">
      <sense> 1 </sense>
      <location unit="IN">
-       <x>  1356.00 </x>
-       <y>    20.00 </y>
-       <z>     0.00 </z>
+       <x>  1063.00 </x>
+       <y>    88.50 </y>
+       <z>     51.00 </z>
      </location>
      <orient unit="DEG">
-       <pitch>     0.00 </pitch>
+       <pitch>     2.50 </pitch>
         <roll>     0.00 </roll>
          <yaw>     0.00 </yaw>
      </orient>
@@ -165,19 +165,19 @@
   <tank type="FUEL" number="0">
      <location unit="IN">
        <x>   786.00 </x>
-       <y>     0.00 </y>
+       <y>  -150.00 </y>
        <z>   -35.40 </z>
      </location>
-     <capacity unit="LBS"> 7802.17 </capacity>
+     <capacity unit="LBS"> 7492.00 </capacity>
      <contents unit="LBS"> 3901.08 </contents>
   </tank>
   <tank type="FUEL" number="1">
      <location unit="IN">
        <x>   786.00 </x>
-       <y>     0.00 </y>
+       <y>   150.00 </y>
        <z>   -35.40 </z>
      </location>
-     <capacity unit="LBS"> 7802.17 </capacity>
+     <capacity unit="LBS"> 7492.00 </capacity>
      <contents unit="LBS"> 3901.08 </contents>
   </tank>
   <tank type="FUEL" number="2">
@@ -186,7 +186,7 @@
        <y>     0.00 </y>
        <z>   -35.40 </z>
      </location>
-     <capacity unit="LBS"> 7802.17 </capacity>
+     <capacity unit="LBS"> 4610.00 </capacity>
      <contents unit="LBS"> 3901.08 </contents>
   </tank>
 
@@ -633,6 +633,18 @@
               2.0    -0.5995
             </tableData>
           </table>
+       </product>
+    </function>
+    
+    <!--experimental!!! -->
+    <function name="aero/moment/Pitch_flaps">
+       <description>Pitch moment due to slap deflection</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/cbarw-ft</property>
+           <property>fcs/flap-pos-deg</property>
+           <value> -0.0025 </value>
        </product>
     </function>
 
