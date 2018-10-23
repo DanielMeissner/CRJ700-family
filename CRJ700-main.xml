@@ -1317,10 +1317,13 @@
 		</dual_control>
 	</nasal>
 
+    
+    <!-- couple jsbsim fcs to crj700 fcs -->
     <fdm>
         <jsbsim>
             <fcs>
                 <slat-pos-norm alias="../../../../surface-positions/slat-pos-norm" />
+                <spoiler-cmd-norm alias="../../../../surface-positions/spoiler-ground-pos-norm" />
             </fcs>
         </jsbsim>
     </fdm>
