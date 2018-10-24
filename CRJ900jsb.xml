@@ -59,7 +59,7 @@
      <!-- Source: Aeromatic -->
    <wingarea  unit="FT2">   765.00 </wingarea>
    <wingspan  unit="FT" >    81.58 </wingspan>
-   <wing_incidence unit="DEG"> 0.00 </wing_incidence>
+   <wing_incidence unit="DEG"> 2.0 </wing_incidence>
    <chord     unit="FT" >    13.04 </chord>
    <htailarea unit="FT2">   173.30 </htailarea>
    <htailarm  unit="FT" >    52.50 </htailarm>
@@ -89,7 +89,7 @@
      <izz unit="SLUG*FT2">  1441914.8 </izz>      <!--1954974-->
    <emptywt unit="LBS" >  48160.00 </emptywt>
    <location name="CG" unit="IN">
-     <x>   756.00 </x>   <!-- 786.99 -->
+     <x>   786.00 </x>   <!-- 786.99 -->
      <y>     0.00 </y>
      <z>   -35.40 </z>
    </location>
@@ -284,6 +284,37 @@
 
  <aerodynamics>
 
+     
+     <aero_ref_pt_shift_x>
+         <function name="aero/function/aero_ref_shift">
+             <sum>
+                 <!-- Mach tuck -->
+                 <table>
+                     <independentVar lookup="row">velocities/mach</independentVar>
+                     <tableData>
+                         0.00 0.00      <!-- guesstimately increases from quarter chord at Ma=0.00 to half chord at Ma=1.00 -->
+                         0.40 0.00
+                         1.00 0.25
+                         2.00 0.25
+                     </tableData>
+                 </table>
+                 
+                 <!-- shift due to flap extension -->
+                  <table>
+                     <independentVar lookup="row">fcs/flap-pos-deg</independentVar>
+                     <tableData>
+                         0  0.00
+                         1  0.04
+                         8  0.08
+                         20  0.15
+                         30  0.15
+                         45  0.15
+                     </tableData>
+                 </table>
+            </sum>
+         </function>
+     </aero_ref_pt_shift_x>
+     
   <axis name="LIFT">
 
     <!-- Lift above 0.85 and below -0.85 is generalised -->
@@ -637,6 +668,7 @@
     </function>
     
     <!--experimental!!! -->
+    <!-- now done by shift of aero rp above. 
     <function name="aero/moment/Pitch_flaps">
        <description>Pitch moment due to slap deflection</description>
        <product>
@@ -647,6 +679,7 @@
            <value> -0.0025 </value>
        </product>
     </function>
+    -->
 
     <function name="aero/moment/Pitch_damp">
        <description>Pitch moment due to pitch rate</description>
