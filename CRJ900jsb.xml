@@ -395,7 +395,7 @@
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>fcs/elevator-pos-rad</property>
-           <value> 0.5076 </value>          <!-- source: experiment. original 0.6076 -->
+           <value> 0.6076 </value>          <!-- source: experiment. original 0.6076 -->
        </product>
     </function>
 
@@ -417,12 +417,13 @@
             <table>
                 <independentVar lookup="row">fcs/slat-pos-norm</independentVar>
                 <tableData>
-                    0.000  0.0000
+                    0.000  0.0000       <!-- data copied from idg a320 as first test -->
                     0.666  0.1734
                     0.814  0.2509
                     1.000  0.3113
                 </tableData>
             </table>
+            <value>0.5</value>          <!-- lessen the lift effect -->
         </product>
     </function>
     
@@ -437,7 +438,7 @@
     </function>
 
     <!-- Lift due to Mach -->
-    <!--<function name="aero/force/Lift_mach">
+    <function name="aero/force/Lift_mach">
         <description>Lift factor due to mach</description>
         <product>
             <property>aero/force/Lift_alpha</property>
@@ -445,11 +446,20 @@
                 <independentVar lookup="row">velocities/mach</independentVar>
                 <tableData>
                     0.00    1.00
+                    0.20    1.12
+                    0.40    1.29
                     0.60    1.58
+                    0.80    1.92
+                    0.90    1.99
+                    1.00    2.00
+                    1.10    1.42
+                    1.20    0.96
+                    1.40    0.65
                 </tableData>
-            </table>
+                <!-- Prandtl Glauert 0-0.6 and 1.2-1.4 with quadratic fitting around mach 1 -->
+                </table>
         </product>
-    </function>  -->
+    </function>  
   </axis>
 
   <axis name="DRAG">
@@ -556,8 +566,22 @@
          <product>
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
+           <!--
            <property>fcs/flap-pos-deg</property>
-           <value> 0.0012 </value>                      <!-- Source: expermiment -->
+           <value> 0.0012 </value>
+           -->
+           <!-- Source: expermiment -->
+           <table>
+               <independentVar lookup="row">fcs/flap-pos-deg</independentVar>
+               <tableData>
+                   0    0.0000
+                   1    0.0005
+                   8    0.002
+                  20    0.015
+                  30    0.035
+                  45    0.060
+              </tableData>
+           </table>
          </product>
     </function>
 

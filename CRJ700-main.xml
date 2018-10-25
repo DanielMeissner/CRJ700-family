@@ -1324,6 +1324,7 @@
             <fcs>
                 <slat-pos-norm alias="../../../../surface-positions/slat-pos-norm" />
                 <spoiler-cmd-norm alias="../../../../surface-positions/spoiler-ground-pos-norm" />
+                <aileron-cmd-norm alias="../../../../fcs/autopilot/aileron-cmd-norm" />
             </fcs>
         </jsbsim>
     </fdm>
