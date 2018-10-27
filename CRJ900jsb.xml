@@ -68,7 +68,7 @@
    <location name="AERORP" unit="IN">
      <x>   786.00 </x>
      <y>     0.00 </y>
-     <z>     0.00 </z>
+     <z>     -35.40 </z>
    </location>
    <location name="EYEPOINT" unit="IN">
      <x>    99.12 </x>
@@ -85,7 +85,7 @@
  <mass_balance>
      <!-- Source: Aeromatic -->
      <ixx unit="SLUG*FT2">  164114.95</ixx>    <!--222510 kgm^2 -->
-     <iyy unit="SLUG*FT2">  1328314 </iyy>      <!--1800952 -->
+     <iyy unit="SLUG*FT2">  1461145.4 </iyy>      <!--1800952 -->   <!--1328314 slugft2 -->
      <izz unit="SLUG*FT2">  1441914.8 </izz>      <!--1954974-->
    <emptywt unit="LBS" >  48160.00 </emptywt>
    <location name="CG" unit="IN">
@@ -162,7 +162,7 @@
     </thruster>
   </engine>
 
-  <tank type="FUEL" number="0">
+  <tank type="FUEL" number="0">     <!-- left wing tank -->
      <location unit="IN">
        <x>   786.00 </x>
        <y>  -150.00 </y>
@@ -171,7 +171,7 @@
      <capacity unit="LBS"> 7492.00 </capacity>
      <contents unit="LBS"> 3901.08 </contents>
   </tank>
-  <tank type="FUEL" number="1">
+  <tank type="FUEL" number="1">     <!-- right wing tank -->
      <location unit="IN">
        <x>   786.00 </x>
        <y>   150.00 </y>
@@ -180,7 +180,7 @@
      <capacity unit="LBS"> 7492.00 </capacity>
      <contents unit="LBS"> 3901.08 </contents>
   </tank>
-  <tank type="FUEL" number="2">
+  <tank type="FUEL" number="2">     <!-- center tank -->
      <location unit="IN">
        <x>   786.00 </x>
        <y>     0.00 </y>
@@ -750,7 +750,8 @@
                   0.3491  -1.7714  -0.2993  -0.3249  -0.4036
              </tableData>
            </table>
-       </product>
+           <value>0.2</value>
+        </product>
     </function>
 
     <function name="aero/moment/Roll_damp">
