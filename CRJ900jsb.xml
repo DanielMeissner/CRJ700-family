@@ -839,7 +839,7 @@
   <axis name="YAW">
 
     <!-- Stall initiator -->
-    <!--<function name="aero/moment/Yaw_alpha">
+    <!-- <function name="aero/moment/Yaw_alpha">
        <description>Yaw moment due to alpha</description>
        <product>
            <property>aero/qbar-psf</property>
@@ -857,7 +857,7 @@
              </tableData>
            </table>
        </product>
-      </function> -->
+       </function> -->
 
     <function name="aero/moment/Yaw_beta">
        <description>Yaw moment due to beta</description>
