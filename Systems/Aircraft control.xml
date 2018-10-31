@@ -1,5 +1,18 @@
 <?xml version="1.0"?>
 <system name="Aircraft control">
+
+    <function name="fcs/manual_trim_speed_mach">
+        <description>computes trim servo speed for manual trim dependent on mach speed</description>
+        <table>
+            <independentVar lookup="row">velocities/mach</independentVar>
+            <tableData>
+                0   1.0
+                1   0.1
+            </tableData>
+        </table>
+    </function>
+        
+    
   <property value="1">fcs/yaw-damper-enable</property>
 
   <channel name="Pitch">
