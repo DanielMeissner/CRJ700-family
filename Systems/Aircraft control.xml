@@ -106,6 +106,61 @@
   </channel>
 
   <channel name="Yaw">
+      
+      <fcs_function name="fcs/rudder_max_deg_fc">
+          <function>
+              <table>
+                  <independentVar lookup="row">/velocities/airspeed-kt</independentVar>
+                  <tableData>
+                      160	33.00
+                      170	27.44
+                      180	23.06
+                      190	19.56
+                      200	16.73
+                      210	14.42
+                      220	12.52
+                      230	10.93
+                      240	9.60
+                      250	8.48
+                      260	7.53
+                      270	6.71
+                      280	6.01
+                      290	5.40
+                      300	4.87
+                      310	4.41
+                      320	4.00
+                      <!-- y = 169326100*x^-3.044394 -->
+                  </tableData>
+              </table>
+          </function>
+      </fcs_function>
+      
+      <switch name="fcs/rudder_max_deg_switch">
+          <default value="33"/>
+          <test logic="AND" value="fcs/rudder_max_deg_fc">
+              /controls/flight/slats-cmd eq 0
+              /gear/gear[1]/wow eq 0
+              /gear/gear[2]/wow eq 0
+          </test>
+      </switch>
+        
+   <aerosurface_scale name="fcs/rudder_max_norm">
+       <input>fcs/rudder_max_deg_switch</input>
+       <domain>
+           <min>-33</min>
+           <max>33</max>
+       </domain>
+       <range>
+           <min>-1</min>
+           <max>1</max>
+       </range>
+   </aerosurface_scale>
+   
+   <pure_gain name="fcs/rudder_max_norm_neg">
+       <input>fcs/rudder_max_norm</input>
+       <gain>-1</gain>
+   </pure_gain>
+   
    <summer name="Rudder Command Sum">
       <input>/fcs/rudder-cmd-norm</input>
       <input>fcs/yaw-trim-cmd-norm</input>
@@ -114,6 +169,7 @@
         <max>   1 </max>
       </clipto>
    </summer>
+   
    <switch name="fcs/yaw-damper-enable">
         <description>Logic for activation of yaw damper</description>
         <default value="0" />
@@ -150,24 +206,33 @@
       </clipto>
    </summer>
 
+   
+   <pure_gain name="rudder_sum_clip">
+       <input>fcs/rudder-sum</input>
+       <clipto>
+            <min>fcs/rudder_max_norm_neg</min>
+            <max>fcs/rudder_max_norm</max>
+        </clipto>
+    </pure_gain>
+   
    <aerosurface_scale name="Rudder Control">
-      <input>fcs/rudder-sum</input>
+      <input>fcs/rudder_sum_clip</input>
       <domain>
         <min> -1.1 </min>
         <max>  1.1 </max>
       </domain>
       <range>
-        <min>  0.576 </min>
-        <max> -0.576 </max>     <!-- attention: minus sign on max value as opposed to min due to differrent rudder deflection direction between yasim and jsbsim model! -->
+        <min> 33 </min>    <!--0.576 rad -->
+        <max> -33 </max>     <!-- attention: minus sign on max value as opposed to min due to differrent rudder deflection direction between yasim and jsbsim model! -->
       </range>
-      <output>fcs/rudder-pos-rad</output>
+      <output>fcs/rudder-pos-deg</output>
    </aerosurface_scale>
 
    <aerosurface_scale name="Rudder Normalization">
-      <input>fcs/rudder-pos-rad</input>
+      <input>fcs/rudder-pos-deg</input>
       <domain>
-        <min>   0.576 </min>
-        <max>  -0.576 </max>    <!-- attention: minus sign on max value as opposed to min due to differrent rudder deflection direction between yasim and jsbsim model! -->
+        <min> 33 </min>
+        <max> -33 </max>    <!-- attention: minus sign on max value as opposed to min due to differrent rudder deflection direction between yasim and jsbsim model! -->
       </domain>
       <range>
         <min> -1 </min>
