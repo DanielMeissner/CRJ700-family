@@ -12,8 +12,10 @@
         </table>
     </function>
         
+    <!--<property value="0">fcs/yaw-damper-enable</property>-->
     
-  <property value="1">fcs/yaw-damper-enable</property>
+    
+  
 
   <channel name="Pitch">
    <summer name="Pitch Trim Sum">
@@ -112,6 +114,20 @@
         <max>   1 </max>
       </clipto>
    </summer>
+   <switch name="fcs/yaw-damper-enable">
+        <description>Logic for activation of yaw damper</description>
+        <default value="0" />
+        <test logic="AND" value="1">
+            /gear/gear[1]/wow eq 0
+            /gear/gear[2]/wow eq 0
+            /controls/autoflight/yaw-damper/engage eq 1
+        </test>
+        <test logic="AND" value="1">
+            /gear/gear[1]/wow eq 0
+            /gear/gear[2]/wow eq 0
+            /controls/autoflight/yaw-damper[1]/engage eq 1
+        </test>
+    </switch>
 
    <scheduled_gain name="Yaw Damper Rate">
       <input>velocities/r-aero-rad_sec</input>
