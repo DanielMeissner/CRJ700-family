@@ -58,7 +58,7 @@
  <metrics>
      <!-- Source: Aeromatic -->
    <wingarea  unit="M2">    71.1 </wingarea>
-   <wingspan  unit="M" >    34.9 </wingspan> 
+   <wingspan  unit="M" >    24.9 </wingspan> 
    <wing_incidence unit="DEG"> 2.0 </wing_incidence> <!-- to be verified -->
    <chord     unit="M" >     3.97 </chord> <!-- to be verified -->
    <htailarea unit="M2">    16.1 </htailarea> <!-- to be verified -->
@@ -271,7 +271,7 @@
  </ground_reactions>
 
  <system file="Propulsion.xml"/>
- <!-- <system file="Thrust Reverse.xml"/> -->
+ <system file="Thrust Reverse.xml"/>
  <system file="Aircraft control.xml"/>
  <system file="Landing Gear.xml"/>
  <system file="Flaps.xml"/>
@@ -294,7 +294,7 @@
                      <independentVar lookup="row">velocities/mach</independentVar>
                      <tableData>
                          0.00 0.00      <!-- guesstimately increases from quarter chord at Ma=0.00 to half chord at Ma=1.00 -->
-                         0.40 0.00
+                         0.65 0.00
                          1.00 0.25
                          2.00 0.25
                      </tableData>

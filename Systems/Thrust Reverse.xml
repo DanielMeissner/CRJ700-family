@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <system name="Thrust Reverse">
-  <channel name="Thrust Reverse">
+    <property alias="/controls/engines/engine/reverser-cmd">systems/reverser/command</property>
+    
+    <channel name="Thrust Reverse">
     <pure_gain name="Thrust Reverse Position">
       <input>systems/reverser/command</input>
       <gain>2.0</gain>
