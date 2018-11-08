@@ -635,12 +635,12 @@
 			<z2-m>-1.69832</z2-m>
 		</axis>
 	</animation>
-	<!-- multifunction/ground spoilers, 1..4 ~ inner to outer -->
+	<!-- Speedbrakes/spoilers -->
 	<animation>
 		<name>Left outboard speedbrake</name>
 		<type>rotate</type>
 		<object-name>SpoilerL4</object-name>
-		<property>surface-positions/left-ob-mfs-pos-norm</property>
+		<property>surface-positions/left-speedbrake-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>2.278</x1-m>
@@ -655,7 +655,7 @@
 		<name>Left inboard speedbrake</name>
 		<type>rotate</type>
 		<object-name>SpoilerL3</object-name>
-		<property>surface-positions/left-ib-mfs-pos-norm</property>
+		<property>surface-positions/left-speedbrake-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>1.968</x1-m>
@@ -670,7 +670,7 @@
 		<name>Left outboard spoiler</name>
 		<type>rotate</type>
 		<object-name>SpoilerL2</object-name>
-		<property>surface-positions/spoiler-ob-ground-pos-norm</property>
+		<property>surface-positions/spoiler-ground-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>1.639</x1-m>
@@ -685,7 +685,7 @@
 		<name>Left inboard spoiler</name>
 		<type>rotate</type>
 		<object-name>SpoilerL1</object-name>
-		<property>surface-positions/spoiler-ib-ground-pos-norm</property>
+		<property>surface-positions/spoiler-ground-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>1.543</x1-m>
@@ -700,7 +700,7 @@
 		<name>Right outboard speedbrake</name>
 		<type>rotate</type>
 		<object-name>SpoilerR4</object-name>
-		<property>surface-positions/right-ob-mfs-pos-norm</property>
+		<property>surface-positions/right-speedbrake-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>2.579</x1-m>
@@ -715,7 +715,7 @@
 		<name>Right inboard speedbrake</name>
 		<type>rotate</type>
 		<object-name>SpoilerR3</object-name>
-		<property>surface-positions/right-ib-mfs-pos-norm</property>
+		<property>surface-positions/right-speedbrake-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>2.27</x1-m>
@@ -730,7 +730,7 @@
 		<name>Right outboard spoiler</name>
 		<type>rotate</type>
 		<object-name>SpoilerR2</object-name>
-		<property>surface-positions/spoiler-ob-ground-pos-norm</property>
+		<property>surface-positions/spoiler-ground-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>1.704</x1-m>
@@ -745,7 +745,7 @@
 		<name>Right inboard spoiler</name>
 		<type>rotate</type>
 		<object-name>SpoilerR1</object-name>
-		<property>surface-positions/spoiler-ib-ground-pos-norm</property>
+		<property>surface-positions/spoiler-ground-pos-norm</property>
 		<factor>40</factor>
 		<axis>
 			<x1-m>1.617</x1-m>
@@ -765,8 +765,11 @@
 		<object-name>ElevatorL</object-name>
 		<object-name>ElevatorR</object-name>
 		<object-name>Hstabs</object-name>
-		<property>surface-positions/hstab-rad</property>
-        <factor>57.297</factor>
+		<property>controls/flight/elevator-trim</property>
+		<interpolation>
+			<entry><ind>-1</ind><dep>4</dep></entry>
+			<entry><ind>1</ind><dep>-11</dep></entry>
+		</interpolation>
 		<axis>
 			<x>0</x>
 			<y>1</y>
@@ -782,7 +785,7 @@
 		<name>Left elevator</name>
 		<type>rotate</type>
 		<object-name>ElevatorL</object-name>
-		<property>surface-positions/elevator-pos-norm</property>
+		<property>fcs/elevator-cmd-norm</property>
 		<factor>15</factor>
 		<axis>
 			<x1-m>17.62</x1-m>
@@ -797,7 +800,7 @@
 		<name>Right elevator</name>
 		<type>rotate</type>
 		<object-name>ElevatorR</object-name>
-		<property>surface-positions/elevator-pos-norm</property>
+		<property>fcs/elevator-cmd-norm</property>
 		<factor>15</factor>
 		<axis>
 			<x1-m>16.251</x1-m>

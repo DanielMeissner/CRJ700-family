@@ -13,7 +13,10 @@
 		<gain>1</gain>
 		<enable>
 			<condition>
-				<property>autopilot/internal/autoflight-engaged</property>
+				<and>
+					<property>autopilot/internal/autoflight-engaged</property>
+					<property>systems/hydraulic/outputs/aileron</property>
+				</and>				
 			</condition>
 		</enable>
 		<input>
@@ -49,6 +52,7 @@
 							</expression>
 						</greater-than-equals>
 					</or>
+					<property>systems/hydraulic/outputs/aileron</property>
 				</and>
 			</condition>
 		</enable>
@@ -84,6 +88,7 @@
 							</abs>
 						</expression>
 					</greater-than>
+					<property>systems/hydraulic/outputs/aileron</property>
 				</and>
 			</condition>
 		</enable>
@@ -91,21 +96,6 @@
 			<property>fcs/copilot/aileron-cmd-norm</property>
 		</input>
 		<output>fcs/aileron-cmd-norm</output>
-	</filter>
-	<filter>
-		<name>Aileron hydraulic</name>
-		<type>gain</type>
-		<debug type="bool">false</debug>
-		<gain>1</gain>
-		<enable>
-			<condition>
-				<property>systems/hydraulic/outputs/aileron</property>
-			</condition>
-		</enable>
-		<input>
-			<property>fcs/aileron-cmd-norm</property>
-		</input>
-		<output>fcs/aileron-hydraulic-cmd-norm</output>
 	</filter>
 
 	<!-- Rudder -->
@@ -427,7 +417,7 @@
 		<output>controls/flight/spoilers-ground-cmd</output>
 	</logic>
 	<filter>
-		<name>OB ground spoilers controller</name>
+		<name>Ground spoilers controller</name>
 		<type>noise-spike</type>
 		<debug type="bool">false</debug>
 		<max-rate-of-change>1</max-rate-of-change>
@@ -435,41 +425,14 @@
 			<expression>
 				<product>
 					<property>controls/flight/spoilers-ground-cmd</property>
-					<property>systems/hydraulic/outputs/ob-ground-spoiler</property>
+					<div>
+						<sum>
+							<property>systems/hydraulic/outputs/ob-ground-spoiler</property>
+							<property>systems/hydraulic/outputs/ib-ground-spoiler</property>
+						</sum>
+						<value>2</value>
+					</div>
 				</product>
-			</expression>
-		</input>
-		<output>surface-positions/spoiler-ob-ground-pos-norm</output>
-	</filter>
-	<filter>
-		<name>IB Ground spoilers controller</name>
-		<type>noise-spike</type>
-		<debug type="bool">false</debug>
-		<max-rate-of-change>1</max-rate-of-change>
-		<input>
-			<expression>
-				<product>
-					<property>controls/flight/spoilers-ground-cmd</property>
-					<property>systems/hydraulic/outputs/ib-ground-spoiler</property>
-				</product>
-			</expression>
-		</input>
-		<output>surface-positions/spoiler-ib-ground-pos-norm</output>
-	</filter>
-	<filter>
-		<name>Ground spoilers to FDM</name>
-		<type>gain</type>
-		<debug type="bool">false</debug>
-		<gain>1</gain>
-		<input>
-			<expression>
-				<div>
-					<sum>
-						<property>surface-positions/spoiler-ib-ground-pos-norm</property>
-						<property>surface-positions/spoiler-ob-ground-pos-norm</property>
-					</sum>
-					<value>2</value>
-				</div>
 			</expression>
 		</input>
 		<output>surface-positions/spoiler-ground-pos-norm</output>
@@ -480,119 +443,84 @@
 		<type>gain</type>
 		<debug type="bool">false</debug>
 		<gain>1</gain>
+		<enable>
+			<condition>
+				<or>
+					<property>systems/hydraulic/outputs/ob-spoileron</property>
+					<property>systems/hydraulic/outputs/ib-spoileron</property>
+				</or>
+			</condition>
+		</enable>
 		<input>
 			<expression>
 				<table>
 					<property>fcs/aileron-cmd-norm</property>
 					<entry><ind>-1</ind><dep>0.5</dep></entry>
-					<entry><ind>-0.002</ind><dep>0</dep></entry>
+					<entry><ind>0</ind><dep>0</dep></entry>
 					<entry><ind>1</ind><dep>0</dep></entry>
 				</table>
 			</expression>
 		</input>
-		<output>controls/flight/left-spoileron-cmd-norm</output>
+		<output>controls/flight/left-speedbrake-aileron-cmd-norm</output>
 	</filter>
 	<filter>
 		<name>Right spoileron controller</name>
 		<type>gain</type>
 		<debug type="bool">false</debug>
 		<gain>1</gain>
+		<enable>
+			<condition>
+				<or>
+					<property>systems/hydraulic/outputs/ob-spoileron</property>
+					<property>systems/hydraulic/outputs/ib-spoileron</property>
+				</or>
+			</condition>
+		</enable>
 		<input>
 			<expression>
 				<table>
 					<property>fcs/aileron-cmd-norm</property>
 					<entry><ind>-1</ind><dep>0</dep></entry>
-					<entry><ind>0.002</ind><dep>0</dep></entry>
+					<entry><ind>0</ind><dep>0</dep></entry>
 					<entry><ind>1</ind><dep>0.5</dep></entry>
 				</table>
 			</expression>
 		</input>
-		<output>controls/flight/right-spoileron-cmd-norm</output>
+		<output>controls/flight/right-speedbrake-aileron-cmd-norm</output>
 	</filter>
 	<filter>
-		<name>Left MFS ob controller</name>
+		<name>Left speedbrake controller</name>
 		<type>noise-spike</type>
 		<debug type="bool">false</debug>
 		<max-rate-of-change>1</max-rate-of-change>
-		<enable>
-			<condition>
-				<property>systems/hydraulic/outputs/ob-flight-spoiler</property>
-			</condition>
-		</enable>
 		<input>
 			<expression>
 				<max>
 					<property>controls/flight/speedbrake</property>
 					<property>controls/flight/spoilers-ground-cmd</property>
-					<property>controls/flight/left-spoileron-cmd-norm</property>
+					<property>controls/flight/left-speedbrake-aileron-cmd-norm</property>
 				</max>
 			</expression>
 		</input>
-		<output>surface-positions/left-ob-mfs-pos-norm</output>
+		<output>surface-positions/left-speedbrake-pos-norm</output>
 	</filter>
 	<filter>
-		<name>Right MFS ob controller</name>
+		<name>Right speedbrake controller</name>
 		<type>noise-spike</type>
 		<debug type="bool">false</debug>
 		<max-rate-of-change>1</max-rate-of-change>
-		<enable>
-			<condition>
-				<property>systems/hydraulic/outputs/ob-flight-spoiler</property>
-			</condition>
-		</enable>
 		<input>
 			<expression>
 				<max>
 					<property>controls/flight/speedbrake</property>
 					<property>controls/flight/spoilers-ground-cmd</property>
-					<property>controls/flight/right-spoileron-cmd-norm</property>
+					<property>controls/flight/right-speedbrake-aileron-cmd-norm</property>
 				</max>
 			</expression>
 		</input>
-		<output>surface-positions/right-ob-mfs-pos-norm</output>
+		<output>surface-positions/right-speedbrake-pos-norm</output>
 	</filter>
-	<filter>
-		<name>Left MFS ib controller</name>
-		<type>noise-spike</type>
-		<debug type="bool">false</debug>
-		<max-rate-of-change>1</max-rate-of-change>
-		<enable>
-			<condition>
-				<property>systems/hydraulic/outputs/ib-flight-spoiler</property>
-			</condition>
-		</enable>
-		<input>
-			<expression>
-				<max>
-					<property>controls/flight/speedbrake</property>
-					<property>controls/flight/spoilers-ground-cmd</property>
-					<property>controls/flight/left-spoileron-cmd-norm</property>
-				</max>
-			</expression>
-		</input>
-		<output>surface-positions/left-ib-mfs-pos-norm</output>
-	</filter>
-	<filter>
-		<name>Right MFS ib controller</name>
-		<type>noise-spike</type>
-		<debug type="bool">false</debug>
-		<max-rate-of-change>1</max-rate-of-change>
-		<enable>
-			<condition>
-				<property>systems/hydraulic/outputs/ib-flight-spoiler</property>
-			</condition>
-		</enable>
-		<input>
-			<expression>
-				<max>
-					<property>controls/flight/speedbrake</property>
-					<property>controls/flight/spoilers-ground-cmd</property>
-					<property>controls/flight/right-spoileron-cmd-norm</property>
-				</max>
-			</expression>
-		</input>
-		<output>surface-positions/right-ib-mfs-pos-norm</output>
-	</filter>
+
 	<!-- Throttles/FADEC thrust modes -->
 	<!-- Autothrottle -->
 	<filter>

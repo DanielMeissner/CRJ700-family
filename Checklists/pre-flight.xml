@@ -252,7 +252,7 @@
 			<condition>
 				<and>
 					<not><property>/sim/model/door-positions/aft-cargo/position-norm</property></not>
-					<not><property>/sim/model/door-positions/av-bay/position-norm</property></not>
+					<not><property>/sim/model/door-positions/avionic/position-norm</property></not>
 					<not><property>/sim/model/door-positions/ctr-cargo/position-norm</property></not>
 					<not><property>/sim/model/door-positions/emer-l1/position-norm</property></not>
 					<not><property>/sim/model/door-positions/emer-l2/position-norm</property></not>

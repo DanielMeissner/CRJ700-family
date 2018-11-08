@@ -55,6 +55,18 @@
 			<value>0</value>
 		</set>
 		<set>
+			<property>engines/engine[0]/running</property>
+			<value type="bool">false</value>
+		</set>
+		<set>
+			<property>engines/engine[1]/running</property>
+			<value type="bool">false</value>
+		</set>
+<!-- 		<set>
+			<property>controls/electric/battery-switch</property>
+			<value type="bool">false</value>
+		</set>
+ -->		<set>
 			<property>systems/fuel/boost-pump[0]/selected</property>
 			<value type="bool">false</value>
 		</set>
@@ -174,31 +186,7 @@
 			</condition>
 		</exit>
 	</step>
-	<step>
-		<message>		
-		Before you start the APU or engine, you must switch on the beacon to warn the ground personal.
-		</message>
-		<view>
-			<heading-offset-deg>327.4</heading-offset-deg>
-			<pitch-offset-deg>13.2</pitch-offset-deg>
-			<roll-offset-deg>0.0</roll-offset-deg>
-			<x-offset-m>-0.5</x-offset-m>
-			<y-offset-m>-0.5</y-offset-m>
-			<z-offset-m>-13.1</z-offset-m>
-			<field-of-view>27.6</field-of-view>
-		</view>
-		<marker>
-			<x-m>-13.6567</x-m>
-			<y-m>-0.2033</y-m>
-			<z-m>-0.2380</z-m>
-			<scale>1.0000</scale>
-		</marker>
-		<exit>
-			<condition>
-				<property>/controls/lighting/beacon</property>
-			</condition>
-		</exit>
-	</step>	
+	
 	<step>
 		<message>		
 		To start the engines, we need the APU (auxilary power unit). 
