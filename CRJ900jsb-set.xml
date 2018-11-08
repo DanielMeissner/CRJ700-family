@@ -2,10 +2,12 @@
 
 <PropertyList include="CRJ700-main.xml">
   <sim include="crj900-views.xml">
-    <description>CRJ900 (JSBSim)</description>
-    <author>Daniel M., Henning S.</author>
+    <description>Bombardier CRJ900 (JSBSim)</description>
+    <author>Ryan Miller, Henning S., Daniel Meissner (JSBSim FDM and FCS)</author>
     <status>alpha</status>
     <aircraft-version>0.0.1</aircraft-version>
+    <variant-of>CRJ700</variant-of>
+    
     
     <flight-model>jsb</flight-model>
     <aero>CRJ900jsb</aero>
