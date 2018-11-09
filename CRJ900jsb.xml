@@ -434,16 +434,8 @@
         <product>
             <property>aero/qbar-psf</property>
             <property>metrics/Sw-sqft</property>
-            <table>
-                <independentVar lookup="row">fcs/slat-pos-norm</independentVar>
-                <tableData>
-                    0.000  0.0000       <!-- data copied from idg a320 as first test -->
-                    0.666  0.1734
-                    0.814  0.2509
-                    1.000  0.3113
-                </tableData>
-            </table>
-            <value>0.5</value>          <!-- lessen the lift effect -->
+            <property>fcs/slat-pos-norm</property>
+            <value>0.15</value>          <!-- generalised slat lift -->
         </product>
     </function>
     
