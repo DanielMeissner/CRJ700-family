@@ -752,7 +752,7 @@
            <property>metrics/Sw-sqft</property>
            <property>metrics/bw-ft</property>
            <property>aero/beta-rad</property>
-       <!--property>fcs/gear-no-wow</property-->
+           <property>fcs/gear-no-wow</property>
            <table>
              <independentVar lookup="row">aero/alpha-rad</independentVar>
              <independentVar lookup="column">aero/Re</independentVar>

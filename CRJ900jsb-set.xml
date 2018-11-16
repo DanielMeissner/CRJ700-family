@@ -52,14 +52,6 @@
         </menu>
       </default>
     </menubar>
-  
-    <instrumentation>
-        <radar-altimeter>
-            <antenna>
-                <z-offset-m>1</z-offset-m>        <!-- fit antenna height to JSBSim reference point. FIXME: calculate position - doesnt have effect yet... -->
-            </antenna>
-        </radar-altimeter>
-    </instrumentation>
 </sim>
 
   
