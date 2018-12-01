@@ -49,10 +49,11 @@
 					<time>      5.573 </time>
 				</setting>
 			</traverse>
-			<output>fcs/flap-pos-deg</output>
+			<output>fcs/flap-inbd-pos-deg</output>
+            <output>fcs/flap-pos-deg</output>
 		</kinematic>
-		<aerosurface_scale name="Flap Normalization">
-			<input>fcs/flap-pos-deg</input>
+		<aerosurface_scale name="Inboard Flap Normalization">
+			<input>fcs/flap-inbd-pos-deg</input>
 			<domain>
 				<min>  0 </min>
 				<max> 45 </max>
@@ -61,7 +62,34 @@
 				<min> 0 </min>
 				<max> 1 </max>
 			</range>
-			<output>fcs/flap-pos-norm</output>
+			<output>fcs/flap-inbd-pos-norm</output>
+            <output>fcs/flap-pos-norm</output>
 		</aerosurface_scale>
-	</channel>
+        
+        <aerosurface_scale name="Outboard Flap Control">
+            <input>fcs/flap-inbd-pos-deg</input>
+            <domain>
+                <min>  0 </min>
+                <max> 45 </max>
+            </domain>
+            <range>
+                <min>  9 </min>
+                <max> 40 </max>
+            </range>
+            <output>fcs/flap-outbd-pos-deg</output>
+        </aerosurface_scale>
+        
+        <aerosurface_scale name="Outboard Flap Normalization">
+			<input>fcs/flap-outbd-pos-deg</input>
+			<domain>
+				<min>  0 </min>
+				<max> 40 </max>
+			</domain>
+			<range>
+				<min> 0 </min>
+				<max> 1 </max>
+			</range>
+			<output>fcs/flap-outbd-pos-norm</output>
+		</aerosurface_scale>
+    </channel>
 </system>
