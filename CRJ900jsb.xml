@@ -361,6 +361,7 @@
                1.57  0.0000
             </tableData>
           </table>
+          <value>0.75</value>
       </product>
     </function>
       <!--<function name="aero/force/Lift_alpha">
@@ -602,7 +603,7 @@
                    8    0.002
                   20    0.015
                   30    0.035
-                  45    0.060
+                  45    0.065
               </tableData>
            </table>
          </product>
