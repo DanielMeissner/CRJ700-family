@@ -117,7 +117,7 @@
     <description> 12933.50 LBS should bring model up to entered max weight </description>
     <weight unit="LBS"> 6466.75 </weight>
     <location name="POINTMASS" unit="M">
-     <x>    18.81 </x>   <!-- 27.3% MAC -->
+     <x>    14.7  </x>   <!-- old: 27.3% MAC new: weight location as in yasim. has to be tuned... -->
      <y>     0.00 </y>
      <z>     0.00 </z>
    </location>
@@ -303,7 +303,28 @@
  </flight_control>
 
  <aerodynamics>
-
+     <!-- Lift due to Mach -->
+     <function name="aero/pg_factor">
+         <description>Lift factor due to mach</description>
+         <product>
+             <table>
+                 <independentVar lookup="row">velocities/mach</independentVar>
+                 <tableData>
+                     0.00    1.00
+                     0.20    1.12
+                     0.40    1.29
+                     0.60    1.58
+                     0.80    1.92
+                     0.90    1.99
+                     1.00    2.00
+                     1.10    1.42
+                     1.20    0.96
+                     1.40    0.65
+                 </tableData>
+                 <!-- Prandtl Glauert 0-0.6 and 1.2-1.4 with quadratic fitting around mach 1 -->
+             </table>
+         </product>
+     </function>  
      
      <aero_ref_pt_shift_x>
          <function name="aero/function/aero_ref_shift">
@@ -361,7 +382,8 @@
                1.57  0.0000
             </tableData>
           </table>
-          <value>0.75</value>
+          <value>1.2</value>
+          <property>aero/pg_factor</property>
       </product>
     </function>
       <!--<function name="aero/force/Lift_alpha">
@@ -417,7 +439,8 @@
            <property>metrics/Sw-sqft</property>
            <property>fcs/elevator-pos-rad</property>
            <value> 0.6076 </value>          <!-- source: experiment. original 0.6076 -->
-       </product>
+           <value> 1.1 </value>
+        </product>
     </function>
 
     <function name="aero/force/Lift_inbd_flap">
@@ -447,6 +470,7 @@
             <property>metrics/Sw-sqft</property>
             <property>fcs/slat-pos-norm</property>
             <value>0.294</value>
+            <value>0.5</value>              <!-- guesstimate -->
         </product>
     </function>
     
@@ -460,29 +484,7 @@
        </product>
     </function>
 
-    <!-- Lift due to Mach -->
-    <function name="aero/force/Lift_mach">
-        <description>Lift factor due to mach</description>
-        <product>
-            <property>aero/force/Lift_alpha</property>
-            <table>
-                <independentVar lookup="row">velocities/mach</independentVar>
-                <tableData>
-                    0.00    1.00
-                    0.20    1.12
-                    0.40    1.29
-                    0.60    1.58
-                    0.80    1.92
-                    0.90    1.99
-                    1.00    2.00
-                    1.10    1.42
-                    1.20    0.96
-                    1.40    0.65
-                </tableData>
-                <!-- Prandtl Glauert 0-0.6 and 1.2-1.4 with quadratic fitting around mach 1 -->
-                </table>
-        </product>
-    </function>  
+    
   </axis>
 
   <axis name="DRAG">
@@ -525,7 +527,7 @@
            <property>aero/qbar-psf</property>
            <property>metrics/Sw-sqft</property>
            <property>aero/cl-squared</property>
-           <value> 0.0297 </value>
+           <value> 0.043 </value>   <!-- Source: CL2 / (pi*A*e). original 0.0297 -->
          </product>
     </function>
 
